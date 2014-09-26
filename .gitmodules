@@ -1,0 +1,3 @@
+[submodule "dep/typesystems"]
+	path = dep/typesystems
+	url = git@github.com:vashman/typesystems.git
