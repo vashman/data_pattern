@@ -1,6 +1,6 @@
-Data Model
+Data Pattern
 ==========================================================================
-status: Open Alpha
+status: Open Alpha Development
 
 Data model aims to make database input / output simple and extensible. It
 accoplish this by seperating the query language from the underlying data
