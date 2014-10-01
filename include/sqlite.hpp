@@ -1,72 +1,46 @@
 
 //          Copyright Sundeep S. Sangha 2013 - 2014.
 
-#ifndef STDL_DATABASE_SQLITE_HPP
-#define STDL_DATABASE_SQLITE_HPP
+#ifndef DATA_PATTERN_SQLITE_HPP
+#define DATA_PATTERN_SQLITE_HPP
 
 extern "C"{
 #include <sqlite3.h>
 }
-#include <initializer_list>
 #include <vector>
 #include <string>
-#include <tuple>
-#include <stdl/database.hpp>
-#include <deque>
+#include "data_model.hpp"
 
-namespace stdl{
-template <
-  template <typename> class C_int =
-, template <typename> class C_double =
-, template <typename> class C_float = 
->
-class sqlite : public database{
+namespace data_pattern {
+/* sqlite */
+class sqlite : public data_model{
 public:
 	typedef std::string query_type;
 	typedef std::vector query_container_type;
-	/*
-	   + Takes char* to database location, vector of startup queries and schema_type
-	   + 
-	*/
-	sqlite(char const*, std::initializer_list<query_type>);
-	~sqlite();
-	virtual database::rv_type access(database::access_type);
+
+	/* Takes char* to database location. */
+  template <
+    typename ConT_int = std::vector<int>
+  , typename ContT_char = std::vector<char>
+  , typename ConT_double = std::vector<double>
+  , typename ConT_float = std::vector<float>
+  >
+	sqlite(
+    char const *
+  );
+
+	~sqlite(
+  );
+
 private:
-	sqlite3* db;
-	char* zErrMsg;
-	sqlite3_stmt *statement;
-	char* result;
-	vector<string> queries;
+	sqlite3 * db;
+	char * zErrMsg;
+	sqlite3_stmt * statement;
+	char * result;
 };
 
-template <
-  template <typename> class C_int =
-, template <typename> class C_double =
-, template <typename> class C_float = 
->
-sqlite::sqlite(char const* _url, vector<string> _queries)
-	: database ()
-	, queries (_queries){
-// Open database.
-this->zErrMsg = nullptr;
-int rc = sqlite3_open(url, &this->db);
-	if (rc > 0){
-	throw runtime_error("Database open error");
-	}
-this->buff_map[typebuffer_interface<int>::type_id] = new typebuffer<int, C_int<int>>();
-this->buff_map[typebuffer_interface<double>::type_id] = new typebuffer<double, C_double<double>>();
-}
-
-sqlite::~sqlite(){
-sqlite3_close(this->db);
-delete zErrMsg;
-}
-
 database::rv_type sqlite::access(database::access_type _req){
-	if (_req > (this->queries.size()/2)){
-	return database::noquery_bit;
-	}
-	if (sqlite3_prepare_v2(this->db, this->queries[_req].c_str(), this->queries[_req].size(), &this->statement, 0) == SQLITE_OK){ // Create prepared statment
+//if (sqlite3_prepare_v2(this->db, this->queries[_req].c_str(), this->queries[_req].size(), &this->statement, 0) == SQLITE_OK){ // Create prepared statment
 	string::const_iterator type_begin = this->queries[_req+1].cbegin();
 	string::const_iterator type_end = this->queries[_req+1].cend();
 	size_t statement_var_index = 0;
@@ -142,5 +116,7 @@ database::rv_type sqlite::access(database::access_type _req){
 	return dataerr::FAIL;
 	}
 }
-}
+
+} /* data_pattern */
+#include "bits/sqlite.tcc"
 #endif
