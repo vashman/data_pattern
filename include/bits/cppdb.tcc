@@ -1,0 +1,39 @@
+
+//          Copyright Sundeep S. Sangha 2013 - 2014.
+
+#ifndef DATA_PATTERN_CPPDB_TCC
+#define DATA_PATTERN_CPPDB_TCC
+
+#include "../include/cppdb.hpp"
+
+namespace data_pattern {
+
+template <typename T, typename Container>
+set_typebuffers(typesystems::typesystem & _typesys){
+typesystems::set_typebuffer<T, Container>(_typesys);
+}
+
+template <typename T, typename Container, typename... Ts>
+set_typebuffers(typesystems::typesystem & _typesys){
+typesystems::set_typebuffer<T, Container>(_typesys);
+set_typebuffers<Ts...>(_typesys);
+}
+
+template <typename... Ts>
+cppdb<Ts...>::cppdb(
+)
+  : data_model() {
+static_assert((sizeof...(Ts) / 2) == 0
+, "Odd number of template types, you are missing a container type.");
+set_typebuffers<Ts...>(this->typesys);
+}
+
+template <typename... Ts>
+void
+cppdb<Ts...>::access(
+  typename cppdb<Ts...>::data_operation _operation
+){
+}
+
+} /* data_pattern */
+#endif
