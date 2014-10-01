@@ -14,17 +14,19 @@
 #define ::funcnamespace boost;
 #endif
 
+#include <typesystems/typesystem.hpp>
 #include "data_model.hpp"
 
 namespace data_pattern {
 
 /* cppdb */
-template <typename... Ts>
 class cppdb : public data_model {
 public:
   /* function to operate on database instance. */
-  typedef funcnamespace::function<void(data_model &)> data_operation;
+  typedef funcnamespace::function<void(typesystems::typesystem &)>
+    data_operation;
 
+  template <typename... Ts>
   explicit
   cppdb(
   );

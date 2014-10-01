@@ -20,19 +20,12 @@ set_typebuffers<Ts...>(_typesys);
 }
 
 template <typename... Ts>
-cppdb<Ts...>::cppdb(
+cppdb::cppdb(
 )
   : data_model() {
 static_assert((sizeof...(Ts) / 2) == 0
 , "Odd number of template types, you are missing a container type.");
 set_typebuffers<Ts...>(this->typesys);
-}
-
-template <typename... Ts>
-void
-cppdb<Ts...>::access(
-  typename cppdb<Ts...>::data_operation _operation
-){
 }
 
 } /* data_pattern */
