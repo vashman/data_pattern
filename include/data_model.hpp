@@ -61,4 +61,5 @@ data_model &
 operator>>(data_model &, T &);
 
 } /* data_pattern */
+#include "bits/data_model.tcc"
 #endif
