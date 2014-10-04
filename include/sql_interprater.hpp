@@ -14,9 +14,15 @@ class sql_traits : public dbmodel::model_traits<Model>{
 public:
   typedef sql_traits<Model> traits_type;
 
+  /* process_sql_statment
+  Takes the sql query as a char pointer for processing. Should complie the
+  statment and deduce the type information in the process.
+  */
   inline static void
   process_sql_statment(char const * const);
 
+  /* sql_version
+  */
   inline static typename sql_interpreater<Model,traits_type>::sql_versions
   sql_version();
 };
