@@ -2,21 +2,22 @@
 
 //          Copyright Sundeep S. Sangha 2013 - 2014.
 
-#ifndef _SQL_INTERPRATER_HPP
-#define _SQL_INTERPRATER_HPP
+#ifndef DATA_PATTERN_SQL_INTERPRATER_HPP
+#define DATA_PATTERN_SQL_INTERPRATER_HPP
 
-#include <dbmodel/interprater.hpp>
+#include <data_pattern/interprater.hpp>
 
-namespace sql_interprater {
+namespace data_pattern {
 
 template <typename Model>
-class sql_dbtraits : public dbmodel::model_traits<Model>{
+class sql_traits : public dbmodel::model_traits<Model>{
 public:
+  typedef sql_traits<Model> traits_type;
+
   inline static void
   process_sql_statment(char const * const);
 
-  inline static typename sql_interpreater<Model,sql_dbtraits<Model> >
-    ::sql_versions
+  inline static typename sql_interpreater<Model,traits_type>::sql_versions
   sql_version();
 };
 
@@ -59,5 +60,5 @@ sql_interprater<Model,Traits>::do_interpret(
 ){
 }
 
-} /**/
+} /* data_pattern */
 #endif
