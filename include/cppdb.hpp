@@ -26,8 +26,13 @@ public:
   typedef funcnamespace::function<void(typesystems::typesystem &)>
     data_operation;
 
+#if __cplusplus >= 201103L
   template <typename... Ts>
   explicit
+  cppdb(
+  );
+#endif
+
   cppdb(
   );
 
@@ -57,6 +62,11 @@ public:
   void
   access(
     data_operation
+  );
+
+  template <typename T, typename Container>
+  void
+  add_type(
   );
 };
 

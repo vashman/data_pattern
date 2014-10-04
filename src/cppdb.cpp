@@ -7,6 +7,11 @@
 
 namespace data_pattern {
 
+/* cppdb ctor */
+cppdb::cppdb(
+){
+}
+
 /* cppdb access */
 void
 cppdb::access(
