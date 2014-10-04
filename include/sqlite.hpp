@@ -32,6 +32,26 @@ public:
 	~sqlite(
   );
 
+#if __cplusplus >= 201103L
+  sqlite(
+    sqlite const &
+  ) = delete;
+
+  sqlite &
+  operator=(
+    sqlite const &
+  ) = delete;
+
+  sqlite(
+    sqlite &&
+  );
+
+  sqlite &
+  operator=(
+    sqlite &&
+  );
+#endif
+
 private:
 	sqlite3 * db;
 	char * zErrMsg;
