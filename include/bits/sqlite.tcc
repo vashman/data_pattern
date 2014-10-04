@@ -18,7 +18,8 @@ template <
 sqlite<>::sqlite(
   char const * _file
 )
-  : data_model () {
+  : data_model ()
+  , db (nullptr) {
 this->zErrMsg = nullptr;
 int rc = sqlite3_open(url, &this->db);
 	if (rc > 0){

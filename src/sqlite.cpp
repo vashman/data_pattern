@@ -27,6 +27,16 @@ return sqlite3_prepare_v2(this->db, _zsql, _nbyte, _ppstmt, __pztail);
 }
 
 int
+sqlite::bind_int(
+  sqlite::stmt_type * _stmt
+, int _index
+){
+typesystems::typebuffer_interface<int> & buff = typesystems::use_typebuffer<int>(this->typesys);
+sqlite3_bind_int(_stmt, index, buff.next());
+buff.pop();
+}
+
+int
 sqlite::step( 
 ){
 sqlite3_step(this->statement);

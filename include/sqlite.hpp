@@ -17,6 +17,7 @@ class sqlite : public data_model{
 public:
 	typedef std::string query_type;
 	typedef std::vector query_container_type;
+  typedef sqlite_t_stmt stmt_type;
 
 	/* Takes char* to database location. */
   template <
@@ -52,17 +53,43 @@ public:
   );
 #endif
 
+  int
+  bind_blob(
+    stmt_type *
+  , int
+//  , void const *
+  , int
+  , void(*)(void*)
+  );
+
+  int
+  bind_double(
+    stmt_type *
+  , int
+  );
+
+  int
+  bind_int(
+    stmt_type *
+  , int
+  );
+
+  int
+  prepare(
+    char const *
+  , int
+  , sqlite_3_stmt **
+  , char const **
+  );
+
 private:
 	sqlite3 * db;
 	char * zErrMsg;
-	sqlite3_stmt * statement;
 	char * result;
 };
 
 database::rv_type sqlite::access(database::access_type _req){
 //if (sqlite3_prepare_v2(this->db, this->queries[_req].c_str(), this->queries[_req].size(), &this->statement, 0) == SQLITE_OK){ // Create prepared statment
-	string::const_iterator type_begin = this->queries[_req+1].cbegin();
-	string::const_iterator type_end = this->queries[_req+1].cend();
 	size_t statement_var_index = 0;
 		while (type_begin != type_end){ // Go through data and bind data arguments if there was data to bind
 		++statement_var_index;
@@ -74,22 +101,11 @@ database::rv_type sqlite::access(database::access_type _req){
 			buff_text.pop();
 			break;
 		}
-		case 'i':
-			auto buff = use_typebuffer<int>(*this);
-			sqlite3_bind_int(this->statement, statement_var_index, buff.next());
-			buff.pop();
-			break;
 		case 'd':
 			auto buff = use_typebuffer<double>(*this);
 			sqlite3_bind_double(this->statement, statement_var_index, buff.next());
 			buff.pop();
 			break;
-		case 'b':
-			auto buff = use
-			//reinterpret_cast<void*>(*data_begin);
-			buff.pop();
-			break;
-		default:
 		}
 		++type_begin;
 		}
