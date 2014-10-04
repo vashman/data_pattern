@@ -11,11 +11,11 @@
 
 #if __cplusplus >= 201103L
 #include <functional>
-#define ::funcnamespace std;
+#define funcnamespace std;
 
 #else
 #include <boost/function.hpp>
-#define ::funcnamespace boost;
+#define funcnamespace boost;
 #endif
 
 #include <typesystems/typesystem.hpp>
