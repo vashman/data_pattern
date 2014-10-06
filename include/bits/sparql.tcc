@@ -15,6 +15,8 @@ do_interpret(
 ){
 /* determine the query type */
 switch(_data[0]){
+  case 'P':
+  case 'p':
   case 'S':
   case 's':
   case 'C':

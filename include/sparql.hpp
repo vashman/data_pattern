@@ -13,10 +13,19 @@ template <typename Model>
 class sparql_traits : public data_traits<Model>{
 public:
   inline static void
-  select();
+  select(Model &);
 
   inline static void
-  where();
+  where(Model &);
+
+  inline static void
+  ask(Model &);
+
+  inline static void
+  describe(Model &);
+
+  inline static void
+  create(Model &);
 };
 
 /* sparql
