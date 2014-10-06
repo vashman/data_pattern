@@ -20,6 +20,10 @@ public:
   ~model_traits(
   );
 
+  /* true in derived class if model traits can be used on the Model. */
+  inline static bool
+  enabled();
+
 private:
 #if __cplusplus >= 201103L
   static_assert(std::is_base(Model, model)
@@ -30,6 +34,13 @@ private:
 template <Model>
 model_traits<Model>::~model_traits(
 ){
+}
+
+template <Model>
+bool
+model_traits<Model>::enabled(
+){
+return false;
 }
 
 } /* data_pattern */
