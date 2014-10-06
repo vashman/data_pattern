@@ -2,21 +2,28 @@
 
 //
 
-#ifndef DATABASE_MODEL_MODEL_TRAITS_HPP
-#define DATABASE_MODEL_MODEL_TRAITS_HPP
+#ifndef DATA_PATTERN_MODEL_TRAITS_HPP
+#define DATA_PATTERN_MODEL_TRAITS_HPP
 
 #if __cplusplus >= 201103L
 #include <type_traits>
 #elif
-// produce error
+#include <boost/type_traits>
 #endif
 
-namespace database_model{
+namespace data_pattern{
 
 template <typename Model>
 class model_traits{
 public:
-  virtual ~model_traits() = default;
+  virtual
+  ~model_traits(
+  )
+#if __cplusplus >= 201103L
+    = default;
+#else
+   ;
+#endif
 
 private:
 #if __cplusplus >= 201103L
@@ -25,5 +32,5 @@ private:
 #endif
 };
 
-} /* database_model */
+} /* data_pattern */
 #endif
