@@ -54,4 +54,6 @@ this->do_interpret(_mdl, _data);
 }
 
 } /* data_pattern */
+#include "bits/model_traits.hpp"
+#include "bits/model_store.hpp"
 #endif
