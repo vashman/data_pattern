@@ -1,6 +1,6 @@
 //
 
-//
+//          Copyright Sundeep S. Sangha 2013 - 2014.
 
 #ifndef DATA_PATTERN_MODEL_TRAITS_HPP
 #define DATA_PATTERN_MODEL_TRAITS_HPP
@@ -18,12 +18,7 @@ class model_traits{
 public:
   virtual
   ~model_traits(
-  )
-#if __cplusplus >= 201103L
-    = default;
-#else
-   ;
-#endif
+  );
 
 private:
 #if __cplusplus >= 201103L
@@ -31,6 +26,11 @@ private:
    , "Data model does not have model base");
 #endif
 };
+
+template <Model>
+model_traits<Model>::~model_traits(
+){
+}
 
 } /* data_pattern */
 #endif
