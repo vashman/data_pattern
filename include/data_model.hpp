@@ -50,15 +50,23 @@ private:
 
 template <typename T>
 bool
-empty(data_model const &);
+empty(
+  data_model const &
+);
 
 template <typename T>
 data_model &
-operator<<(data_model &, T const &);
+operator<<(
+  data_model &
+, T const &
+);
 
 template <typename T>
 data_model &
-operator>>(data_model &, T &);
+operator>>(
+  data_model &
+, T &
+);
 
 } /* data_pattern */
 #include "bits/data_model.tcc"

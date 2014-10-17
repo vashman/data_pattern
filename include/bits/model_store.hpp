@@ -1,4 +1,4 @@
-//
+// specialize to hold data between model and interprater
 
 //          Copyright Sundeep S. Sangha 2013 - 2014.
 
