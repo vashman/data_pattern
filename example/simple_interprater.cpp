@@ -1,7 +1,8 @@
-#ifndef
-#define
+#ifndef EXAMPLE_SIMPLE_INTERPRATER_HPP
+#define EXAMPLE_SIMPLE_INTERPRATER_HPP
 
-#include <../../include/interprater.hpp>
+#include <sstream>
+#include "../include/interprater.hpp"
 
 template <typename Model>
 class simple_store : public data_pattern::model_store<Model> {
@@ -44,6 +45,14 @@ model_store<Model> store;
   if (std::char_traits<char>::length(_data) < 5){
   return false;
   }
+
+  std::stringstream stream;
+  stream << _data[std::char_traits<char>::length(_data)-1];
+  int var = 1;
+  stream >> var;
+    if (stream.fail()){
+    return false;
+    }
 
   if (std::char_traits<char>::compare(_data, "find ", 5) == 0) {
   simple_traits<Model>::find(_mdl, store, var);
