@@ -16,11 +16,13 @@ namespace data_pattern {
 Recursive function to add all types to typesystem.
 */
 template <typename T, typename Container>
+void
 set_typebuffers(typesystems::typesystem & _typesys){
 typesystems::set_typebuffer<T, Container>(_typesys);
 }
 
 template <typename T, typename Container, typename... Ts>
+void
 set_typebuffers(typesystems::typesystem & _typesys){
 typesystems::set_typebuffer<T, Container>(_typesys);
 set_typebuffers<Ts...>(_typesys);
