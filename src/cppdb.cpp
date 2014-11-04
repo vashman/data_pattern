@@ -8,6 +8,8 @@
 #ifndef DATA_PATTERN_CPPDB_CPP
 #define DATA_PATTERN_CPPDB_CPP
 
+#include "../include/cppdb.hpp"
+
 namespace data_pattern {
 
 /* cppdb ctor */
