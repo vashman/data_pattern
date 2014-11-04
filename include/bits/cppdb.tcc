@@ -9,8 +9,6 @@
 #ifndef DATA_PATTERN_CPPDB_TCC
 #define DATA_PATTERN_CPPDB_TCC
 
-#include "../include/cppdb.hpp"
-
 namespace data_pattern {
 
 #if __cplusplus >= 201103L
