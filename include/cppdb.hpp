@@ -56,7 +56,7 @@ public:
 
   cppdb &
   operator=(
-    cppedb &&
+    cppdb &&
   ) = default;
 
   ~cppdb(
