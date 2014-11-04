@@ -8,7 +8,7 @@
 #ifndef DATA_PATTERN_MODEL_HPP
 #define DATA_PATTERN_MODEL_HPP
 
-#include <typesystem/typesystem.hpp>
+#include <typesystems/typesystem.hpp>
 
 namespace data_pattern {
 /* data_model
