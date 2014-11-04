@@ -7,8 +7,12 @@
 
 #if __cplusplus >= 201103L
 #include <type_traits>
-#elif
+#define TTRAITS std
+
+#else
 #include <boost/type_traits>
+#define TTRAITS boost
+
 #endif
 
 namespace data_pattern{
@@ -26,17 +30,17 @@ public:
 
 private:
 #if __cplusplus >= 201103L
-  static_assert(std::is_base(Model, model)
+  static_assert(TTRAITS::is_base_of<Model, data_model>()
    , "Data model does not have model base");
 #endif
 };
 
-template <Model>
+template <typename Model>
 model_traits<Model>::~model_traits(
 ){
 }
 
-template <Model>
+template <typename Model>
 bool
 model_traits<Model>::enabled(
 ){
