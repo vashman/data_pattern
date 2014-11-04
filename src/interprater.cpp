@@ -5,7 +5,7 @@
 #ifndef DATABASE_MODEL_INTERPRATER_CPP
 #define DATABASE_MODEL_INTERPRATER_CPP
 
-#include "interprater.hpp"
+#include "../include/interprater.hpp"
 
 namespace database_model {
 

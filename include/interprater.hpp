@@ -21,7 +21,7 @@ public:
   interprater &
   operator=(interprater &&) = default;
 
-  interprater(interprater const &) = delete
+  interprater(interprater const &) = delete;
 
   interprater &
   operator=(interprater const &) = delete;
@@ -33,14 +33,14 @@ public:
   void
   interpret(
     Model &
-    char *
+  , char *
   );
 
 protected:
   virtual void
   do_interpret(
     Model &
-    char *
+  , char *
   ) = 0;
 };
 
@@ -48,7 +48,7 @@ template <typename Model>
 void
 interprater<Model>::interpret(
   Model & _mdl
-  char * _data
+, char * _data
 ){
 this->do_interpret(_mdl, _data);
 }
