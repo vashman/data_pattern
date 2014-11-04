@@ -43,7 +43,7 @@ template <typename T, typename Container>
 void
 cppdb::add_type(
 ){
-typesystems::set_typebuffer<T, Contaner>();
+typesystems::set_typebuffer<T, Container>();
 }
 
 } /* data_pattern */
