@@ -2,64 +2,97 @@
 
 //          Copyright Sundeep S. Sangha 2013 - 2014.
 
-#ifndef STDL_DATABASE_GETOPT_DB_HPP
-#define STDL_DATABASE_GETOPT_DB_HPP
+#ifndef DATA_PATTERN_GETOPT_DB_HPP
+#define DATA_PATTERN_GETOPT_DB_HPP
 
 #include <unistd.h>
 #include <string>
 #include <vector>
-#include <stdl/model.hpp>
+#include "data_model.hpp"
 
-namespace stdl{
+namespace data_pattern {
+
 template <typename Alloc = std::allocator<char*> >
-class getopt_db : public model{
+class getopt_db : public data_model{
 public:
-	typedef std::vector<char*,Alloc> char_container_type;
-	typedef typebuffer<char*, char_container_type> char_buffer_type;
+  typedef std::vector<char*,Alloc> char_container_type;
+  typedef typebuffer<char*, char_container_type> char_buffer_type;
 
-	getopt_db(std::string);
+  getopt_db(
+    std::string
+  );
+
 #if __cplusplus >= 201103L
-//	getopt_db(getopt_db&&);
-//	getopt_db& operator=(getopt_db&&)
+  getopt_db(
+    getopt_db &&
+  );
+
+  getopt_db &
+  operator=(
+    getopt_db &&
+  )
 #endif
 	~getopt_db();
-	void set_args(std::string&);
-	void process();
+
+  void
+  set_args(std::string &);
+
+  void 
+  process();
+
 protected:
-	getopt_db(getopt_db const&) = delete;
-	getopt_db& operator=(getopt_db const&) = delete;
+  getopt_db(
+    getopt_db const &
+  ) = delete;
+	
+  getopt_db &
+  operator=(
+    getopt_db const &
+  ) = delete;
+
 private:
 	std::string args;
 };
 
-template <typename Alloc>
-getopt_db<Alloc>::getopt_db(std::string _str)
+template <typename alloc>
+getopt_db<alloc>::getopt_db(
+  std::string _str
+)
 	: model (typesystem())
-	, args(_str){
-set_typebuff<typename getopt_db<Alloc>::char_container_type >(this->buff_map);
+	, args (_str) {
+typesystems::set_typebuffer<
+  typename getopt_db<alloc>::char_container_type>(this);
 }
 
 #if __cplusplus >= 201103L
-/*
-template <typename Alloc>
-getopt_db<Alloc>::getopt_db(getopt_db<Alloc>&& _db)
-	: model (_db){
+
+template <typename alloc>
+getopt_db<alloc>::getopt_db(
+  getopt_db<Alloc> && _db
+)
+	: model (_db) {
 }
 
-template <typename Alloc>
-getopt_db<Alloc>& getopt_db<Alloc>::operator=(getopt_db<Alloc>&& _db){
+template <typename alloc>
+getopt_db<alloc> &
+getopt_db<alloc>::operator=(
+  getopt_db<alloc> && _db
+){
 this = _db;
 }
-*/
 #endif
 
-template <typename Alloc>
-getopt_db<Alloc>::~getopt_db(){
+template <typename alloc>
+getopt_db<alloc>::~getopt_db(
+){
 }
 
-template <typename Alloc>
-void getopt_db<Alloc>::process(){
-typename getopt_db<Alloc>::char_buffer_type& buff = use_typebuff<char*, typename getopt_db<Alloc>::char_buffer_type>(this->buff_map);
+template <typename alloc>
+void
+getopt_db<alloc>::process(
+){
+typename getopt_db<alloc>::char_buffer_type & buff
+  = use_typebuff<char*, typename getopt_db<alloc>::char_buffer_type>(this->buff_map);
 	if (!buff.empty()){
 	while ((c =  getopt(static_cast<int>(buff.size()), &(*buff_ptr)[0], this->args.c_str())) != -1){
 	buff_int.push(c);

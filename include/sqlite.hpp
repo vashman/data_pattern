@@ -1,5 +1,9 @@
+//
 
 //          Copyright Sundeep S. Sangha 2013 - 2014.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef DATA_PATTERN_SQLITE_HPP
 #define DATA_PATTERN_SQLITE_HPP
@@ -7,25 +11,45 @@
 extern "C"{
 #include <sqlite3.h>
 }
-#include <vector>
 #include <string>
 #include "data_model.hpp"
 
 namespace data_pattern {
-/* sqlite */
-class sqlite : public data_model{
-public:
-	typedef std::string query_type;
-	typedef std::vector query_container_type;
-  typedef sqlite_t_stmt stmt_type;
 
+class sqlite;
+
+/* query_statement wraps an sqlite statement and does some book keeping */
+class sqlite_statement {
+public:
+  void
+  bind_double(
+    double
+  , int
+  );
+
+  void
+  bind_int(
+    int
+  , int
+  );
+
+  void
+  bind_float(
+    float
+  , int
+  );
+
+private:
+  sqlite3_stmt * stmt;
+
+  friend sqlite;
+};
+
+/* sqlite */
+class sqlite : public data_model {
+public:
 	/* Takes char* to database location. */
-  template <
-    typename ConT_int = std::vector<int>
-  , typename ContT_char = std::vector<char>
-  , typename ConT_double = std::vector<double>
-  , typename ConT_float = std::vector<float>
-  >
+  template <typename container = std::vector<sqlite_statement> >
 	sqlite(
     char const *
   );
@@ -53,29 +77,8 @@ public:
   );
 #endif
 
-  int
-  bind_blob(
-    stmt_type *
-  , int
-//  , void const *
-  , int
-  , void(*)(void*)
-  );
-
-  int
-  bind_double(
-    stmt_type *
-  , int
-  );
-
-  int
-  bind_int(
-    stmt_type *
-  , int
-  );
-
-  int
-  prepare(
+  sqlite_statement
+  create(
     char const *
   , int
   , sqlite_3_stmt **
@@ -89,8 +92,6 @@ private:
 };
 
 database::rv_type sqlite::access(database::access_type _req){
-//if (sqlite3_prepare_v2(this->db, this->queries[_req].c_str(), this->queries[_req].size(), &this->statement, 0) == SQLITE_OK){ // Create prepared statment
-	size_t statement_var_index = 0;
 		while (type_begin != type_end){ // Go through data and bind data arguments if there was data to bind
 		++statement_var_index;
 		switch(*type_begin){
