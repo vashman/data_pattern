@@ -22,25 +22,53 @@ class sqlite;
 class sqlite_statement {
 public:
   void
-  bind_double(
-    double
-  , int
+  bind(
+    int
+  , double
   );
 
   void
-  bind_int(
+  bind(
     int
   , int
   );
 
   void
-  bind_float(
-    float
-  , int
+  bind(
+    int
+  , void const *
   );
+
+  void
+  bind(
+    int
+  );
+
+  void
+  bind(
+    int
+  , char const *
+  );
+
+  int
+  column_int(
+    int
+  );
+
+  double
+  column_double(
+   int
+  );
+
+  int index;
 
 private:
   sqlite3_stmt * stmt;
+
+  signed int state;
+
+  /* when statement runs, set this to max column */
+  int max_col;
 
   friend sqlite;
 };
@@ -85,35 +113,23 @@ public:
   , char const **
   );
 
+  void
+  finalize(
+    sqlite_statement const &
+  );
+
+  void
+  step(
+    sqlite_statement const &
+  );
+
 private:
 	sqlite3 * db;
 	char * zErrMsg;
 	char * result;
+  signed int state;
 };
 
-database::rv_type sqlite::access(database::access_type _req){
-		while (type_begin != type_end){ // Go through data and bind data arguments if there was data to bind
-		++statement_var_index;
-		switch(*type_begin){
-		case 't':{
-			auto buff = use_typebuffer<string>(*this);
-			string s = buff_text.next();
-			sqlite3_bind_text(this->statement, statement_var_index, s.c_str(), s.size(), SQLITE_TRANSIENT);
-			buff_text.pop();
-			break;
-		}
-		case 'd':
-			auto buff = use_typebuffer<double>(*this);
-			sqlite3_bind_double(this->statement, statement_var_index, buff.next());
-			buff.pop();
-			break;
-		}
-		++type_begin;
-		}
-		// Run prepared statement
-		auto rc = sqlite3_step(this->statement);
-		auto col_type = type_begin;
-		while (rc == SQLITE_ROW){
 		col_type = type_begin;
 			for (size_t col=0; col_type != type_end; ++col, ++col_type){
 			switch(*col_type){
