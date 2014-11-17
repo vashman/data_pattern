@@ -17,7 +17,7 @@ namespace sqlite {
 
 class int_put_rw : public typesystems::put_rewriter<int>{
 public:
-  int_put_rewriter(
+  int_put_rw(
     std::size_t _refs = 0
   );
 
@@ -31,7 +31,7 @@ private:
   static typesystems::explicit_typeid_type const array[];
 };
 
-int_put_rw::int_put_rewriter(
+int_put_rw::int_put_rw(
   std::size_t _refs
 )
   : typesystems::put_rewriter<int>(
@@ -42,7 +42,7 @@ int_put_rw::int_put_rewriter(
 
 typesystems::explicit_typeid_type const int_put_rw::array[]
   = {
-     typesysetms::explicit_typeid<sqlite_statement>::raw_typeid();
+     typesysetems::explicit_typeid<sqlite_statement>::raw_typeid();
   };
 
 } /* sqlite */ } /* bits */ } /* data_patten */

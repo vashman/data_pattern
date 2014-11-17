@@ -12,6 +12,7 @@ extern "C"{
 #include <sqlite3.h>
 }
 #include <string>
+#include <vector>
 #include "data_model.hpp"
 
 namespace data_pattern {
@@ -109,7 +110,7 @@ public:
   create(
     char const *
   , int
-  , sqlite_3_stmt **
+  , sqlite3_stmt **
   , char const **
   );
 
