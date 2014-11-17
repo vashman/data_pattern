@@ -1,4 +1,4 @@
-//
+// wrapper around sqlite3
 
 //          Copyright Sundeep S. Sangha 2013 - 2014.
 // Distributed under the Boost Software License, Version 1.0.
@@ -131,5 +131,6 @@ private:
 };
 
 } /* data_pattern */
+#include "bits/sqlite_rewriters.hpp"
 #include "bits/sqlite.tcc"
 #endif
