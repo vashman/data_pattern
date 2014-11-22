@@ -5,19 +5,19 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef DATA_PATTERN_BITS_SQLITE_HPP
-#define DATA_PATTERN_BITS_SQLITE_HPP
+#ifndef DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_HPP
+#define DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_HPP
 
 #include <typesystems/get_rewriter.hpp>
 #include <typesystems/put_rewriter.hpp>
 
 namespace data_pattern {
 namespace bits {
-namespace sqlite {
+namespace sqlite_rw {
 
-class int_put_rw : public typesystems::put_rewriter<int>{
+class int_put : public typesystems::put_rewriter<int>{
 public:
-  int_put_rw(
+  int_put(
     std::size_t _refs = 0
   );
 
@@ -28,22 +28,13 @@ private:
   , typesystems::typebuffer_container const &
   ) const;
 
-  static typesystems::explicit_typeid_type const array[];
+  static typesystems::explicit_typeid_type const array[1];
 };
-
-int_put_rw::int_put_rw(
-  std::size_t _refs
-)
-  : typesystems::put_rewriter<int>(
-      array
-    , static_cast<std::size_t>(1)
-    , _refs){
-}
 
 typesystems::explicit_typeid_type const int_put_rw::array[]
   = {
-     typesysetems::explicit_typeid<sqlite_statement>::raw_typeid();
-  };
+      typesystems::explicit_typeid<sqlite_statement>::raw_typeid();
+    };
 
-} /* sqlite */ } /* bits */ } /* data_patten */
+} /* sqlite_rw */ } /* bits */ } /* data_patten */
 #endif
