@@ -39,9 +39,9 @@ Changes should be submitted trough [github]
 (http://github.com/vashman/typesystems). The changes should be submitted
 under the topic branch for which it address. This topic branch should be
 merged with the newest development branch before submitting. 
-After submitting a pull request the connected [issues][issues] should also be
-updated.
+After submitting a pull request the connected [issues][issues] should also
+be updated.
 
 [issues]: http://www.github.com/vashman/data_pattern/issues
-[src.style]: http://www.github.com/404
+[src.style]: http://vashman.github.io/docs/style/
 [doc.style]: http://www.github.com/404
