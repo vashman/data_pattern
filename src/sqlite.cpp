@@ -21,11 +21,11 @@ delete zErrMsg;
 
 void
 sqlite::step(
-  sqlite_statement const & _stmt
+  sqlite_statement & _stmt
 ){
 _stmt.state = sqlite3_step(_stmt.stmt);
   if (_stmt.state == SQLITE_OK){
-  _stmt.max_col = sqlite3_column_count();
+  _stmt.max_col = sqlite3_column_count(_stmt.stmt);
   }
 }
 
@@ -33,7 +33,7 @@ void
 sqlite::finalize(
   sqlite_statement const & _stmt
 ){
-sqlite3_finilize(_stmt.stmt);
+sqlite3_finalize(_stmt.stmt);
 }
 
 /* sqlite create */
@@ -43,8 +43,8 @@ sqlite::create(
 , int _size
 , char const **
 ){
-sqlite_statement stmt();
-stmt.state = sqlite_3_prepare_v2(this->db, _query, _size, &stmt->stmt, 0);
+sqlite_statement stmt;
+stmt.state = sqlite3_prepare_v2(this->db, _query, _size, &stmt.stmt, 0);
 return stmt;
 }
 
@@ -55,7 +55,14 @@ sqlite_statement::bind(
   int _index
 , int _var
 ){
-this->state = sqlite3_bind_int(&this->stmt, _index, _var);
+this->state = sqlite3_bind_int(this->stmt, _index, _var);
+}
+
+void sqlite_dtor_data(void*);
+void sqlite_dtor_data(
+  void * _data
+){
+// do nothing
 }
 
 /* sqlite_statement bind_blob */
@@ -65,8 +72,8 @@ sqlite_statement::bind(
 , void const * _blob
 , int _size
 ){
-this->state = sqlite3_bind_blob(&this->stmt, _index, _blob, _size
-              , SQLITE_TRANSIENT);
+this->state = sqlite3_bind_blob(this->stmt, _index, _blob, _size
+              ,sqlite_dtor_data);
 }
 
 /* sqlite_statement bind */
@@ -75,8 +82,8 @@ sqlite_statement::bind(
   int _index
 , char const * _str
 ){
-this->state = sqlite3_bind_text(&this->stmt, _index, _str
-              , std::char_traits<char>::length(_str), SQLITE_TRANSIENT);
+this->state = sqlite3_bind_text(this->stmt, _index, _str
+              , static_cast<int>(std::char_traits<char>::length(_str)), sqlite_dtor_data);
 }
 
 /* sqlite_statement bind */
@@ -85,14 +92,14 @@ sqlite_statement::bind(
   int _index
 , double _var
 ){
-this->state = sqlite3_bind_double(&this->stmt, _index, _var);
+this->state = sqlite3_bind_double(this->stmt, _index, _var);
 }
 
 void
 sqlite_statement::bind(
   int _index
 ){
-this->state = sqlite3_bind_null(&this->stmt, _index);
+this->state = sqlite3_bind_null(this->stmt, _index);
 }
 
 /* sqlite_statement column_int */
@@ -103,7 +110,7 @@ sqlite_statement::column_int(
   if (_index > this->max_col){
   throw ;
   }
-return sqlite3_column_int(&this->stmt, _index);
+return sqlite3_column_int(this->stmt, _index);
 }
 
 /* sqlite_statement column_double */
@@ -114,7 +121,13 @@ sqlite_statement::column_double(
   if (_index > this->max_col){
   throw ;
   }
-return sqlite3_column_double(&this->stmt, _index);
+return sqlite3_column_double(this->stmt, _index);
+}
+
+signed int
+sqlite_statement::get_state(
+) const {
+return this->state;
 }
 
 /* sqlite rewriters */

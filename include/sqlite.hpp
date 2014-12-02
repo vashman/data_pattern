@@ -38,6 +38,7 @@ public:
   bind(
     int
   , void const *
+  , int
   );
 
   void
@@ -62,6 +63,10 @@ public:
   );
 
   int index;
+
+  signed int
+  get_state(
+  ) const;
 
 private:
   sqlite3_stmt * stmt;
@@ -110,7 +115,6 @@ public:
   create(
     char const *
   , int
-  , sqlite3_stmt **
   , char const **
   );
 
@@ -121,7 +125,7 @@ public:
 
   void
   step(
-    sqlite_statement const &
+    sqlite_statement &
   );
 
 private:
@@ -132,6 +136,6 @@ private:
 };
 
 } /* data_pattern */
-#include "bits/sqlite_rewriters.hpp"
 #include "bits/sqlite.tcc"
+#include "bits/sqlite_rewriters.hpp"
 #endif

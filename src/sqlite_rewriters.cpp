@@ -8,9 +8,17 @@
 #ifndef DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_CPP
 #define DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_CPP
 
+#include "../include/sqlite.hpp"
+#include "../include/bits/sqlite_rewriters.hpp"
+
 namespace data_pattern {
 namespace bits {
 namespace sqlite_rw {
+
+typesystems::explicit_typeid_type const int_put::array[]
+  = {
+      typesystems::explicit_typeid<sqlite_statement>::raw_typeid()
+    };
 
 /* int_put ctor */
 int_put::int_put(
@@ -34,7 +42,8 @@ typesystems::typebuffer_interface<sqlite_statement> & buff
 sqlite_statement stmt = buff.next();
 stmt.bind(stmt.index++, _var);
 buff.push(stmt);
-return (stmt.state == SQLITE_OK);
+return (stmt.get_state() == SQLITE_OK);
 }
 
 } /* sqlite_rw */ } /* bits */ } /* data_pattern */
+#endif
