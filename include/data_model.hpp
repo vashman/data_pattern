@@ -46,6 +46,9 @@ private:
 
   template <typename T> friend data_model &
   operator>>(data_model &, T &);
+
+  template <typename T> friend bool
+  empty(data_model const &);
 };
 
 template <typename T>
