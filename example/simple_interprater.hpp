@@ -10,38 +10,40 @@ class simple_store : public data_pattern::model_store<Model> {
 };
 
 template <typename Model>
-class simple_traits : public data_pattern::model_traits {
+class simple_traits : public data_pattern::model_traits<Model> {
 public:
   static inline bool
   find(
     Model &
   , simple_store<Model> &
   , int
-  ) const;
+  );
 
   static inline void
   add(
     Model &
   , simple_store<Model> &
   , int
-  ) const;
+  );
 };
 
 template <typename Model>
 class simple_interprater : public data_pattern::interprater<Model> {
 private:
   bool
-  do_interprate(char const * const);
-
+  do_interpret(
+    Model &
+  , char const * const
+  );
 };
 
 template <typename Model>
 bool
-simple_interprater<Model>::do_interprate(
+simple_interprater<Model>::do_interpret(
   Model & _mdl
 , char const * const _data
 ){
-model_store<Model> store;
+data_pattern::model_store<Model> store;
   if (std::char_traits<char>::length(_data) < 5){
   return false;
   }
