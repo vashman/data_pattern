@@ -16,15 +16,23 @@ public:
 #if __cplusplus >= 201103L
   interprater() = default;
 
-  interprater(interprater &&) = default;
+  interprater(
+    interprater &&
+  ) = default;
 
   interprater &
-  operator=(interprater &&) = default;
+  operator=(
+    interprater &&
+  ) = default;
 
-  interprater(interprater const &) = delete;
+  interprater(
+    interprater const &
+  ) = delete;
 
   interprater &
-  operator=(interprater const &) = delete;
+  operator=(
+    interprater const &
+  ) = delete;
 #endif
 
   virtual
