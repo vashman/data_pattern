@@ -43,5 +43,13 @@ operator>>(
 return _mdl;
 }
 
+template <typename T>
+bool
+empty(
+  data_model const & _mdl
+){
+return typesystems::empty<T>(_mdl.typesys);
+}
+
 } /* data_pattern */
 #endif
