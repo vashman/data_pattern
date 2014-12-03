@@ -1,5 +1,5 @@
 CC=/usr/bin/g++
-FLAGS=-g -fno-rtti -std=c++11 -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
+FLAGS=-g -ltypesystems -fno-rtti -std=c++11 -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
 
 BIN=./bin
 SRC=../src
@@ -34,7 +34,7 @@ $(EXOBJ)/%.o: $(EXDIR)/%.cpp
 	$(CC) -c $< -o $@ $(FLAGS) 2> example_object.log
 
 $(BIN)/%: $(EXOBJ)/%.o
-	$(CC) $< -o $@ $(SLIB) 2> example.log
+	$(CC) $< -o $@ $(FLAGS) $(SLIB) 2> example.log
 
 define cc-lib_dynamic
 $(CC) $^ -shared $(FLAGS) -o $@ 2> dyncamiclib.log
