@@ -21,7 +21,7 @@ LIBDIR=/usr/local/lib
 
 MAJOR=0
 MINOR=0
-LIB=libdata_pattern
+LIB=libdata_pattern.so
 DLIB=$(LIBS)/$(LIB).so.$(MAJOR).$(MINOR)
 SLIB=$(LIBS)/$(LIB).a.$(MAJOR).$(MINOR)
 
@@ -76,10 +76,10 @@ install: $(DLIB)
 	mkdir -p -m 655 $(INCDIR)
 	install -c $(DLIB) $(LIBDIR)
 	ldconfig -v -n $(LIBDIR)
-	ln -sf $(LIBDIR)/$(LIB).so.$(MAJOR).$(MINOR) $(LIBDIR)/$(LIB).$(MAJOR)
-	ln -sf $(LIBDIR)/$(LIB).so.$(MAJOR) $(LIBDIR)/$(LIB).so
+	ln -sf $(LIBDIR)/$(LIB).$(MAJOR).$(MINOR) $(LIBDIR)/$(LIB).$(MAJOR)
+	ln -sf $(LIBDIR)/$(LIB).$(MAJOR) $(LIBDIR)/$(LIB)
 	cp -r ../include/* $(INCDIR)
 
-remove: $(LIBDIR)/$(LIB).so $(INCDIR)
+remove: $(LIBDIR)/$(LIB) $(INCDIR)
 	rm -r $(INCDIR)
-	rm $(LIBDIR)/$(LIB).so*
+	rm $(LIBDIR)/$(LIB)*
