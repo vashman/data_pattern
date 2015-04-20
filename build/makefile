@@ -22,8 +22,8 @@ LIBDIR=/usr/local/lib
 MAJOR=0
 MINOR=0
 LIB=libdata_pattern.so
-DLIB=$(LIBS)/$(LIB).so.$(MAJOR).$(MINOR)
-SLIB=$(LIBS)/$(LIB).a.$(MAJOR).$(MINOR)
+DLIB=$(LIBS)/libdata_pattern.so.$(MAJOR).$(MINOR)
+SLIB=$(LIBS)/libdata_pattern.a.$(MAJOR).$(MINOR)
 
 .PHONY: clean all dirs lib example
 

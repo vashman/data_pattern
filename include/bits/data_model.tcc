@@ -16,13 +16,9 @@ operator<<(
   data_model & _mdl
 , T const & _var
 ){
-//	if (!typesystems::has_put_rewriter<T>(_mdl.tysys)){
-//	_mdl.setstate(typesystem::failbit);
-//	return _mdl;
-//	}
-//  if (!_mdl.tysys.put_rewrite(_var)){
-  // setstate
-//  };
+  if (typesystems::has_put_rewriter<T>(_mdl.typesys)){
+  _mdl.typesys.put_rewrite(_var);
+  }
 return _mdl;
 }
 
@@ -33,13 +29,9 @@ operator>>(
   data_model & _mdl
 , T & _var
 ){
-//	if (! typesystems::has_get_rewriter<T>(_mdl.tysys)){
-//	_mdl.setstate(typesystems::failbit);
-//	return _mdl;
-//	}
-//  if (!_mdl.tysys.get_rewrite(_var)){
-  // setstate
-//  }
+  if (typesystems::has_get_rewriter<T>(_mdl.typesys)){
+  _mdl.typesys.get_rewrite(_var);
+  }
 return _mdl;
 }
 
