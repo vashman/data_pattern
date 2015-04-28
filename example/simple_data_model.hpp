@@ -5,14 +5,15 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef DATA_PATTHEN_EXAMPLE_SIMPLE_DATA_MODEL
+#ifndef DATA_PATTERN_EXAMPLE_SIMPLE_DATA_MODEL
 #define DATA_PATTERN_EXAMPLE_SIMPLE_DATA_MODEL
 
 #include <algorithm>
 #include <vector>
 #include "../include/data_model.hpp"
 
-class simple_data_model : public data_pattern::data_model {
+class simple_data_model
+  : public data_pattern::data_model {
 public:
   simple_data_model();
 
@@ -36,15 +37,23 @@ public:
 /* ctor */
 simple_data_model::simple_data_model(
 ){
-typesystems::set_typebuffer<int, std::vector<int> >(this->typesys);
+typesystems::set_typebuffer<
+  int
+, std::vector<int>
+>
+(this->typesys);
 }
 
 bool
 simple_data_model::find(
   int _value
 ){
-auto & buff =
-typesystems::use_typebuffer<int, std::vector<int> >(this->typesys);
+auto & buff
+  = typesystems::use_typebuffer<
+      int
+    , std::vector<int>
+    >
+    (this->typesys);
 auto con = buff.get_container();
 
   if (con.end() == std::find(con.begin(), con.end(), _value)){
