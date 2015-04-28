@@ -12,7 +12,9 @@
 #include "data_model.hpp"
 
 namespace data_pattern {
-/**/
+/* idata_model_iterator
+Input iterator.
+*/
 template <
   typename T
 , typename Distance = std::ptrdiff_t
@@ -52,15 +54,22 @@ public:
   ) const ;
 
   /**/
-  idata_model_iterator &
+  idata_model_iterator<T,Distance> &
   operator++(
   );
 
   /**/
-  idata_model_iterator
+  idata_model_iterator<T,Distance> &
   operator++(
     int
   );
+
+private:
+  /* data_model pointer */
+  data_model * mdl;
+
+  /* temp variable */
+  T temp;
 };
 
 /**/
@@ -103,26 +112,33 @@ public:
   );
 
   /**/
-  idata_model_iterator &
+  odata_model_iterator<T> &
   operator=(
     T const &
   );
 
   /**/
-  idata_model_iterator &
+  odata_model_iterator<T> &
   operator*(
   );
 
   /**/
-  odata_model_iterator &
+  odata_model_iterator<T> &
   operator++(
   );
 
   /**/
-  odata_model_iterator
+  odata_model_iterator<T> &
   operator++(
     int
   );
+
+private:
+  /* data_model pointer */
+  data_model * mdl;
+
+  /* temp variable */
+  T temp;
 };
 
 } /* data_pattern */
