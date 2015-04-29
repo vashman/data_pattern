@@ -64,6 +64,10 @@ public:
     int
   );
 
+  bool
+  is_empty(
+  ) const ;  
+
 private:
   /* data_model pointer */
   data_model * mdl;
@@ -86,12 +90,14 @@ operator==(
 /**/
 template <
   typename T
-, typename Dist
+, typename Distance
 >
 bool
 operator!=(
-  idata_model_iterator<T,Dist> const &
-, idata_model_iterator<T,Dist> const &
+  idata_model_iterator<T,Distance>
+    const &
+, idata_model_iterator<T,Distance>
+    const &
 );
 
 /* output data_model iterator */
@@ -106,6 +112,10 @@ class odata_model_iterator
     >
 {
 public:
+  /* ctor end */
+  odata_model_iterator(
+  );
+
   /* ctor */
   odata_model_iterator(
     data_model &
@@ -140,6 +150,14 @@ private:
   /* temp variable */
   T temp;
 };
+
+/**/
+template <typename T>
+bool
+operator!=(
+  odata_model_iterator<T> const &
+, odata_model_iterator<T> const &
+);
 
 } /* data_pattern */
 #include "bits/iterator.tcc"

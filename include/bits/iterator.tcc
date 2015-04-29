@@ -26,7 +26,7 @@ idata_model_iterator<T,Distance>
   data_model & _mdl
 )
   : mdl (&_mdl) {
-  if (!empty<T>(*(this->mdl))){
+  if (!empty<T>(_mdl)){
   *(this->mdl) >> this->temp;
   }
 }
@@ -72,7 +72,7 @@ operator==(
 , idata_model_iterator<T,Distance>
     const & _rhs
 ){
-return empty<T>(_lhs);
+return _lhs.is_empty();
 }
 
 /* idata_model_iterator operator =!=
@@ -96,7 +96,7 @@ idata_model_iterator<T,Distance>
 ::operator++(
 ){
 *(this->mdl) >> this->temp;
-return this;
+return *this;
 }
 
 /* idata_model_iterator operator ++
@@ -111,7 +111,23 @@ idata_model_iterator<T,Distance>
   this->operator++();
   --_value;
   }
-return this;
+return *this;
+}
+
+/* idata_model_iterator empty */
+template <typename T, typename Distance>
+bool
+idata_model_iterator<T,Distance>::is_empty(
+) const {
+return empty<T>(*(this->mdl));
+}
+
+/* odata_model_iterator ctor */
+template <typename T>
+odata_model_iterator<T>
+::odata_model_iterator(
+)
+  : mdl (nullptr) {
 }
 
 /* odata_model_iterator ctor
@@ -133,7 +149,7 @@ odata_model_iterator<T>
   T const & _value
 ){
 *(this->mdl) << _value;
-return this;
+return *this;
 }
 
 /* odata_model_iterator operator ++
@@ -143,7 +159,7 @@ odata_model_iterator<T> &
 odata_model_iterator<T>
 ::operator++(
 ){
-return this;
+return *this;
 }
 
 /* odata_model_iterator operator ++
@@ -154,7 +170,18 @@ odata_model_iterator<T>
 ::operator++(
   int _value
 ){
-return this;
+return *this;
+}
+
+/* odata_model_iterator operator ==
+*/
+template <typename T>
+bool
+operator==(
+  odata_model_iterator<T> const & _lhs
+, odata_model_iterator<T> const & _rhs
+){
+return empty<T>(_lhs.mdl);
 }
 
 } /* data_pattern */
