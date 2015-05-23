@@ -64,6 +64,11 @@ public:
     int
   );
 
+  /* is_empty
+  Used by the iterator comparison
+  operators to check whether the model
+  is empty.
+  */
   bool
   is_empty(
   ) const ;  
@@ -143,6 +148,11 @@ public:
     int
   );
 
+  /* is_empty */
+  bool
+  is_empty(
+  ) const;
+
 private:
   /* data_model pointer */
   data_model * mdl;
@@ -151,7 +161,15 @@ private:
   T temp;
 };
 
-/**/
+/* odata_model_iterator operator == */
+template <typename T>
+bool
+operator==(
+  odata_model_iterator<T> const &
+, odata_model_iterator<T> const &
+);
+
+/* odata_model_iterator operator != */
 template <typename T>
 bool
 operator!=(
