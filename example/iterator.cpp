@@ -22,7 +22,7 @@ idata_model_iterator<int> ibegin(mdl);
 int value = 44;
 
 if (obegin != oend)
-obegin = value;
+//obegin = value;
 
 //if (ibegin != iend)
 //value = ibegin;

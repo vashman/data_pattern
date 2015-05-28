@@ -11,7 +11,6 @@
 extern "C"{
 #include <sqlite3.h>
 }
-#include <string>
 #include <vector>
 #include "data_model.hpp"
 
@@ -19,21 +18,41 @@ namespace data_pattern {
 
 class sqlite;
 
-/* query_statement wraps an sqlite statement and does some book keeping */
+/* query_statement wraps an sqlite
+  statement and does some book keeping.
+*/
 class sqlite_statement {
 public:
+  /* ctor */
+  sqlite_statement (
+    char const *
+  , sqlite &
+  );
+
+  /* ctor copy */
+  sqlite_statement (
+    sqlite_statement const &
+  );
+
+  /* dtor */
+  ~sqlite_statement(
+  );
+
+  /* bind double */
   void
   bind(
     int
   , double
   );
 
+  /* bind int */
   void
   bind(
     int
   , int
   );
 
+  /* bind void* */
   void
   bind(
     int
@@ -41,29 +60,38 @@ public:
   , int
   );
 
+  /* bind null */
   void
   bind(
     int
   );
 
+  /* bind char* */
   void
   bind(
     int
   , char const *
   );
 
+  /* column_int */
   int
   column_int(
     int
   );
 
+  /* column_double */
   double
   column_double(
    int
   );
 
+  /* Coulunm counter used to keep track
+    of which column in the current
+    table is currently active.
+  */
   int index;
 
+  /* get_state */
   signed int
   get_state(
   ) const;
@@ -71,10 +99,15 @@ public:
 private:
   sqlite3_stmt * stmt;
 
+  /* Sqlite error code.*/
   signed int state;
 
-  /* when statement runs, set this to max column */
+  /* When a statement runs, set this to
+    max column.
+  */
   int max_col;
+
+  unsigned int * ref;
 
   friend sqlite;
 };
@@ -82,57 +115,78 @@ private:
 /* sqlite */
 class sqlite : public data_model {
 public:
-	/* Takes char* to database location. */
-  template <typename container = std::vector<sqlite_statement> >
+	/* ctor
+    Takes char* to database location.
+  */
+  template <
+      typename container
+    = std::vector<sqlite_statement>
+  >
 	sqlite(
     char const *
   );
 
+  /* dtor */
 	~sqlite(
   );
 
 #if __cplusplus >= 201103L
+  /* copy ctor */
   sqlite(
     sqlite const &
   ) = delete;
 
+  /* operator = */
   sqlite &
   operator=(
     sqlite const &
   ) = delete;
 
+  /* move ctor */
   sqlite(
     sqlite &&
-  );
+  ) = default;
 
+  /* move operator = */
   sqlite &
   operator=(
     sqlite &&
-  );
+  ) = default;
 #endif
 
+  /* create */
   sqlite_statement
   create(
-    char const *
-  , int
-  , char const **
+    char const * _query
   );
 
-  void
-  finalize(
-    sqlite_statement const &
-  );
-
+  /* step */
   void
   step(
     sqlite_statement &
   );
 
+  /* step
+    Step through next statment in
+    the buffer.
+  */
+  void
+  step();
+
 private:
 	sqlite3 * db;
 	char * zErrMsg;
 	char * result;
+  /* Sqlite error code. */
   signed int state;
+
+  /* set_state */
+  void
+  set_state(
+    int
+  );
+
+  friend sqlite_statement;
 };
 
 } /* data_pattern */

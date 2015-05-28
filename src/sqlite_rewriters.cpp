@@ -15,34 +15,46 @@ namespace data_pattern {
 namespace bits {
 namespace sqlite_rw {
 
-typesystems::explicit_typeid_type const int_put::array[]
-  = {
-      typesystems::explicit_typeid<sqlite_statement>::raw_typeid()
-    };
+  typesystems
+::explicit_typeid_type
+const int_put::array[] = {
+    typesystems
+  ::explicit_typeid<sqlite_statement>
+  ::raw_typeid()
+};
 
-/* int_put ctor */
+/* ctor */
 int_put::int_put(
   std::size_t _refs
 )
-  : typesystems::put_rewriter<int> (
-        array
-      , static_cast<std::size_t>(1)
-      , _refs
-    ) {
+: typesystems::put_rewriter<int> (
+    array
+  , static_cast<std::size_t>(1)
+  , _refs
+) {
 }
 
-/* int_put::do_rewrite */
+/* int_put do_rewrite
+  No need to check for typebuffers
+  since the assumption is sqlite alwatys
+  uses sqlite_statements interanlly.
+*/
 bool
 int_put::do_rewrite(
-  int const & _var
-, typesystems::typebuffer_container const & _con
+  int const & _value
+,   typesystems
+  ::typebuffer_container const & _buffer
 ) const {
-typesystems::typebuffer_interface<sqlite_statement> & buff
-    = typesystems::use_typebuffer<sqlite_statement>(_con);
-sqlite_statement stmt = buff.next();
-stmt.bind(stmt.index++, _var);
+  typesystems
+::typebuffer_interface<sqlite_statement>
+& buff = typesystems
+::use_typebuffer<sqlite_statement> (
+  _buffer
+);
+auto stmt = buff.next();
+stmt.bind(stmt.index++, _value);
 buff.push(stmt);
-return (stmt.get_state() == SQLITE_OK);
+return true;
 }
 
 } /* sqlite_rw */ } /* bits */ } /* data_pattern */

@@ -19,8 +19,14 @@ not supported.
 */
 class data_model {
 public:
+  typedef int state_type;
+  static state_type const good = 0;
+  static state_type const data = 1;
+  static state_type const fail = 2;
+  static state_type const bad = 3;
+
 #if __cplusplus >= 201103L
-  data_model() = default;
+  data_model();
 
   data_model(data_model &&) = default;
 
@@ -36,11 +42,27 @@ public:
   virtual
   ~data_model();
 
+  bool
+  is_good() const;
+
+  bool
+  is_bad() const;
+
+  state_type
+  rdstate() const;
+
+  state_type
+  rdstate(
+    state_type
+  );
+
 protected:
   /* typesys represents the types supported by the database. */
 	typesystems::typesystem typesys;
 
 private:
+  state_type state;
+
   template <typename T> friend data_model &
   operator<<(data_model &, T const &);
 

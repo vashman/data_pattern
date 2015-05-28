@@ -5,8 +5,10 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_HPP
-#define DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_HPP
+#ifndef DATA_PATTERN_BITS_SQLITE_RW\
+_SQLITE_REWRITERS_HPP
+#define DATA_PATTERN_BITS_SQLITE_RW\
+_SQLITE_REWRITERS_HPP
 
 #include <typesystems/get_rewriter.hpp>
 #include <typesystems/put_rewriter.hpp>
@@ -15,20 +17,27 @@ namespace data_pattern {
 namespace bits {
 namespace sqlite_rw {
 
-class int_put : public typesystems::put_rewriter<int> {
+class int_put
+  : public typesystems
+::put_rewriter<int> {
 public:
+  /* ctor */
   int_put(
     std::size_t _refs = 0
   );
 
 private:
+  /* do_rewrite */
   virtual bool
   do_rewrite(
     int const &
-  , typesystems::typebuffer_container const &
+  ,   typesystems
+    ::typebuffer_container const &
   ) const;
 
-  static typesystems::explicit_typeid_type const array[1];
+  static
+    typesystems
+  ::explicit_typeid_type const array[1];
 };
 
 } /* sqlite_rw */ } /* bits */ } /* data_patten */

@@ -117,7 +117,8 @@ return *this;
 /* idata_model_iterator empty */
 template <typename T, typename Distance>
 bool
-idata_model_iterator<T,Distance>::is_empty(
+idata_model_iterator<T,Distance>
+::is_empty(
 ) const {
 return empty<T>(*(this->mdl));
 }
@@ -181,7 +182,27 @@ operator==(
   odata_model_iterator<T> const & _lhs
 , odata_model_iterator<T> const & _rhs
 ){
-return empty<T>(_lhs.mdl);
+return _lhs.is_empty();
+}
+
+/* odata_model_iterator operator !=
+*/
+template <typename T>
+bool
+operator!=(
+  odata_model_iterator<T> const & _lhs
+, odata_model_iterator<T> const & _rhs
+){
+return !_lhs.is_empty();
+}
+
+/* odata_model_iterator empty */
+template <typename T>
+bool
+odata_model_iterator<T>
+::is_empty(
+) const {
+return empty<T>(*(this->mdl));
 }
 
 } /* data_pattern */
