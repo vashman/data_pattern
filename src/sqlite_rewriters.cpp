@@ -36,7 +36,7 @@ int_put::int_put(
 
 /* int_put do_rewrite
   No need to check for typebuffers
-  since the assumption is sqlite alwatys
+  since the assumption is sqlite always
   uses sqlite_statements interanlly.
 */
 bool
