@@ -29,6 +29,7 @@
 
 # Editor Files
 *.swp
+*.*~
 
 # Log files
 *.log
