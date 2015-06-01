@@ -12,6 +12,14 @@
 #include "../include/sqlite.hpp"
 
 namespace data_pattern {
+/* sqlite_exception ctor  */
+sqlite_exception::sqlite_exception(
+  const char * what_arg
+, int _rv
+)
+: std::runtime_error (what_arg)
+, rv (_rv) {
+}
 
 /* sqlite dtor */
 sqlite::~sqlite(
@@ -21,45 +29,178 @@ delete zErrMsg;
 delete result;
 }
 
+namespace bits {
+namespace sqlite {
 /**/
 void
-sqlite::set_state(
+check_error(
   int _rv
 ){
 switch (_rv){
-  case SQLITE_OK:
-    this->rdstate(data_model::good);
-    break;
+  case SQLITE_DONE:
+  case SQLITE_ROW:
+  case SQLITE_OK: return;
   case SQLITE_ERROR:
+    throw sqlite_exception(
+      "Sqlite: SQL error or missing database."
+    , _rv
+    );
   case SQLITE_BUSY:
+    throw sqlite_exception(
+      "Sqlite: The database file is locked."
+    , _rv
+    );
   case SQLITE_AUTH:
+     throw sqlite_exception(
+      "Sqlite: Authorization denied."
+    , _rv
+    );
+  case SQLITE_TOOBIG:
+    throw sqlite_exception(
+    "Sqlite: String or BLOB exceeds size limit."
+  , _rv
+  );
+  case SQLITE_RANGE:
+    throw sqlite_exception(
+      "Sqlite: 2nd parameter to sqlite3_bind out of range."
+    , _rv
+    );
+  case SQLITE_CONSTRAINT:
+    throw sqlite_exception(
+      "Sqlite: Abort due to constraint violation."
+    , _rv
+    );
+  case SQLITE_INTERNAL:
+      throw sqlite_exception(
+      "Sqlite: Internal logic error in SQLite."
+    , _rv
+    );
+  case SQLITE_PERM:
+        throw sqlite_exception(
+      "Sqlite: Access permission denied."
+    , _rv
+    );
+  case SQLITE_ABORT:
+          throw sqlite_exception(
+      "Sqlite: Callback routine requested an abort."
+    , _rv
+    );
+  case SQLITE_LOCKED:
+          throw sqlite_exception(
+      "Sqlite: A table in the database is locked."
+    , _rv
+    );
+  case SQLITE_NOMEM:
+          throw sqlite_exception(
+      "Sqlite: A malloc() failed."
+    , _rv
+    );
+  case SQLITE_READONLY:
+            throw sqlite_exception(
+      "Sqlite: Attempt to write a readonly database."
+    , _rv
+    );
+  case SQLITE_INTERRUPT:
+            throw sqlite_exception(
+      "Sqlite: Operation terminated by sqlite3_interrupt()."
+    , _rv
+    );
+  case SQLITE_IOERR:
+          throw sqlite_exception(
+      "Sqlite: Some kind of disk I/O error occurred."
+    , _rv
+    );
+  case SQLITE_CORRUPT:
+    throw sqlite_exception(
+      "Sqlite: The database disk image is malformed."
+    , _rv
+    );
+  case SQLITE_NOTFOUND:
+          throw sqlite_exception(
+      "Sqlite: Unknown opcode in sqlite3_file_control()."
+    , _rv
+    );
+  case SQLITE_FULL:
+            throw sqlite_exception(
+      "Sqlite: Insertion failed because database is full."
+    , _rv
+    );
+  case SQLITE_CANTOPEN:
+            throw sqlite_exception(
+      "Sqlite: Unable to open the database file."
+    , _rv
+    );
+  case SQLITE_PROTOCOL:
+            throw sqlite_exception(
+      "Sqlite: Database lock protocol error."
+    , _rv
+    );
+  case SQLITE_EMPTY:
+            throw sqlite_exception(
+      "Sqlite: Database is empty."
+    , _rv
+    );
+  case SQLITE_SCHEMA:
+              throw sqlite_exception(
+      "Sqlite: The database schema changed."
+    , _rv
+    );
+  case SQLITE_MISMATCH:
+              throw sqlite_exception(
+      "Sqlite: Data type mismatch."
+    , _rv
+    );
+  case SQLITE_MISUSE:
+              throw sqlite_exception(
+      "Sqlite: Library used incorrectly."
+    , _rv
+    );
+  case SQLITE_NOLFS:
+              throw sqlite_exception(
+      "Sqlite: Uses OS features not supported on host."
+    , _rv
+    );
+  case SQLITE_NOTADB:
+            throw sqlite_exception(
+      "Sqlite: File opened that is not a database file."
+    , _rv
+    );
+  case SQLITE_FORMAT:
+          throw sqlite_exception(
+      "Sqlite: Auxiliary database format error."
+    , _rv
+    );
   default:
-    this->rdstate(data_model::bad);
+    throw sqlite_exception(
+      "Sqlite error"
+    , _rv
+    );
 }
 }
+} /* sqlite */ } /* bits */
 
 /* sqlite step */
 void
 sqlite::step (
   sqlite_statement & _stmt
 ){
-_stmt.state = sqlite3_step(_stmt.stmt);
-  if (_stmt.state == SQLITE_OK){
-    _stmt.max_col
-  = sqlite3_column_count(_stmt.stmt);
-  _stmt.index = 0;
-  }
+bits::sqlite::check_error(
+  sqlite3_step(_stmt.stmt)
+);
+_stmt.max_col = sqlite3_column_count(
+  _stmt.stmt
+);
+_stmt.index = 0;
 }
 
 /* step */
 void
-sqlite::step(
-){
-  auto & buff
-= typesystems
-::use_typebuffer<sqlite_statement>(
-  this->typesys
-);
+sqlite::step(){
+auto &
+buff = typesystems::use_typebuffer<
+  sqlite_statement
+>(this->typesys);
+
 auto stmt (buff.next());
 this->step(stmt);
 }
@@ -81,16 +222,18 @@ sqlite_statement::sqlite_statement(
 : index (0) 
 , max_col (0) 
 , ref (new unsigned int(1)) {
-this->state = sqlite3_prepare_v2(
-  _db.db
-, _query
+bits::sqlite::check_error(
+  sqlite3_prepare_v2(
+    _db.db
+  , _query
   /* Query should be null terminated. */
-, -1 
-, & this->stmt
+  , -1 
+  , & this->stmt
   /* There is never an unused portion of
     the statement.
   */
-, 0
+  , 0
+  )
 );
 }
 
@@ -99,7 +242,6 @@ sqlite_statement::sqlite_statement(
   sqlite_statement const & _stmt
 )
 : index (_stmt.index)
-, state (_stmt.state)
 , max_col (_stmt.max_col)
 , ref (_stmt.ref) {
 ++(*ref);
@@ -119,11 +261,11 @@ sqlite_statement::bind(
   int _index
 , int _var
 ){
-this->state = sqlite3_bind_int(
+bits::sqlite::check_error(sqlite3_bind_int(
   this->stmt
 , _index
 , _var
-);
+));
 }
 
 /* */
@@ -146,13 +288,13 @@ sqlite_statement::bind (
 , void const * _blob
 , int _size
 ){
-this->state = sqlite3_bind_blob(
+bits::sqlite::check_error(sqlite3_bind_blob(
   this->stmt
 , _index
 , _blob
 , _size
 , sqlite_dtor_data
-);
+));
 }
 
 /* sqlite_statement bind */
@@ -161,7 +303,7 @@ sqlite_statement::bind (
   int _index
 , char const * _str
 ){
-this->state = sqlite3_bind_text(
+bits::sqlite::check_error(sqlite3_bind_text(
   this->stmt
 , _index
 , _str
@@ -169,7 +311,7 @@ this->state = sqlite3_bind_text(
     std::char_traits<char>::length(_str)
   )
 , sqlite_dtor_data
-);
+));
 }
 
 /* sqlite_statement bind */
@@ -178,11 +320,11 @@ sqlite_statement::bind (
   int _index
 , double _var
 ){
-this->state = sqlite3_bind_double(
+bits::sqlite::check_error(sqlite3_bind_double(
   this->stmt
 , _index
 , _var
-);
+));
 }
 
 /* sqlite bind null */
@@ -190,10 +332,10 @@ void
 sqlite_statement::bind (
   int _index
 ){
-this->state = sqlite3_bind_null(
+bits::sqlite::check_error(sqlite3_bind_null(
   this->stmt
 , _index
-);
+));
 }
 
 /* sqlite_statement column_int */
@@ -222,13 +364,6 @@ return sqlite3_column_double(
   this->stmt
 , _index
 );
-}
-
-/* sqlite_statement get_state */
-signed int
-sqlite_statement::get_state (
-) const {
-return this->state;
 }
 
 } /* data_pattern */

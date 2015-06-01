@@ -8,7 +8,6 @@
 #ifndef DATA_PATTERN_SQLITE_TCC
 #define DATA_PATTERN_SQLITE_TCC
 
-#include <stdexcept>
 #include <typesystems/typesystem.hpp>
 
 namespace data_pattern {
@@ -21,18 +20,15 @@ sqlite::sqlite (
 : data_model ()
 , db (nullptr)
 , zErrMsg (NULL)
-, result (NULL)
-, state (SQLITE_OK) {
+, result (NULL) {
 int rc = sqlite3_open(_file, &this->db);
-	if (rc > 0){
-	throw std::runtime_error(
-    "Database open error"
-  );
-	}
+bits::sqlite::check_error(rc);
+
 typesystems::set_typebuffer<
   sqlite_statement
 , container
->           (this->typesys);
+>
+(this->typesys);
 }
 
 } /* data_pattern */

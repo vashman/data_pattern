@@ -12,11 +12,27 @@ extern "C"{
 #include <sqlite3.h>
 }
 #include <vector>
+#include <stdexcept>
 #include "data_model.hpp"
 
 namespace data_pattern {
 
+class sqlite_statement;
 class sqlite;
+class sqlite_exception;
+
+/* sqlite exception */
+class sqlite_exception
+: public std::runtime_error {
+public:
+  explicit
+  sqlite_exception(
+    const char *
+  , int
+  );
+
+  int const rv;
+};
 
 /* query_statement wraps an sqlite
   statement and does some book keeping.
@@ -85,22 +101,14 @@ public:
    int
   );
 
-  /* Coulunm counter used to keep track
+  /* Column counter used to keep track
     of which column in the current
     table is currently active.
   */
   int index;
 
-  /* get_state */
-  signed int
-  get_state(
-  ) const;
-
 private:
   sqlite3_stmt * stmt;
-
-  /* Sqlite error code.*/
-  signed int state;
 
   /* When a statement runs, set this to
     max column.
@@ -167,7 +175,7 @@ public:
   );
 
   /* step
-    Step through next statment in
+    Step through next statement in
     the buffer.
   */
   void
@@ -177,17 +185,23 @@ private:
 	sqlite3 * db;
 	char * zErrMsg;
 	char * result;
-  /* Sqlite error code. */
-  signed int state;
 
-  /* set_state */
-  void
-  set_state(
-    int
-  );
+
 
   friend sqlite_statement;
 };
+
+namespace bits {
+namespace sqlite {
+/* check_error
+  Throws an exception for an sqlite
+  error code.
+*/
+void
+check_error(
+  int
+);
+} /* sqlite */ } /* bits */
 
 } /* data_pattern */
 #include "bits/sqlite.tcc"

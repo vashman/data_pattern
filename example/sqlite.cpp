@@ -13,13 +13,8 @@ using std::cout;
 using std::endl;
 using data_pattern::sqlite;
 
-int main (){
+int main () {
 sqlite db("testdata");
-  if (!db.is_good()){
-  cout << "cannot create db" << endl;
-  return 1;
-  }
-
 /* Create the table if it does not exist
   yet.
 */
@@ -31,27 +26,16 @@ auto query1 = db.create(
 
 /* Run the statement. */
 db.step(query1);
-  if (!db.is_good()){
-  cout << "query failed" << endl;
-  return 1;
-  }
 
 /**/
 db << db.create(
-  "INSERT INTO testtable "
+  "INSERT INTO test "
   "(ID, Value) Values (?, ?);"
 );
 
+std::cerr << "binding\n";
 /* bind data into data_model */
 db << 2 << 4;
-  if (!db.is_good()){
-  cout << "input error" << endl;
-  return 1;
-  }
-
+std::cerr << "steping\n";
 db.step();
-  if (!db.is_good()){
-  cout << "step error" << endl;
-  return 1;
-  }
 }

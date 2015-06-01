@@ -28,7 +28,7 @@ public:
 
 private:
   /* do_rewrite */
-  virtual bool
+  virtual void
   do_rewrite(
     int const &
   ,   typesystems

@@ -12,47 +12,9 @@
 
 namespace data_pattern {
 
-/* data_model ctor */
-data_model::data_model(
-)
-: state (data_model::good) {
-}
-
 /* data_model dtor */
 data_model::~data_model(
 ){
-}
-
-/**/
-bool
-data_model::is_good(
-) const {
-return
-(this->state == data_model::good);
-}
-
-/**/
-bool
-data_model::is_bad(
-) const {
-return !(this->is_good());
-}
-
-/**/
-data_model::state_type
-data_model::rdstate(
-) const {
-return this->state;
-}
-
-/**/
-data_model::state_type
-data_model::rdstate(
-  data_model::state_type _state
-){
-auto t = this->state;
-this->state == _state;
-return t;
 }
 
 } /* data_patten */
