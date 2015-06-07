@@ -10,21 +10,27 @@
 namespace data_pattern {
 
 template <typename Model>
-class sql_traits : public dbmodel::model_traits<Model>{
+class sql_traits
+: public dbmodel::model_traits<Model>{
 public:
   typedef sql_traits<Model> traits_type;
 
   /* process_sql_statment
-  Takes the sql query as a char pointer for processing. Should complie the
-  statment and deduce the type information in the process.
+    Takes the sql query as a char pointer
+    for processing. Should complie the
+    statment and deduce the type
+    information in the process.
   */
   inline static void
-  process_sql_statment(char const * const);
+  process_sql_statment(
+    char const * const
+  );
 
   /* sql_version
   */
-  inline static typename sql_interpreater<Model,traits_type>::sql_versions
-  sql_version();
+  inline static typename
+    sql_interpreater<Model,traits_type>
+  ::sql_versions sql_version();
 };
 
 /*
@@ -32,8 +38,12 @@ verify statment
 if can pass statment directly pass it else
 use traits to run operate subprocedures
 */
-template <typename Model, typename Traits = sql_dbtraits<Model> >
-class sql_interprater : public dbmodel::interprater<Model>{
+template <
+  typename Model
+, typename Traits = sql_dbtraits<Model>
+>
+class sql_interprater
+: public interprater<Model> {
 public:
   typedef int sql_versions;
   static sql_versions const _86 = 0;
@@ -52,15 +62,23 @@ private:
   );
 };
 
-template <Model, typename Traits>
-sql_interprater<Model,Traits>::sql_interprater(
-  sql_versions
+template <
+  typename Model
+, typename Traits
+>
+  sql_interprater<Model,Traits>
+::sql_interprater(
+  sql_version
 ){
 }
 
-template <typename Model, typename Traits>
+template <
+  typename Model
+, typename Traits
+>
 void
-sql_interprater<Model,Traits>::do_interpret(
+  sql_interprater<Model,Traits>
+::do_interpret(
   Model & _mdl
   char * _data
 ){

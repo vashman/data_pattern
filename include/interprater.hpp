@@ -14,12 +14,15 @@ class interprater {
 public:
 
 #if __cplusplus >= 201103L
+  /* ctor */
   interprater() = default;
 
+  /* ctor move */
   interprater(
     interprater &&
   ) = default;
 
+  /* operator assignment */
   interprater &
   operator=(
     interprater &&
@@ -35,6 +38,7 @@ public:
   ) = delete;
 #endif
 
+  /* dtor */
   virtual
   ~interprater();
 

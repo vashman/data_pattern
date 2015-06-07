@@ -53,12 +53,12 @@ public:
   operator->(
   ) const ;
 
-  /**/
+  /* operator increment */
   idata_model_iterator<T,Distance> &
   operator++(
   );
 
-  /**/
+  /* operator increment */
   idata_model_iterator<T,Distance> &
   operator++(
     int
@@ -81,7 +81,7 @@ private:
   T temp;
 };
 
-/**/
+/* operator eqivilent */
 template <
   typename T
 , typename Dist
@@ -126,7 +126,7 @@ public:
     data_model &
   );
 
-  /**/
+  /* operator assignment */
   odata_model_iterator<T> &
   operator=(
     T const &
@@ -137,12 +137,12 @@ public:
   operator*(
   );
 
-  /**/
+  /* operator increment */
   odata_model_iterator<T> &
   operator++(
   );
 
-  /**/
+  /* operator increment */
   odata_model_iterator<T> &
   operator++(
     int

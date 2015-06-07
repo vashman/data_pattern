@@ -13,6 +13,7 @@ extern "C"{
 }
 #include <vector>
 #include <stdexcept>
+#include <memory>
 #include "data_model.hpp"
 
 namespace data_pattern {
@@ -48,7 +49,12 @@ public:
   /* ctor copy */
   sqlite_statement (
     sqlite_statement const &
-  );
+  ) = default;
+
+  /* ctor move */
+  sqlite_statement (
+    sqlite_statment &&
+  ) = default;
 
   /* dtor */
   ~sqlite_statement(
@@ -108,14 +114,12 @@ public:
   int index;
 
 private:
-  sqlite3_stmt * stmt;
+  std::shared_ptr<sqlite3_stmt> stmt;
 
   /* When a statement runs, set this to
     max column.
   */
   int max_col;
-
-  unsigned int * ref;
 
   friend sqlite;
 };
@@ -182,12 +186,9 @@ public:
   step();
 
 private:
-	sqlite3 * db;
-	char * zErrMsg;
-	char * result;
-
-
-
+  sqlite3 * db;
+  char * zErrMsg;
+  char * result;
   friend sqlite_statement;
 };
 
