@@ -9,6 +9,7 @@
 #define DATA_PATTERN_SQLITE_CPP
 
 #include <string>
+#include <iostream>
 #include "../include/sqlite.hpp"
 
 namespace data_pattern {
@@ -185,11 +186,10 @@ sqlite::step (
   sqlite_statement & _stmt
 ){
 bits::sqlite::check_error(
-  sqlite3_step(_stmt.stmt.get())
+  sqlite3_step(_stmt.stmt)
 );
-_stmt.max_col = sqlite3_column_count(
-  _stmt.stmt
-);
+_stmt.max_col
+  = sqlite3_column_count(_stmt.stmt);
 _stmt.index = 0;
 }
 
@@ -219,7 +219,10 @@ sqlite_statement::sqlite_statement(
   char const * _query
 , sqlite & _db
 )
-: index (0) 
+/* index starts at 1 and then >1 */
+: index (1) 
+, stmt ()
+, ref_count (new int(1))
 , max_col (0) {
 bits::sqlite::check_error(
   sqlite3_prepare_v2(
@@ -227,7 +230,7 @@ bits::sqlite::check_error(
   , _query
   /* Query should be null terminated. */
   , -1 
-  , & this->stmt.get()
+  , & this->stmt
   /* There is never an unused portion of
     the statement.
   */
@@ -236,9 +239,57 @@ bits::sqlite::check_error(
 );
 }
 
+/* ctor move */
+sqlite_statement::sqlite_statement(
+  sqlite_statement && _other
+)
+: index (_other.index)
+, stmt (_other.stmt)
+, ref_count (_other.ref_count)
+, max_col (_other.max_col) {
+std::clog << "Moved sql stmt from: "
+<< _other.stmt << " to: " << stmt
+<< std::endl;
+}
+
+/* ctor copy */
+sqlite_statement::sqlite_statement(
+  sqlite_statement const & _other
+)
+: index (_other.index)
+, stmt (_other.stmt)
+, ref_count (_other.ref_count)
+, max_col (_other.max_col) {
+++(*ref_count);
+std::clog << "Copied sql stmt from: "
+<< _other.stmt << " to: " << stmt
+<< std::endl;
+}
+
+/* copy assingment operator */
+sqlite_statement &
+sqlite_statement::operator=(
+  sqlite_statement const & _rhs
+){
+  if (this != &_rhs){
+  this->index = _rhs.index;
+  this->stmt = _rhs.stmt;
+  this->ref_count = _rhs.ref_count;
+  this->max_col = _rhs.max_col;
+  ++(*ref_count);
+  }
+std::clog << "Assigned sql stmt from: "
+<< _rhs.stmt << " to: " << stmt
+<< std::endl;
+return *this;
+}
+
 /* dtor */
 sqlite_statement::~sqlite_statement(
 ){
+  if ((--ref_count) == 0){
+  //finilize
+  }
 }
 
 /* sqlite_statement bind_int */
@@ -249,7 +300,7 @@ sqlite_statement::bind(
 ){
 bits::sqlite::check_error(
   sqlite3_bind_int(
-    this->stmt.get()
+    this->stmt
   , _index
   , _var
   )
@@ -278,7 +329,7 @@ sqlite_statement::bind (
 ){
 bits::sqlite::check_error(
   sqlite3_bind_blob(
-    this->stmt.get()
+    this->stmt
   , _index
   , _blob
   , _size
@@ -287,7 +338,7 @@ bits::sqlite::check_error(
 );
 }
 
-/* sqlite_statement bind */
+/* sqlite_statement bind string */
 void
 sqlite_statement::bind (
   int _index
@@ -295,7 +346,7 @@ sqlite_statement::bind (
 ){
 bits::sqlite::check_error(
   sqlite3_bind_text(
-    this->stmt.get()
+    this->stmt
   , _index
   , _str
   , static_cast<int>(
@@ -307,7 +358,7 @@ bits::sqlite::check_error(
 );
 }
 
-/* sqlite_statement bind */
+/* sqlite_statement bind double */
 void
 sqlite_statement::bind (
   int _index
@@ -315,7 +366,7 @@ sqlite_statement::bind (
 ){
 bits::sqlite::check_error(
   sqlite3_bind_double(
-    this->stmt.get()
+    this->stmt
   , _index
   , _var
   )
@@ -329,7 +380,7 @@ sqlite_statement::bind (
 ){
 bits::sqlite::check_error(
   sqlite3_bind_null(
-    this->stmt.get()
+    this->stmt
   , _index
   )
 );
@@ -344,7 +395,7 @@ sqlite_statement::column_int (
   throw ;
   }
 return sqlite3_column_int(
-  this->stmt.get()
+  this->stmt
 , _index
 );
 }
@@ -358,7 +409,7 @@ sqlite_statement::column_double(
   throw ;
   }
 return sqlite3_column_double(
-  this->stmt.get()
+  this->stmt
 , _index
 );
 }

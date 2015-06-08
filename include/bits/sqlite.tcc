@@ -18,17 +18,20 @@ sqlite::sqlite (
   char const * _file
 )
 : data_model ()
-, db (nullptr)
+, db (NULL)
 , zErrMsg (NULL)
 , result (NULL) {
-int rc = sqlite3_open(_file, &this->db);
-bits::sqlite::check_error(rc);
+bits::sqlite::check_error(
+  sqlite3_open(_file, &this->db)
+);
 
-typesystems::set_typebuffer<
-  sqlite_statement
-, container
->
+  typesystems
+::set_typebuffer
+<sqlite_statement, container>
 (this->typesys);
+
+/* Add re-writers */
+typesystems::set_put_rewriter<>();
 }
 
 } /* data_pattern */

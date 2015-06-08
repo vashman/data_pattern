@@ -12,15 +12,15 @@
 
 namespace data_pattern {
 
-template <typename Alloc = std::allocator<char*> >
-class getopt_db : public data_model{
+template <typename Alloc = std::allocator<char> >
+class getopt_db : public data_model {
 public:
-  typedef std::vector<char*,Alloc> char_container_type;
-  typedef typebuffer<char*, char_container_type> char_buffer_type;
+  getopt_db(
+    char const * const;
+  );
 
   getopt_db(
-    std::string
-  );
+  ) = default;
 
 #if __cplusplus >= 201103L
   getopt_db(
@@ -38,7 +38,11 @@ public:
   set_args(std::string &);
 
   void 
-  process();
+  getopt(
+    int
+  , char **
+  , char const * const
+ );
 
 protected:
   getopt_db(
@@ -54,6 +58,17 @@ private:
 	std::string args;
 };
 
+class getopt_putrw : public typesystems::put_rewriter<> {
+public:
+};
+
+bool
+getopt_putrw::do_rewrite(
+  
+){
+}
+
+/**/
 template <typename alloc>
 getopt_db<alloc>::getopt_db(
   std::string _str
@@ -65,7 +80,7 @@ typesystems::set_typebuffer<
 }
 
 #if __cplusplus >= 201103L
-
+/**/
 template <typename alloc>
 getopt_db<alloc>::getopt_db(
   getopt_db<Alloc> && _db
@@ -87,17 +102,21 @@ getopt_db<alloc>::~getopt_db(
 ){
 }
 
+/* getopt_db getopt */
 template <typename alloc>
 void
-getopt_db<alloc>::process(
+getopt_db<alloc>::getopt(
+  int _argc
+, char * const _argv[]
+, char const * _str
 ){
-typename getopt_db<alloc>::char_buffer_type & buff
-  = use_typebuff<char*, typename getopt_db<alloc>::char_buffer_type>(this->buff_map);
-	if (!buff.empty()){
-	while ((c =  getopt(static_cast<int>(buff.size()), &(*buff_ptr)[0], this->args.c_str())) != -1){
-	buff_int.push(c);
-	}
-	}
+char * optarg;
+int optind, opterr, optopt;
+std::vector<char,alloc> & buff = use_typebuff<char, alloc>(this->typesys);
+while ((c =  getopt(_argc, _argv, _str)) != -1){
+buff.push(c);
 }
 }
+
+} /* data_pattern */
 #endif

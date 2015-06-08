@@ -5,7 +5,6 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-
 #ifndef DATA_PATTERN_CPPDB_HPP
 #define DATA_PATTERN_CPPDB_HPP
 

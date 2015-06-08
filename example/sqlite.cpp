@@ -18,10 +18,19 @@ sqlite db("testdata");
 /* Create the table if it does not exist
   yet.
 */
-auto query1 = db.create(
+
+auto query2 = db.create(
+  "CREATE TABLE IF NOT EXISTS test2"
+  "(Value INT);"
+);
+
+db.step(query2);
+
+data_pattern::sqlite_statement query1 (
   "CREATE TABLE IF NOT EXISTS test"
   "(ID INT PRIMARY KEY NOT NULL"
   ", Value INT);"
+, db
 );
 
 /* Run the statement. */
@@ -29,13 +38,21 @@ db.step(query1);
 
 /**/
 db << db.create(
+  "INSERT INTO test2 "
+  "(Value) Values (?);"
+);
+
+db << 45;
+db.step();
+
+/**/
+db << db.create(
   "INSERT INTO test "
   "(ID, Value) Values (?, ?);"
 );
 
-std::cerr << "binding\n";
 /* bind data into data_model */
 db << 2 << 4;
-std::cerr << "steping\n";
+
 db.step();
 }
