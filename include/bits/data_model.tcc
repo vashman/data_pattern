@@ -11,44 +11,30 @@
 #include <stdexcept>
 
 namespace data_pattern {
-/* data_model left shift operation */
 template <typename T>
-data_model &
-operator<<(
+void
+rewrite(
   data_model & _mdl
 , T const & _var
 ){
-  if (
-      typesystems
-    ::has_put_rewriter<T>(_mdl.typesys)
-  ){
-  _mdl.typesys.put_rewrite(_var);
-  } else {
-  throw std::runtime_error(
-    "No put_rewriter for type."
-  );
-  }
-return _mdl;
+typesystems::rewrite(
+  _var
+, _mdl.buffer
+, _mdl.owriter
+);
 }
 
-/* data_model right shift operation */
 template <typename T>
-data_model &
-operator>>(
+void
+rewrite(
   data_model & _mdl
 , T & _var
 ){
-  if (
-      typesystems
-    ::has_get_rewriter<T>(_mdl.typesys)
-  ){
-  _mdl.typesys.get_rewrite(_var);
-  } else {
-  throw std::runtime_error(
-    "No put_rewriter for type."
-  );  
-  }
-return _mdl;
+typesystems::rewrite(
+  _var
+, _mdl.buffer
+, _mdl.iwriter
+);
 }
 
 template <typename T>
@@ -57,7 +43,38 @@ empty(
   data_model const & _mdl
 ){
 return
-typesystems::empty<T>(_mdl.typesys);
+  typesystems
+::empty<T>(_mdl.buffer, _mdl.iwriter);
+}
+
+template <typename Writer>
+bool
+data_model::set_iwriter(
+){
+  if (typesystems::has_typebuffer<
+      typename Writer::value_type
+     >(this->buffer)
+  ){
+  return false;
+  }
+typesystems::add_writer<Writer>
+(this->iwriter);
+return true;
+}
+
+template <typename Writer>
+bool
+data_model::set_owriter(
+){
+  if (typesystems::has_typebuffer<
+      typename Writer::value_type
+     >(this->buffer)
+  ){
+  return false;
+  }
+typesystems::add_writer<Writer>
+(this->owriter);
+return true;
 }
 
 } /* data_pattern */

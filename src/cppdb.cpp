@@ -17,13 +17,5 @@ cppdb::cppdb(
 ){
 }
 
-/* cppdb access */
-void
-cppdb::access(
-  typename cppdb::data_operation _operation
-){
-_operation(this->typesys);
-}
-
 } /* data_pattern */
 #endif

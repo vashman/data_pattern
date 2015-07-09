@@ -199,7 +199,7 @@ sqlite::step(){
 auto &
 buff = typesystems::use_typebuffer<
   sqlite_statement
->(this->typesys);
+>(this->buffer);
 
 auto stmt (buff.next());
 this->step(stmt);
@@ -211,6 +211,15 @@ sqlite::create (
   char const * _query
 ){
 return sqlite_statement(_query, *this);
+}
+
+data_model &
+operator<<(
+  data_model & _mdl
+, sqlite_statement const & _var
+){
+rewrite(_mdl, _var);
+return _mdl;
 }
 
 /* sqlite_statement */
@@ -400,6 +409,11 @@ return sqlite3_column_int(
 );
 }
 
+sqlite_statement::operator int(
+){
+return this->column_int(this->index++);
+}
+
 /* sqlite_statement column_double */
 double
 sqlite_statement::column_double(
@@ -409,6 +423,112 @@ sqlite_statement::column_double(
   throw ;
   }
 return sqlite3_column_double(
+  this->stmt
+, _index
+);
+}
+
+sqlite_statement::operator double(
+){
+return
+this->column_double(this->index++);
+}
+
+sqlite_statement::operator std::string(
+){
+return
+std::string(
+  reinterpret_cast<char const *>(
+    this->column_text(this->index++)
+  )
+);
+}
+
+sqlite_statement::operator raw(
+){
+raw temp(
+  this->column_blob(this->index)
+, static_cast<std::size_t>(
+    this->column_bytes(this->index)
+  )
+);
+++this->index;
+return temp;
+}
+
+/* sqlite_statement column_blob */
+const void *
+sqlite_statement::column_blob(
+  int _index
+){
+  if (_index > this->max_col){
+  throw ;
+  }
+return sqlite3_column_blob(
+  this->stmt
+, _index
+);
+}
+
+/* column bytes */
+int
+sqlite_statement::column_bytes(
+  int _index
+){
+return sqlite3_column_bytes(
+  this->stmt
+, _index
+);
+}
+
+/* column bytes 16 */
+int
+sqlite_statement::column_bytes16(
+  int _index
+){
+return sqlite3_column_bytes16(
+  this->stmt
+, _index
+);
+}
+
+/* column text */
+const unsigned char *
+sqlite_statement::column_text(
+  int _index
+){
+return sqlite3_column_text(
+  this->stmt
+, _index
+);
+}
+
+/* column bytes 16 */
+const void *
+sqlite_statement::column_text16(
+  int _index
+){
+return sqlite3_column_text16(
+  this->stmt
+, _index
+);
+}
+
+sqlite3_value *
+sqlite_statement::column_value(
+  int _index
+){
+return sqlite3_column_value(
+  this->stmt
+, _index
+);
+}
+
+int
+sqlite_statement::column_type(
+  int _index
+){
+return sqlite3_column_type(
   this->stmt
 , _index
 );

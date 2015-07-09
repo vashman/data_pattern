@@ -8,10 +8,12 @@
 #include <iostream>
 #include "../src/sqlite.cpp"
 #include "../src/sqlite_rewriters.cpp"
+#include "../include/raw.hpp"
 
 using std::cout;
 using std::endl;
 using data_pattern::sqlite;
+using data_pattern::raw;
 
 int main () {
 sqlite db("testdata");
@@ -20,8 +22,9 @@ sqlite db("testdata");
 */
 
 auto query2 = db.create(
-  "CREATE TABLE IF NOT EXISTS test2"
-  "(Value INT);"
+  "CREATE TABLE IF NOT EXISTS test3"
+  "(Value INT, str TEXT, dec REAL, "
+  "raw Blob);"
 );
 
 db.step(query2);
@@ -38,11 +41,12 @@ db.step(query1);
 
 /**/
 db << db.create(
-  "INSERT INTO test2 "
-  "(Value) Values (?);"
+  "INSERT INTO test3 "
+  "(Value, str, dec, raw) Values (?,?,?,?);"
 );
 
-db << 45;
+db << 45 << std::string("test string")
+<< 12.04 << raw("0101", 4);
 db.step();
 
 /**/
@@ -54,5 +58,31 @@ db << db.create(
 /* bind data into data_model */
 db << 2 << 4;
 
+int temp_int;
+std::string temp_str;
+data_pattern::raw temp_raw;
+double temp_dbl;
+
+/*
+db << db.create(
+  "SELECT ID, Value FROM test;"
+);
 db.step();
+
+int temp;
+db >> temp; cout << temp;
+db >> temp; cout << temp << endl;
+*/
+
+db << db.create(
+  "SELECT Value, str, dec, raw FROM "
+  "test3;"
+);
+db.step();
+
+db >> temp_int >> temp_str >> temp_dbl
+>> temp_raw;
+
+
+return 0;
 }

@@ -17,7 +17,6 @@
 #define funcnamespace boost
 #endif
 
-#include <typesystems/typesystem.hpp>
 #include "data_model.hpp"
 
 namespace data_pattern {
@@ -25,10 +24,6 @@ namespace data_pattern {
 /* cppdb */
 class cppdb : public data_model {
 public:
-  /* function to operate on database instance. */
-  typedef funcnamespace::function<void(typesystems::typesystem &)>
-    data_operation;
-
 #if __cplusplus >= 201103L
   template <typename... Ts>
   explicit
@@ -62,14 +57,14 @@ public:
   ) = default;
 #endif
 
+  template <typename T, typename Buffer>
   void
-  access(
-    data_operation
+  set_iwriter(
   );
 
-  template <typename T, typename Container>
+  template <typename T, typename Buffer>
   void
-  add_type(
+  set_owriter(
   );
 };
 

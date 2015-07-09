@@ -5,8 +5,10 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_CPP
-#define DATA_PATTERN_BITS_SQLITE_RW_SQLITE_REWRITERS_CPP
+#ifndef DATA_PATTERN_BITS_SQLITE_RW\
+_SQLITE_REWRITERS_CPP
+#define DATA_PATTERN_BITS_SQLITE_RW\
+_SQLITE_REWRITERS_CPP
 
 #include <iostream>
 #include "../include/sqlite.hpp"
@@ -16,48 +18,49 @@ namespace data_pattern {
 namespace bits {
 namespace sqlite_rw {
 
-  typesystems
-::explicit_typeid_type const
-int_put::array[] = {
-    typesystems
-  ::explicit_typeid<sqlite_statement>
-  ::raw_typeid()
-};
-
-/* ctor */
-int_put::int_put(
-  std::size_t _refs
-)
-: typesystems::put_rewriter<int> (
-    array
-  , static_cast<std::size_t>(1)
-  , _refs
-) {
-}
-
-/* int_put do_rewrite
-  No need to check for type buffers
-  since the assumption is sqlite always
-  uses sqlite_statements internally.
-*/
+template <>
 void
-int_put::do_rewrite(
-  int const & _value
+type_writer<std::string>::do_put(
+  value_type const & _value
 ,   typesystems
-  ::typebuffer_container const & _buffer
+  ::typebuffer_container const & _buff
+,   typesystems
+  ::owriter_container const & _writer
 ) const {
   typesystems
-::typebuffer_interface<sqlite_statement>
-  & buff = typesystems
-::use_typebuffer<sqlite_statement> (
-  _buffer
-);
+::typebuffer<sqlite_statement>
+& buff = typesystems
+::use_typebuffer<sqlite_statement>
+(_buff);
 
-auto stmt = buff.next();
-std::clog << "Binding value: "
-<< _value << std::endl;
-stmt.bind(stmt.index++, _value);
-buff.push(stmt);
+auto & stmt = buff.back();
+stmt.bind(
+  stmt.index++
+, _value.c_str()
+);
+}
+
+template <>
+void
+type_writer<raw>::do_put(
+  value_type const & _value
+,   typesystems
+  ::typebuffer_container const & _buff
+,   typesystems
+  ::owriter_container const & _writer
+) const {
+  typesystems
+::typebuffer<sqlite_statement>
+& buff = typesystems
+::use_typebuffer<sqlite_statement>
+(_buff);
+
+auto & stmt = buff.back();
+stmt.bind(
+  stmt.index++
+, _value.ptr()
+, static_cast<int>(_value.size())
+);
 }
 
 } /* sqlite_rw */

@@ -19,11 +19,13 @@ sdm << 42 << 21 << 21 << 12 << 4;
 print_int(sdm);
 
 /* if there is the number add 21 to the next number*/
-  if (sdm.find(4)){
+  if (sdm.find(43)){
   sdm.add(21);
   }
-
+sdm.add(12);
+while (! empty<int>(sdm)){
 print_int(sdm);
+}
 return 0;
 }
 
@@ -31,9 +33,7 @@ void
 print_int(
   data_model & _mdl
 ){
-  if (empty<int>(_mdl)){
-  int temp;
-  _mdl >> temp;
-  std::cout << "next number is: " << temp << std::endl;
-  }
+int temp;
+_mdl >> temp;
+std::cout << "next number is: " << temp << std::endl;
 }

@@ -17,5 +17,59 @@ data_model::~data_model(
 ){
 }
 
+data_model &
+operator<<(
+  data_model & _mdl
+, int const & _var
+){
+rewrite(_mdl, _var);
+return _mdl;
+}
+
+data_model &
+operator<<(
+  data_model & _mdl
+, double const & _var
+){
+rewrite(_mdl, _var);
+return _mdl;
+}
+
+data_model &
+operator<<(
+  data_model & _mdl
+, float const & _var
+){
+rewrite(_mdl, _var);
+return _mdl;
+}
+
+data_model &
+operator>>(
+  data_model & _mdl
+, int & _var
+){
+rewrite(_mdl, _var);
+return _mdl;
+}
+
+data_model &
+operator>>(
+  data_model & _mdl
+, double & _var
+){
+rewrite(_mdl, _var);
+return _mdl;
+}
+
+data_model &
+operator>>(
+  data_model & _mdl
+, float & _var
+){
+rewrite(_mdl, _var);
+return _mdl;
+}
+
 } /* data_patten */
 #endif

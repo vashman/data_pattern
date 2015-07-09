@@ -11,9 +11,11 @@
 extern "C"{
 #include <sqlite3.h>
 }
-#include <vector>
 #include <stdexcept>
+#include <typesystems/typebuffer_queue.hpp>
 #include "data_model.hpp"
+#include <string>
+#include "raw.hpp"
 
 namespace data_pattern {
 
@@ -79,7 +81,7 @@ public:
   , int
   );
 
-  /* bind void* */
+  /* bind void * */
   void
   bind(
     int
@@ -93,7 +95,7 @@ public:
     int
   );
 
-  /* bind char* */
+  /* bind char * */
   void
   bind(
     int
@@ -106,11 +108,44 @@ public:
     int
   );
 
+  sqlite3_int64
+  column_int64(
+    int
+  );
+
   /* column_double */
   double
   column_double(
    int
   );
+
+  const void *
+  column_blob(
+    int
+  );
+
+  int
+  column_bytes(int);
+
+  int
+  column_bytes16(int);
+
+  const unsigned char *
+  column_text(int);
+
+  const void *
+  column_text16(int);
+
+  int
+  column_type(int);
+
+  sqlite3_value *
+  column_value(int);
+
+  operator int();
+  operator double();
+  operator std::string();
+  operator raw();
 
   /* Column counter used to keep track
     of which column in the current
@@ -137,8 +172,8 @@ public:
     Takes char* to database location.
   */
   template <
-      typename container
-    = std::vector<sqlite_statement>
+    typename Container = typesystems
+    ::typebuffer_queue<sqlite_statement>
   >
 	sqlite(
     char const *
@@ -198,6 +233,12 @@ private:
   friend sqlite_statement;
 };
 
+data_model &
+operator<<(
+  data_model &
+, sqlite_statement const &
+);
+
 namespace bits {
 namespace sqlite {
 /* check_error
@@ -212,5 +253,4 @@ check_error(
 
 } /* data_pattern */
 #include "bits/sqlite.tcc"
-#include "bits/sqlite_rewriters.hpp"
 #endif
