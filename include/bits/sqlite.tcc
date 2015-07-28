@@ -42,11 +42,11 @@ bits::sqlite::check_error(
 
 typesystems::add_writer<
     bits
-  ::sqlite_rw::type_writer<std::string>
+  ::sqlite_rw::string_writer
 >(this->iwriter);
 
 typesystems::add_writer<
-  bits::sqlite_rw::type_writer<raw>
+  bits::sqlite_rw::raw_writer
 >(this->iwriter);
 
 /* Add output writers */
@@ -63,11 +63,11 @@ typesystems::add_writer<
   typesystems
 ::add_writer<
     bits
-  ::sqlite_rw::type_writer<std::string>
+  ::sqlite_rw::string_writer
 >(this->owriter);
 
 typesystems::add_writer<
-  bits::sqlite_rw::type_writer<raw>
+  bits::sqlite_rw::raw_writer
 >(this->owriter);
 }
 

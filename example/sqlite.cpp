@@ -6,9 +6,9 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iostream>
+#include "../include/raw.hpp"
 #include "../src/sqlite.cpp"
 #include "../src/sqlite_rewriters.cpp"
-#include "../include/raw.hpp"
 
 using std::cout;
 using std::endl;

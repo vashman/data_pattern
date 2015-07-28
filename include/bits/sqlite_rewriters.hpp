@@ -63,9 +63,8 @@ private:
     ::iwriter_container const &
   ) const;
 };
-/*
-template <>
-class type_writer<std::string>
+
+class string_writer
   : public typesystems::owriter<std::string>
   , public typesystems::iwriter<std::string> {
 public:
@@ -76,29 +75,17 @@ public:
   ::owriter<std::string>::value_type
   value_type;
 
-  / * do_put * /
+  /* do_put */
   virtual void
   do_put(
-    value_type const & _value
+    value_type const &
   ,   typesystems
-    ::typebuffer_container const & _buff
+    ::typebuffer_container const &
   ,   typesystems
-    ::owriter_container const & _writer
-  ) const {
-    typesystems
-  ::typebuffer<sqlite_statement>
-  & buff = typesystems
-  ::use_typebuffer<sqlite_statement>
-  (_buff);
+    ::owriter_container const &
+  ) const;
 
-  auto & stmt = buff.back();
-  stmt.bind(
-    stmt.index++
-  , _value.c_str()
-  );
-  }
-
-  / * do_get * /
+  /* do_get */
   virtual void
   do_get(
     value_type &
@@ -108,7 +95,7 @@ public:
     ::iwriter_container const &
   ) const;
 
-  / * do_empty * /
+  /* do_empty */
   virtual bool
   do_empty(
       typesystems
@@ -118,8 +105,7 @@ public:
   ) const;
 };
 
-template <>
-class type_writer<raw>
+class raw_writer
   : public typesystems::owriter<raw>
   , public typesystems::iwriter<raw> {
 public:
@@ -129,30 +115,17 @@ public:
   typedef typename typesystems
   ::owriter<raw>::value_type value_type;
 
-  / * do_put * /
+  /* do_put */
   virtual void
   do_put(
-    value_type const & _value
+    value_type const &
   ,   typesystems
-    ::typebuffer_container const & _buff
+    ::typebuffer_container const &
   ,   typesystems
-    ::owriter_container const & _writer
-  ) const {
-    typesystems
-  ::typebuffer<sqlite_statement>
-  & buff = typesystems
-  ::use_typebuffer<sqlite_statement>
-  (_buff);
+    ::owriter_container const &
+  ) const;
 
-  auto & stmt = buff.back();
-  stmt.bind(
-    stmt.index++
-  , _value.ptr()
-  , _value.size()
-  );
-  }
-
-  / * do_get * /
+  /* do_get */
   virtual void
   do_get(
     value_type &
@@ -162,7 +135,7 @@ public:
     ::iwriter_container const &
   ) const;
 
-  / * do_empty * /
+  /* do_empty */
   virtual bool
   do_empty(
       typesystems
@@ -170,127 +143,10 @@ public:
   ,   typesystems
     ::iwriter_container const &
   ) const;
-};*/
-
-/* do_put
-  No need to check for type buffers
-  since the assumption is sqlite always
-  uses sqlite_statements internally.
-*/
-template <typename T>
-void
-type_writer<T>::do_put(
-  value_type const & _value
-,   typesystems
-  ::typebuffer_container const & _buffer
-,   typesystems
-  ::owriter_container const & _writer
-) const {
-  typesystems
-::typebuffer<sqlite_statement>
-& buff = typesystems
-::use_typebuffer<sqlite_statement>
-(_buffer);
-
-auto & stmt = buff.back();
-stmt.bind(stmt.index++, _value);
-}
-
-/* do_get */
-template <typename T>
-void
-type_writer<T>::do_get(
-  value_type & _value
-,   typesystems
-  ::typebuffer_container const & _buffer
-,   typesystems
-  ::iwriter_container const & _writer
-) const {
-  typesystems
-::typebuffer<sqlite_statement>
-& buff = typesystems
-::use_typebuffer<sqlite_statement>
-(_buffer);
-
-auto & stmt = buff.back();
-_value = static_cast<T>(stmt);
-}
-/*
-template <>
-void
-type_writer<std::string>::do_get(
-  value_type & _value
-,   typesystems
-  ::typebuffer_container const & _buffer
-,   typesystems
-  ::iwriter_container const & _writer
-) const {
-  typesystems
-::typebuffer<sqlite_statement>
-& buff = typesystems
-::use_typebuffer<sqlite_statement>
-(_buffer);
-
-auto & stmt = buff.back();
-_value = static_cast<std::string>(stmt);
-}
-
-template <>
-void
-type_writer<raw>::do_get(
-  value_type & _value
-,   typesystems
-  ::typebuffer_container const & _buffer
-,   typesystems
-  ::iwriter_container const & _writer
-) const {
-  typesystems
-::typebuffer<sqlite_statement>
-& buff = typesystems
-::use_typebuffer<sqlite_statement>
-(_buffer);
-
-auto & stmt = buff.back();
-_value = static_cast<raw>(stmt);
-}*/
-
-/* do_empty */
-template <typename T>
-bool
-type_writer<T>::do_empty(
-    typesystems
-  ::typebuffer_container const & _buffer
-,   typesystems
-  ::iwriter_container const & _writer
-) const {
-return true;
-}
-
-/* do_empty */
-/*template <>
-bool
-type_writer<std::string>::do_empty(
-    typesystems
-  ::typebuffer_container const & _buffer
-,   typesystems
-  ::iwriter_container const & _writer
-) const {
-return true;
-}
-
-/ * do_empty * /
-template <>
-bool
-type_writer<raw>::do_empty(
-    typesystems
-  ::typebuffer_container const & _buffer
-,   typesystems
-  ::iwriter_container const & _writer
-) const {
-return true;
-}*/
+};
 
 } /* sqlite_rw */
 } /* bits */
 } /* data_patten */
+#include "sqlite_rewriters.tcc"
 #endif
