@@ -40,7 +40,7 @@ public:
 
   /* ctor copy */
   idata_model_iterator(
-    idata_model_iterator &
+    idata_model_iterator const &
   );
 
   /**/

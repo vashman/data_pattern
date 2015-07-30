@@ -36,10 +36,12 @@ idata_model_iterator<T,Distance>
 template <typename T, typename Distance>
 idata_model_iterator<T,Distance>
 ::idata_model_iterator(
-  idata_model_iterator<T,Distance> &
-  _iter
+  idata_model_iterator<T,Distance> const
+  & _iter
 )
-: mdl (_iter.mdl) {
+: mdl (
+  const_cast<data_model *>(_iter.mdl)
+) {
 }
 
 /* idata_model_iterator operator *
