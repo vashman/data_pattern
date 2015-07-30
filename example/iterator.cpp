@@ -19,13 +19,22 @@ idata_model_iterator<int> iend;
 odata_model_iterator<int> obegin(mdl);
 idata_model_iterator<int> ibegin(mdl);
 
+idata_model_iterator<int> cei (iend);
+odata_model_iterator<int> ceo (oend);
+
+idata_model_iterator<int> ci (ibegin);
+odata_model_iterator<int> co (obegin);
+
+ci = ibegin;
+co = obegin;
+ceo = oend;
+cei = iend;
+
 int value = 44;
 
-if (obegin != oend)
-//obegin = value;
+  if (obegin != oend) obegin = value;
 
-//if (ibegin != iend)
-//value = ibegin;
+  if (ibegin != iend) value = *ibegin;
 
 return 0;
 }

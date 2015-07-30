@@ -15,7 +15,7 @@ template <typename T, typename Distance>
 idata_model_iterator<T,Distance>
 ::idata_model_iterator(
 )
-  : mdl (nullptr) {
+: mdl (nullptr) {
 }
 
 /* idata_model_iterator ctor
@@ -25,7 +25,7 @@ idata_model_iterator<T,Distance>
 ::idata_model_iterator(
   data_model & _mdl
 )
-  : mdl (&_mdl) {
+: mdl (& _mdl) {
   if (!empty<T>(_mdl)){
   *(this->mdl) >> this->temp;
   }
@@ -36,10 +36,10 @@ idata_model_iterator<T,Distance>
 template <typename T, typename Distance>
 idata_model_iterator<T,Distance>
 ::idata_model_iterator(
-  idata_model_iterator<T,Distance>
-    const & _iter
+  idata_model_iterator<T,Distance> &
+  _iter
 )
-  : mdl (&_iter.mdl) {
+: mdl (_iter.mdl) {
 }
 
 /* idata_model_iterator operator *
