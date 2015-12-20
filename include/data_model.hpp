@@ -1,7 +1,7 @@
 // data model base to provide interface
 // for io, and hold the type-system.
 
-//          Copyright Sundeep S. Sangha 2013 - 2014.
+//          Copyright Sundeep S. Sangha 2013 - 2015.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -9,9 +9,12 @@
 #ifndef DATA_PATTERN_DATA_MODEL_HPP
 #define DATA_PATTERN_DATA_MODEL_HPP
 
-#include <typesystems/typebuffer.hpp>
-#include <typesystems/iwriter.hpp>
-#include <typesystems/owriter.hpp>
+#include <map>
+#include <typesystems/qualified_typeid.hpp>
+#include <typesystems/writer.hpp>
+
+#include "odata_model.hpp"
+#include "idata_model.hpp"
 
 namespace data_pattern {
 /* data_model
@@ -21,125 +24,65 @@ namespace data_pattern {
   a means to convert incompatible types
   if not supported.
 */
-class data_model {
+template <
+  typename Container
+, template <typename> class OutputIter
+, typename Writer = std::map <
+    typesystems::qualified_typeinfo
+  , typesystems::owriter_base_type >
+, typename Reader = std::map <
+    typesystems::qualified_typeinfo
+  , typesystems::iwriter_base_type >
+>
+class data_model
+: public idata_model <Container,Reader>
+, odata_model <
+    Container,OutputIter,Writer >
+{
 public:
-  /* ctor */
-  virtual
-  ~data_model();
 
-  template <typename Writer>
-  bool
-  set_iwriter();
+/* ctor */
+virtual
+~data_model() = default;
 
-  template <typename Writer>
-  bool
-  set_owriter();
+/* ctor */
+data_model() = default;
 
-protected:
-#if __cplusplus >= 201103L
-  /* ctor */
-  data_model() = default;
+/* ctor move */
+data_model (
+  data_model <
+    Container,OutputIter,Writer,Reader >
+  &&
+) = default;
 
-  /* ctor copy */
-  data_model(data_model &&) = default;
+/* assignment operator move */
+data_model <
+  Container,OutoutIter,Writer,Reader > &
+operator = (
+  data_model <
+    Container,OutputIter,Writer,Reader >
+  &&
+) = default;
 
-  /* assignment operator move */
-  data_model &
-  operator=(data_model &&) = default;
+/* ctor copy */
+data_model (
+  data_model <
+    Container,OutputIter,Writer,Reader >
+  const &
+) = delete;
 
-  data_model(
-    data_model const &
-  ) = delete;
+/* assignment operator copy */
+data_model <
+  Container,OutputIter,Writer,Reader > &
+operator = (
+  data_model <
+    Container,OutputIter,Writer,Reader >
+  const &
+) = delete;
 
-  data_model &
-  operator=(
-    data_model const &
-  ) = delete;
-#endif
-
-  /* typesys represents the types
-    supported by the database.
-  */
-	typesystems::typebuffer_container
-  buffer;
-
-	typesystems::owriter_container
-	owriter;
-
-  typesystems::iwriter_container
-  iwriter;
-
-private:
-  template <typename T> friend
-  void
-  rewrite(data_model &, T const &);
-
-  template <typename T> friend
-  void
-  rewrite(data_model &, T &);
-
-  template <typename T> friend bool
-  empty(data_model const &);
-};
-
-template <typename T>
-bool
-empty(
-  data_model const &
-);
-
-template <typename T>
-void
-rewrite(
-  data_model &
-, T const &
-);
-
-template <typename T>
-void
-rewrite(
-  data_model &
-, T &
-);
-
-data_model &
-operator<<(
-  data_model &
-, int const &
-);
-
-data_model &
-operator<<(
-  data_model &
-, double const &
-);
-
-data_model &
-operator<<(
-  data_model &
-, float const &
-);
-
-data_model &
-operator>>(
-  data_model &
-, int &
-);
-
-data_model &
-operator>>(
-  data_model &
-, double &
-);
-
-data_model &
-operator>>(
-  data_model &
-, float &
-);
+}; /* data_model */
 
 } /* data_pattern */
-#include "bits/data_model.tcc"
 #include "bits/raw_data_model_shifts.hpp"
 #include "bits/string_data_model_shifts.hpp"
 #endif

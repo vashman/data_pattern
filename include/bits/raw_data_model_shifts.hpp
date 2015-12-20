@@ -8,34 +8,58 @@
 
 namespace data_pattern {
 
-template <typename T>
-data_model &
-operator<<(
-  data_model &
+template <
+  typename T
+, typename Container
+, typename Writer
+, typename Reader
+>
+data_model<Container,Writer,Reader> &
+operator << (
+  data_model<Container,Writer,Reader>
+  & _mdl
 , raw_data<T> const &
 );
 
-template <typename T>
-data_model &
-operator>>(
-  data_model &
+template <
+  typename T
+, typename Container
+, typename Writer
+, typename Reader
+>
+data_model<Container,Writer,Reader> &
+operator >> (
+  data_model<Container,Writer,Reader>
+  & _mdl
 , raw_data<T> &
 );
 
-template <typename T>
-data_model &
-operator<<(
-  data_model & _mdl
+template <
+  typename T
+, typename Container
+, typename Writer
+, typename Reader
+>
+data_model<Container,Writer,Reader> &
+operator << (
+  data_model<Container,Writer,Reader>
+  & _mdl
 , raw_data<T> const & _data
 ){
 rewrite(_mdl, _data);
 return _mdl;
 }
 
-template <typename T>
-data_model &
-operator>>(
-  data_model & _mdl
+template <
+  typename T
+, typename Container
+, typename Writer
+, typename Reader
+>
+data_model<Container,Writer,Reader> &
+operator >> (
+  data_model<Container,Writer,Reader>
+  & _mdl
 , raw_data<T> & _data
 ){
 rewrite(_mdl, _data);

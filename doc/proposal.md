@@ -40,5 +40,30 @@ none, pure extenstion.
 * query traits
 * extending an interprater
 
+3 Client side Buffer vs Implementation side buffer
+--------------------------------------------------------------------------
+### Client side
+Strengths
+* 
+
+Weakness
+Oppitunities
+* compile time buffer / writer selection.
+
+Threats
+
+### Implementation side
+Strengths
+* 
+
+Weakness
+Oppitunities
+* compile time buffer / writer selection.
+
+Threats
+
+4
+--------------------------------------------------------------------------
+
 6 Technical Specifications
 ==========================================================================
