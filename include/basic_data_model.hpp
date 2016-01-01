@@ -1,4 +1,5 @@
-//
+// Basic data model contains container
+// and supported types.
 
 //          Copyright Sundeep S. Sangha 2013 - 2015.
 // Distributed under the Boost Software License, Version 1.0.
@@ -9,52 +10,62 @@
 #define DATA_PATTERN_BASIC_DATA_MODEL_HPP
 
 namespace data_pattern {
-/* base data model */
-template <typename Container>
-class basic_data_model {
-public:
+/* data model buffer */
+template <
+  typename Buffer
+, typename MakeInputIter
+, typename MakeOutputIter >
+struct data_model_buffer {
+Buffer buffer;
+MakeInputIter make_input_iter;
+MakeOutputIter make_output_iter;
 
-/* ctor */
+/* dtor */
 virtual
-~basic_data_model() = default;
+~data_model_buffer() = default;
 
 /* ctor */
-basic_data_model() = default;
-
-/* ctor move */
-basic_data_model (
-  basic_data_model <Container> &&
-) = default;
+explicit
+data_model_buffer (
+  MakeInputIter
+, MakeOutputIter
+);
 
 /* assignment operator move */
-basic_data_model <Container> &
+data_model_buffer <
+  Buffer, MakeInputIter, MakeOutputIter
+> &
 operator = (
-  basic_data_model <Container> &&
+  data_model_buffer <
+    Buffer, MakeInputIter
+  , MakeOutputIter > &&
 ) = default;
 
 /* ctor copy */
-basic_data_model (
-  basic_data_model <Container> const &
+data_model_buffer (
+  data_model_buffer <
+    Buffer, MakeInputIter
+  , MakeOutputIter > const &
 ) = delete;
+
+/* ctor move */
+data_model_buffer (
+  data_model_buffer <
+    Buffer, MakeInputIter
+  , MakeOutputIter > &&
+) = default;
 
 /* assignment operator copy */
-basic_data_model <Container> &
+data_model_buffer <
+  Buffer, MakeInputIter, MakeOutputIter
+> const &
 operator = (
-  basic_data_model <Container> const &
+  data_model_buffer <
+    Buffer, MakeInputIter
+  , MakeOutputIter > const &
 ) = delete;
 
-void
-set_state(bool);
-
-bool
-get_state() const;
-
-Container con;
-
-private:
-
-bool state;
-};
+}; /* data_model_buffer */
 
 } /* data_pattern */
 #include "bits/basic_data_model.tcc"

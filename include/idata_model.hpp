@@ -14,25 +14,31 @@
 #include "basic_data_model.hpp"
 
 namespace data_pattern {
+
 /* input data model */
 template <
-  typename Container
+  typename Buffer
+, typename MakeOutputIter
+, typename MakeInputIter
 , typename Reader = std::map <
     typesystems::qualified_typeinfo
-  , typesystems::iwriter_base_type >
->
-class idata_model
-: public virtual
-  basic_data_model<Container>
-{
+  , typesystems::writer_type <
+      decltype(begin(Buffer))
+    , OutputIter >
+  >
+, typename GetWriter >
+class idata_model {
 public:
 
 /* ctor */
-virtual
-~idata_model() = default;
+idata_model (
+  data_model_buffer < Buffer
+  , MakeInputIter, MakeOutputIter > *
+, GetWriter _get_writer = [](...){}
+);
 
-/* ctor */
-idata_model() = default;
+/* dtor */
+~idata_model() = default;
 
 /* ctor move */
 idata_model (
@@ -56,7 +62,15 @@ operator = (
   idata_model <Container,Reader> const &
 ) = delete;
 
+GetWriter get_writer;
+
+private:
+
 Reader reader;
+bool state;
+data_model_buffer < Buffer
+  , MakeInputIter, MakeOutputIter >
+* buffer;
 }; /* idata_model */
 
 /* rewrite input */

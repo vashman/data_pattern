@@ -9,28 +9,67 @@
 #define DATA_PATTERN_IDATA_MODEL_TCC
 
 #include <iterator>
+#include <typesystems/type_traits.hpp>
 #include "iterator_decorator/iterator.hpp"
 
 namespace data_pattern {
 
+template <
+  typename Buffer
+, typename MakeOutputIter
+, typename MakeInputIter
+, typename Reader
+, typename GetWriter >
+  idata_model <
+    Buffer, Reader, OutputIter
+  , GetWriter >
+::idata_model (
+  data_model_buffer <
+    Buffer, MakeInputIter
+  , MakeOutputIter > * _buffer
+, GetWriter _get_writer
+)
+: get_writer (_get_writer)
+, reader ()
+, state ()
+, buffer (_buffer) {
+}
+
 /* rewrite input */
 template <
   typename T
-, typename Container
-, typename Reader >
-void
+, typename Buffer
+, typename MakeOutputIter
+, typename MakeInputIter
+, typename Reader
+, typename GetWriter >
+idata_model <
+  Buffer, MakeOutputIter, MakeInputIter
+, Reader, GetWriter > &
 rewrite (
-  idata_model <Container, Reader> & _mdl
-, T & _var
+  T & _var
+, idata_model <
+    Buffer, MakeOutputIter
+  , MakeInputIter,Reader,GetWriter >
+  & _mdl
 ){
-  if ( ! typesystems::rewrite (
-      _var
-    , begin<T>(_mdl.con)
-    , end<T>(_mdl.con)
-    , begin(_mdl.reader)
-    , end(_mdl.reader)
-    , Container::type)
-   ) _mdl.setstate ();
+auto stop (
+  typesystems::qualified_typeid<void>()
+);
+  
+auto rv (
+  typesystems::qualified_typeid<void>()
+);
+
+do {
+rv = typesystems::rewrite <,T> (
+  begin(*_mdl.buffer), end(*_mdl.buffer)
+, _mdl.buffer.make_output_iter()
+, begin(_mdl.reader), end(_mdl.reader)
+, _mdl.get_writer
+)
+} while (rv != stop);
+
 return _mdl;
 }
 
@@ -40,10 +79,11 @@ return _mdl;
 template <
   typename T
 , typename Container
-, typename Reader >
+, typename Reader
+, typename Find >
 bool
 empty (
-  idata_model <Container,Reader>
+  idata_model <Container,Reader, Find>
   const & _mdl
 ){
 return
