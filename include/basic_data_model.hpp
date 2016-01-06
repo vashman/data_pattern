@@ -6,63 +6,44 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef DATA_PATTERN_BASIC_DATA_MODEL_HPP
-#define DATA_PATTERN_BASIC_DATA_MODEL_HPP
+#ifndef DATA_PATTERN_DATA_BUFFER_HPP
+#define DATA_PATTERN_DATA_BUFFER_HPP
 
 namespace data_pattern {
+
 /* data model buffer */
-template <
-  typename Buffer
-, typename MakeInputIter
-, typename MakeOutputIter >
-struct data_model_buffer {
+template <typename Buffer>
+struct data_buffer {
 Buffer buffer;
-MakeInputIter make_input_iter;
-MakeOutputIter make_output_iter;
 
 /* dtor */
 virtual
-~data_model_buffer() = default;
+~data_buffer() = default;
 
 /* ctor */
 explicit
-data_model_buffer (
-  MakeInputIter
-, MakeOutputIter
-);
+data_buffer () = default;
 
 /* assignment operator move */
-data_model_buffer <
-  Buffer, MakeInputIter, MakeOutputIter
-> &
+data_buffer <Buffer> &
 operator = (
-  data_model_buffer <
-    Buffer, MakeInputIter
-  , MakeOutputIter > &&
+  data_buffer <Buffer> &&
 ) = default;
 
 /* ctor copy */
-data_model_buffer (
-  data_model_buffer <
-    Buffer, MakeInputIter
-  , MakeOutputIter > const &
+data_buffer (
+  data_buffer <Buffer> const &
 ) = delete;
 
 /* ctor move */
-data_model_buffer (
-  data_model_buffer <
-    Buffer, MakeInputIter
-  , MakeOutputIter > &&
+data_buffer (
+  data_buffer <Buffer> &&
 ) = default;
 
 /* assignment operator copy */
-data_model_buffer <
-  Buffer, MakeInputIter, MakeOutputIter
-> const &
+data_buffer <Buffer> const &
 operator = (
-  data_model_buffer <
-    Buffer, MakeInputIter
-  , MakeOutputIter > const &
+  data_buffer <Buffer> const &
 ) = delete;
 
 }; /* data_model_buffer */

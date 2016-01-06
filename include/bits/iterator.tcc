@@ -9,30 +9,266 @@
 #define DATA_PATTERN_ITERATOR_TCC
 
 namespace data_pattern {
-/* idata_model_iterator ctor
+/* input model iterator. */
+template <
+  typename T
+, typename Distance = std::ptrdiff_t >
+class iterator
+: public std::iterator <
+    std::input_iterator_tag
+  , T
+  , Distance
+  , T const *
+  , T const & >
+{
+public:
+
+/* ctor end */
+iterator (
+  input_model<Buffer,MakeInputIter> &
+, int
+);
+
+/* ctor */
+iterator (
+  input_model<Buffer,MakeInputIter> &
+);
+
+/* ctor copy */
+iterator (
+  iterator<T,Distance> const &
+);
+
+/* defrence */
+T const &
+operator * () const;
+
+/**/
+T const *
+operator -> () const;
+
+/* operator increment */
+iterator<T,Distance> &
+operator ++ ();
+
+/* operator increment */
+iterator<T,Distance> &
+operator ++ (
+  int
+);
+
+/* is_empty
+Used by the iterator comparison
+operators to check whether the is empty.
 */
-template <typename T, typename Distance>
-idata_model_iterator<T,Distance>
-::idata_model_iterator(
+bool
+is_empty (
+  iterator<T,Distance> const &
+) const ;
+
+private:
+
+decltype(begin<T>(buffer)) iter;
+
+}; /* iterator */
+
+/* operator == */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+bool
+operator == (
+    typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator <T, Distance>
+  const &
+,   typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator <T, Distance>
+  const &
+);
+
+/* operator != */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+bool
+operator != (
+    typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator <T, Distance>
+  const &
+,   typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator <T, Distance>
+  const &
+);
+
+//// TCC
+/* input_model::iterator end ctor */
+/*template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance>
+::iterator (
+  input_model<Buffer,MakeInputIter>
+  & _mdl
+, int
 )
-: mdl (nullptr) {
+: iter (end<T>(_mdl.buffer)) {
+}*/
+
+/* input_model::iterator begin ctor */
+/*template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance>
+::iterator (
+  input_model<Buffer,MakeInputIter>
+  & _mdl
+)
+: iter (begin<T>(_mdl.buffer)) {
+}*/
+
+/* input_model::iterator operator * */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+T const &
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance>
+::operator * (
+) const {
+return *this->iter;
 }
 
-/* idata_model_iterator ctor
-*/
-template <typename T, typename Distance>
-idata_model_iterator<T,Distance>
-::idata_model_iterator(
-  data_model & _mdl
-)
-: mdl (& _mdl) {
-  if (!empty<T>(_mdl)){
-  *(this->mdl) >> this->temp;
-  }
+/* input_model::iterator operator -> */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+T const *
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance>
+::operator -> (
+) const {
+return this->iter.operator->();
 }
 
-/* idata_model_iterator ctor
-*/
+/* input_model::iterator operator == */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+bool
+operator == (
+    typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator<T,Distance>
+  const & _lhs
+,   typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator<T,Distance>
+  const & _rhs
+){
+return _lhs.is_empty(_rhs);
+}
+
+/* input_model::iterator operator != */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+bool
+operator != (
+    typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator<T,Distance>
+  const & _lhs
+,   typename
+    input_model<Buffer,MakeInputIter>
+  ::template iterator<T,Distance>
+  const & _rhs
+){
+return !(_lhs==_rhs);
+}
+
+/* input_model::iterator operator ++ */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance> &
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance>
+::operator ++ (
+){
+this->iter++;
+return *this;
+}
+
+/* input_model::iterator operator ++ */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance> &
+  typename
+  input_model<Buffer,MakeInputIter>
+::template iterator<T,Distance>
+::operator ++ (
+  int _value
+){
+//? call op with value
+++this->iter;
+return *this;
+}
+
+/* idata_model_iterator empty */
+template <
+  typename T
+, typename Distance
+, typename Buffer
+, typename MakeInputIter >
+bool
+  input_model<Buffer,MakeInputIter>
+::iterator<T,Distance>
+::is_empty (
+    input_model<Buffer,MakeInputIter>
+  ::iterator<T,Distance> const & _iter
+) const {
+return (this->iter == _iter);
+}
+
+  ///////////////////////////////
+  
+/* idata_model_iterator ctor */
 template <typename T, typename Distance>
 idata_model_iterator<T,Distance>
 ::idata_model_iterator(
@@ -42,88 +278,9 @@ idata_model_iterator<T,Distance>
 : mdl (
   const_cast<data_model *>(_iter.mdl)
 ) {
-}
+}/////////////////////////////////////
 
-/* idata_model_iterator operator *
-*/
-template <typename T, typename Distance>
-T const &
-idata_model_iterator<T,Distance>
-::operator*(
-) const {
-return (this->temp);
-}
 
-/* idata_model_iterator operator ->
-*/
-template <typename T, typename Distance>
-T const *
-idata_model_iterator<T,Distance>
-::operator->(
-) const {
-return &(this->temp);
-}
-
-/* idata_model_iterator operator ==
-*/
-template <typename T, typename Distance>
-bool
-operator==(
-  idata_model_iterator<T,Distance>
-    const & _lhs
-, idata_model_iterator<T,Distance>
-    const & _rhs
-){
-return _lhs.is_empty();
-}
-
-/* idata_model_iterator operator =!=
-*/
-template <typename T, typename Distance>
-bool
-operator!=(
-  idata_model_iterator<T,Distance>
-    const & _lhs
-, idata_model_iterator<T,Distance>
-    const & _rhs
-){
-return !(_lhs==_rhs);
-}
-
-/* idata_model_iterator operator ++
-*/
-template <typename T, typename Distance>
-idata_model_iterator<T,Distance> &
-idata_model_iterator<T,Distance>
-::operator++(
-){
-*(this->mdl) >> this->temp;
-return *this;
-}
-
-/* idata_model_iterator operator ++
-*/
-template <typename T, typename Distance>
-idata_model_iterator<T,Distance> &
-idata_model_iterator<T,Distance>
-::operator++(
-  int _value
-){
-  while (_value > 0){
-  this->operator++();
-  --_value;
-  }
-return *this;
-}
-
-/* idata_model_iterator empty */
-template <typename T, typename Distance>
-bool
-idata_model_iterator<T,Distance>
-::is_empty(
-) const {
-return empty<T>(*(this->mdl));
-}
 
 /* odata_model_iterator ctor */
 template <typename T>

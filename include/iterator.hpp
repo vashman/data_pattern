@@ -1,4 +1,4 @@
-// data_model input iterator
+// model input iterator
 
 //          Copyright Sundeep S. Sangha 2015.
 // Distributed under the Boost Software License, Version 1.0.
@@ -12,98 +12,7 @@
 #include "data_model.hpp"
 
 namespace data_pattern {
-/* idata_model_iterator
-Input iterator.
-*/
-template <
-  typename T
-, typename Distance = std::ptrdiff_t
->
-class idata_model_iterator
-  : public std::iterator <
-      std::input_iterator_tag
-    , T
-    , Distance
-    , T const *
-    , T const &
-    >
-{
-public:
-  /* ctor end */
-  idata_model_iterator(
-  );
 
-  /* ctor */
-  idata_model_iterator(
-    data_model &
-  );
-
-  /* ctor copy */
-  idata_model_iterator(
-    idata_model_iterator const &
-  );
-
-  /**/
-  T const &
-  operator*(
-  ) const ;
-
-  /**/
-  T const *
-  operator->(
-  ) const ;
-
-  /* operator increment */
-  idata_model_iterator<T,Distance> &
-  operator++(
-  );
-
-  /* operator increment */
-  idata_model_iterator<T,Distance> &
-  operator++(
-    int
-  );
-
-  /* is_empty
-  Used by the iterator comparison
-  operators to check whether the model
-  is empty.
-  */
-  bool
-  is_empty(
-  ) const ;  
-
-private:
-  /* data_model pointer */
-  data_model * mdl;
-
-  /* temp variable */
-  T temp;
-};
-
-/* operator eqivilent */
-template <
-  typename T
-, typename Dist
->
-bool
-operator==(
-  idata_model_iterator<T,Dist> const &
-, idata_model_iterator<T,Dist> const &
-);
-
-/**/
-template <
-  typename T
-, typename Distance
->
-bool
-operator!=(
-  idata_model_iterator<T,Distance>
-    const &
-, idata_model_iterator<T,Distance>
-    const &
-);
 
 /* output data_model iterator */
 template <typename T>
