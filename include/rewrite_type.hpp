@@ -18,48 +18,89 @@ namespace data_pattern {
 namespace bits {  
 
 /**/
-template <typename T, typename Iter>
-struct type_rewrite {
+template <
+  typename... Ts
+, typename T
+, typename OutputIter
+, typename WriterIter
+, typename GetWriter >
+struct itype_rewrite {
 
-type_rewrite (
-  T&
-, Iter
-, Iter );
+itype_rewrite (
+  OutputIter
+, WriterIter
+, WriterIter
+, GetWriter );
 
 private:
-T & var;
-Iter begin;
-Iter end;
+GetWriter get_writer;
+WriterIter begin;
+WriterIter end;
+OutputIter output;
 };
 
 /**/
 template <
-  typename Buffer
-, typename MakeIter
+  typename... Ts
 , typename T
-, typename Iter >
+, typename BufferIter
+, typename WriterIter
+, typename GetWriter >
+struct otype_rewrite {
+
+otype_rewrite (
+  BufferIter
+, BufferIter
+, WriterIter
+, WriterIter
+, GetWriter );
+
+private:
+GetWriter get_writer;
+WriterIter writer_begin;
+WriterIter writer_end;
+BufferIter buffer_begin;
+BufferIter buffer_endl
+};
+
+/**/
+template <
+  typename... Ts
+, typename T
+, typename OutputIter
+, typename WriterIter
+, typename GetWriter
+, typename Buffer
+, typename MakeIter >
 input_model<Buffer,MakeIter> &
 operator >> (
   input_model<Buffer,MakeIter> & _mdl
-, type_rewrite<T,Iter> & _typeinfo
+, itype_rewrite <
+    Ts..., T, OutputIter, WriterIter
+  , GetWriter > & _typeinfo
 ){
   typesystems
 ::rewrite<Ts...,T> (
-  begin(_mdl), end(_mdl)
+  begin(_mdl.buffer), end(_mdl.buffer)
 , 
 , _typeinfo.begin, _typeinfo.end );
 }
 
 /**/
 template <
-  typename Buffer
-, typename MakeIter
+  typename... Ts
 , typename T
-, typename Iter >
+, typename BufferIter
+, typename WriterIter
+, typename GetWriter
+, typename Buffer
+, typename MakeIter >
 output_model<Buffer,MakeIter> &
 operator >> (
   output_model<Buffer,MakeIter> & _mdl
-, type_rewrite<T,Iter> & _typeinfo
+, otype_rewrite <
+    Ts..., T, BufferIter, WriterIter
+  , GetWriter > & _typeinfo
 ){
 typesystems::rewrite<Ts...,T> (
   begin(_mdl.buffer)
@@ -71,18 +112,50 @@ typesystems::rewrite<Ts...,T> (
 
 } /* bits */
 
-/* rewrite type */
+/* rewrite type on input */
 template <
-  typename T
-, typename BuffIter >
-type_rewrite &
+  typename... Ts
+, typename T
+, typename OutputIter
+, typename WriterIter
+, typename GetWriter >
+itype_rewrite<Ts...,T> &
 rewrite_type (
-  T & _var
-, Iter _writer_begin, Iter _writer_end
-,
+  OutputIter _output_iter
+, WriterIter _writer_begin
+, WriterIter _writer_end
+, GetWriter _get_writer
 ){
 return
-type_rewrite<T,Iter>(_var,_begin,_end);
+itype_rewrite<Ts...,T> (
+  _output_iter
+, _writer_begin
+, _writer_end
+, _get_writer );
+}
+
+/* rewrite type on output */
+template <
+  typename... Ts
+, typename T
+, typename BufferIter
+, typename WriterIter
+, typename GetWriter >
+otype_rewrite<Ts...,T> &
+rewrite_type (
+  BufferIter _buffer_begin
+, BufferIter _buffer_end
+, WriterIter _writer_begin
+, WriterIter _writer_end
+, GetWriter _get_writer
+){
+return
+otype_rewrite<Ts...,T> (
+  _buffer_begin
+, _buffer_end
+, _writer_begin
+, _writer_end
+, _get_writer );
 }
 
 } /* data_pattern */
