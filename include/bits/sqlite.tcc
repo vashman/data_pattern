@@ -13,63 +13,16 @@
 namespace data_pattern {
 
 /* sqlite ctor */
-template <typename Container>
 sqlite::sqlite (
   char const * _file
 )
-: data_model ()
-, db (NULL)
+: db (NULL)
 , zErrMsg (NULL)
 , result (NULL) {
-bits::sqlite::check_error(
-  sqlite3_open(_file, &this->db)
-);
-  typesystems
-::set_typebuffer
-<sqlite_statement, Container>
-(this->buffer);
-
-/* Add input writers */
-  typesystems
-::add_writer<
-  bits::sqlite_rw::type_writer<int>
->(this->iwriter);
-
-  typesystems
-::add_writer<
-  bits::sqlite_rw::type_writer<double>
->(this->iwriter);
-
-typesystems::add_writer<
-    bits
-  ::sqlite_rw::string_writer
->(this->iwriter);
-
-typesystems::add_writer<
-  bits::sqlite_rw::raw_writer
->(this->iwriter);
-
-/* Add output writers */
-  typesystems
-::add_writer<
-  bits::sqlite_rw::type_writer<int>
->(this->owriter);
-
-  typesystems
-::add_writer<
-  bits::sqlite_rw::type_writer<double>
->(this->owriter);
-
-  typesystems
-::add_writer<
-    bits
-  ::sqlite_rw::string_writer
->(this->owriter);
-
-typesystems::add_writer<
-  bits::sqlite_rw::raw_writer
->(this->owriter);
-}
+  bits::sqlite
+::check_error (
+  sqlite3_open(_file, &this->db) );
+};
 
 } /* data_pattern */
 #endif

@@ -1,11 +1,19 @@
 //
 
-#ifndef
-#define
+//          Copyright Sundeep S. Sangha 2015 - 2016.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#ifndef TYPESYSTEMS_REWRITE_TYPE_TCC
+#define TYPESYSTEMS_REWRITE_TYPE_TCC
+
+#include "variable_iterator.hpp"
 
 namespace data_pattern {
 namespace bits {
 
+/* owrrite type */
 template <
   typename Iter, typename Writer >
 struct owrite_type {
@@ -25,14 +33,15 @@ owrite_type (
 
 }; /* owrite type */
 
+/* owrite type << output_model */
 template <
   typename Iter
 , typename Writer
 , typename Buffer
 , typename MakeIter >
-output_model<Buffer,Makeiter> &
+output_model<Buffer,MakeIter> &
 operator << (
-  output_model & _mdl
+  output_model<Buffer,MakeIter> & _mdl
 , owrite_type<Iter,Writer> & _writer
 ){
 _writer.writer (
@@ -42,7 +51,30 @@ _writer.writer (
 );
 }
 
-template <typename Iter>
+/* iwrite type */
+template <typename T, typename Writer>
+struct iwrite_type {
+
+variable_iterator<T> iterator;
+Writer writer;
+
+explicit
+iwrite_type (
+  T & _var
+, Writer _writer
+)
+: iterator (_var)
+, writer (_writer) {
+}
+
+}; / iwrite type /
+
+/* iwrite type >> input */
+template <
+  typename Iter
+, typename Writer
+, typename Buffer
+, typename MakeIter >
 input_model<Buffer,MakeIter> &
 operator >> (
   input_model<Buffer,MakeIter> & _mdl
@@ -51,47 +83,9 @@ operator >> (
 _writer.writer (
   _mdl.input_iterator(_mdl.buffer)
 , _mdl.input_iterator(_mdl.buffer)
-, _writer.output_iter
+, _writer.iterator
 );
 }
-
-template <typename T>
-class output_iterator {
-T * var;
-
-public:
-
-explicit
-output_iterator (
-  T & _var
-)
-: var (& _var) {
-}
-
-output_iterator<T> &
-operator ++ (
-){
-return *this;
-}
-
-output_iterator<T> &
-operator ++ (
-  int
-){
-return *this;
-}
-
-T *
-operator -> (){
-return this->var;
-}
-
-T &
-operator * (){
-return *this->var;
-}
-
-};
 
 } /* bits */
 
@@ -99,41 +93,52 @@ return *this->var;
 template <typename T, typename Writer>
 bits::owrite_type
 rewrite_output (
-  T const & _var // input
+  T const & _var // input buffer
 , Writer _writer
 ){
-T * var (& _var);
-T * end (var);
+T * var_begin (& _var);
+T * var_end (var);
 return
 bits::owrite_type <T*, Writer>
-(_var,++_var,_writer);
-}
-
-/* rewrite output */
-template <
-  typename Iter, typename Writer >
-bits::owrite_type
-rewrite_output (
-  Iter _begin // input
-, Iter _end
-, Writer _writer
-){
-return
-bits::owrite_type <Iter, Writer>
-(_begin,_end,_writer);
+(_var_begin, ++_var_end, _writer);
 }
 
 /* rewrite input */
 template <typename T, typename Writer>
-bits::iwrite_type
+bits::iwrite_type <T, Writer>
 rewrite_input (
-  T & _var // output
+  T & _var // output variable
 , Writer _writer
 ){
-return
-  bits
-::iwrite_type <bits::output_iterator<T>>
-(bits::output_iterator(_var), _writer);
+return bits::iwrite_type <T, Writer>
+(_var, _writer);
+}
+
+/* rewriter iterator assignment operator
+*/
+template <
+  typename... Ts
+, typename Iterator
+, typename T >
+template <typename U>
+void
+operator = (
+  U const & _val
+){
+auto & writer = get<U>(this->map);
+writer(_val); 
+}
+
+/* rewriter iterator cast operator */
+template <
+  typename... Ts
+, typename Iterator
+, typename T >
+template <typename U>
+  rewrite_iterator<Ts...,Iterator,T>
+::operator U (){
+auto writer = get<U>(this->writer);
+return writer(*iter);
 }
 
 } /* data_pattern */

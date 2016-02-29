@@ -1,5 +1,3 @@
-//
-
 // data model base to provide interface
 // for io, and hold the type-system.
 
@@ -15,148 +13,102 @@
 #include "data_model.hpp"
 
 namespace data_pattern {
-namespace bits {  
+namespace bits {
 
-/**/
+/* owrrite type */
 template <
-  typename... Ts
-, typename T
-, typename OutputIter
-, typename WriterIter
-, typename GetWriter >
-struct itype_rewrite {
+  typename Iter, typename Writer >
+struct owrite_type;
 
-itype_rewrite (
-  OutputIter
-, WriterIter
-, WriterIter
-, GetWriter );
-
-private:
-GetWriter get_writer;
-WriterIter begin;
-WriterIter end;
-OutputIter output;
-};
-
-/**/
+/* owrite type << output_model */
 template <
-  typename... Ts
-, typename T
-, typename BufferIter
-, typename WriterIter
-, typename GetWriter >
-struct otype_rewrite {
+  typename Iter
+, typename Writer
+, typename Buffer
+, typename MakeIter >
+output_model<Buffer,MakeIter> &
+operator << (
+  output_model<Buffer,MakeIter> &
+, owrite_type<Iter,Writer> &
+);
 
-otype_rewrite (
-  BufferIter
-, BufferIter
-, WriterIter
-, WriterIter
-, GetWriter );
+/* iwrite type */
+template <typename T, typename Writer>
+struct iwrite_type;
 
-private:
-GetWriter get_writer;
-WriterIter writer_begin;
-WriterIter writer_end;
-BufferIter buffer_begin;
-BufferIter buffer_endl
-};
-
-/**/
+/* iwrite type >> input */
 template <
-  typename... Ts
-, typename T
-, typename OutputIter
-, typename WriterIter
-, typename GetWriter
+  typename Iter
+, typename Writer
 , typename Buffer
 , typename MakeIter >
 input_model<Buffer,MakeIter> &
 operator >> (
-  input_model<Buffer,MakeIter> & _mdl
-, itype_rewrite <
-    Ts..., T, OutputIter, WriterIter
-  , GetWriter > & _typeinfo
-){
-  typesystems
-::rewrite<Ts...,T> (
-  begin(_mdl.buffer), end(_mdl.buffer)
-, 
-, _typeinfo.begin, _typeinfo.end );
-}
-
-/**/
-template <
-  typename... Ts
-, typename T
-, typename BufferIter
-, typename WriterIter
-, typename GetWriter
-, typename Buffer
-, typename MakeIter >
-output_model<Buffer,MakeIter> &
-operator >> (
-  output_model<Buffer,MakeIter> & _mdl
-, otype_rewrite <
-    Ts..., T, BufferIter, WriterIter
-  , GetWriter > & _typeinfo
-){
-typesystems::rewrite<Ts...,T> (
-  begin(_mdl.buffer)
-, end(_mdl.buffer)
-, 
-, _typeinfo.begin
-, _typeinfo.end );
-}
+  input_model<Buffer,MakeIter> &
+, iwrite_type<Buffer,Writer> &
+);
 
 } /* bits */
 
-/* rewrite type on input */
-template <
-  typename... Ts
-, typename T
-, typename OutputIter
-, typename WriterIter
-, typename GetWriter >
-itype_rewrite<Ts...,T> &
-rewrite_type (
-  OutputIter _output_iter
-, WriterIter _writer_begin
-, WriterIter _writer_end
-, GetWriter _get_writer
-){
-return
-itype_rewrite<Ts...,T> (
-  _output_iter
-, _writer_begin
-, _writer_end
-, _get_writer );
-}
+/* rewrite output */
+template <typename T, typename Writer>
+bits::owrite_type
+rewrite_output (
+  T const & // input buffer
+, Writer
+);
 
-/* rewrite type on output */
+/* rewrite input */
+template <typename T, typename Writer>
+bits::iwrite_type <T, Writer>
+rewrite_input (
+  T &
+, Writer
+);
+
+/* rewrite iterator */
 template <
   typename... Ts
+  typename Iterator
 , typename T
-, typename BufferIter
-, typename WriterIter
-, typename GetWriter >
-otype_rewrite<Ts...,T> &
-rewrite_type (
-  BufferIter _buffer_begin
-, BufferIter _buffer_end
-, WriterIter _writer_begin
-, WriterIter _writer_end
-, GetWriter _get_writer
+  = typesystems::writer_function >
+class rewrite_iterator  {
+
+Iterator iterator;
+typesystems::type_map<T,Ts...> map;
+
+/* assignment operator */
+template <typename U>
+operator = (
+  U const &
+);
+
+/* cast operator */
+template <typename U>
+operator U();
+
+rewrite_iterator<Ts...,Iterator,T> &
+operator * ();
+
+rewrite_iterator<Ts...,Iterator,T> * 
+operator -> ();
+}; /* rewrite_iterator */
+
+/* make rewrite iterator */
+template <
+  typename... Ts
+, typename Iterator
+, typename T >
+rewrite_iterator<Ts..., Iterator, T>
+make_rewrite_iterator (
+  Iterator _iter
 ){
 return
-otype_rewrite<Ts...,T> (
-  _buffer_begin
-, _buffer_end
-, _writer_begin
-, _writer_end
-, _get_writer );
+rewrite_iterator<Ts..., Iterator, T>
+(iter);
 }
 
 } /* data_pattern */
+#include "./bits/rewrite_type.tcc"
 #endif
+

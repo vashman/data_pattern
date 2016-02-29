@@ -13,7 +13,6 @@
 
 namespace data_pattern {
 
-
 /* output data_model iterator */
 template <typename T>
 class odata_model_iterator

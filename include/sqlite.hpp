@@ -12,232 +12,299 @@ extern "C"{
 #include <sqlite3.h>
 }
 #include <stdexcept>
-#include <typesystems/typebuffer_queue.hpp>
-#include "data_model.hpp"
 #include <string>
 #include "raw.hpp"
+#include <memory>
+#include <iterator>
 
 namespace data_pattern {
 
 class sqlite_statement;
-class sqlite;
 class sqlite_exception;
+class sqlite;
 
 /* sqlite exception */
 class sqlite_exception
 : public std::runtime_error {
 public:
-  explicit
-  sqlite_exception(
-    const char *
-  , int
-  );
+  
+explicit
+sqlite_exception (
+  const char *
+, int
+);
 
-  int const rv;
-};
+int const rv;
+}; /* sqlite exception */
 
 /* query_statement wraps an sqlite
   statement and does some book keeping.
 */
 class sqlite_statement {
 public:
-  /* ctor */
-  sqlite_statement (
-    char const *
-  , sqlite &
-  );
 
-  /* ctor copy */
-  sqlite_statement (
-    sqlite_statement const &
-  );
+/* ctor */
+explicit
+sqlite_statement (
+  char const *
+, sqlite &
+);
 
-  /* ctor move */
-  sqlite_statement (
-    sqlite_statement &&
-  );
+/* ctor copy */
+sqlite_statement (
+  sqlite_statement const &
+) = default;
 
-  /**/
-  sqlite_statement &
-  operator=(
-    sqlite_statement const &
-  );
+/* ctor move */
+sqlite_statement (
+  sqlite_statement &&
+) = default;
 
-  /* dtor */
-  ~sqlite_statement(
-  );
+/**/
+sqlite_statement &
+operator = (
+  sqlite_statement const &
+) = default;
 
-  /* bind double */
-  void
-  bind(
-    int
-  , double
-  );
+/* dtor */
+~sqlite_statement() = default;
 
-  /* bind int */
-  void
-  bind(
-    int
-  , int
-  );
-
-  /* bind void * */
-  void
-  bind(
-    int
-  , void const *
-  , int
-  );
-
-  /* bind null */
-  void
-  bind(
-    int
-  );
-
-  /* bind char * */
-  void
-  bind(
-    int
-  , char const *
-  );
-
-  /* column_int */
+/* bind double */
+void
+bind (
   int
-  column_int(
-    int
-  );
+, double
+);
 
-  sqlite3_int64
-  column_int64(
-    int
-  );
-
-  /* column_double */
-  double
-  column_double(
-   int
-  );
-
-  const void *
-  column_blob(
-    int
-  );
-
+/* bind int */
+void
+bind (
   int
-  column_bytes(int);
+, int
+);
 
+/* bind void * */
+void
+bind (
   int
-  column_bytes16(int);
+, void const *
+, int
+);
 
-  const unsigned char *
-  column_text(int);
-
-  const void *
-  column_text16(int);
-
+/* bind null */
+void
+bind (
   int
-  column_type(int);
+);
 
-  sqlite3_value *
-  column_value(int);
+/* bind char * */
+void
+bind (
+  int
+, char const *
+);
 
-  operator int();
-  operator double();
-  operator std::string();
-  operator raw();
+/* column_int */
+int
+column_int (
+  int
+);
 
-  /* Column counter used to keep track
-    of which column in the current
-    table is currently active.
-  */
-  int index;
+sqlite3_int64
+column_int64 (
+  int
+);
+
+/* column_double */
+double
+column_double (
+ int
+);
+
+const void *
+column_blob (
+  int
+);
+
+int
+column_bytes (
+  int
+);
+
+int
+column_bytes16 (
+  int
+);
+
+const unsigned char *
+column_text (
+  int
+);
+
+const void *
+column_text16 (
+  int
+);
+
+int
+column_type (
+  int
+);
+
+sqlite3_value *
+column_value (
+  int
+);
+
+operator int();
+operator double();
+operator std::string();
+operator raw();
+
+/* Column counter used to keep track
+  of which column in the current
+  table is currently active.
+*/
+int index;
 
 private:
-  sqlite3_stmt * stmt;
-  int * ref_count;
 
-  /* When a statement runs, set this to
-    max column.
-  */
-  int max_col;
+std::shared_ptr<sqlite3_stmt> stmt;
 
-  friend sqlite;
-};
+/* When a statement runs, set this to
+  max column.
+*/
+int max_col;
+friend class sqlite;
+}; /* sqlite satemenmt */
 
 /* sqlite */
-class sqlite : public data_model {
+class sqlite {
 public:
-	/* ctor
-    Takes char* to database location.
-  */
-  template <
-    typename Container = typesystems
-    ::typebuffer_queue<sqlite_statement>
-  >
-	sqlite(
-    char const *
-  );
 
-  /* dtor */
-	~sqlite(
-  );
+/* ctor
+  Takes the filepath "char const *" to
+  database location.
+*/
+explicit
+sqlite (
+  char const *
+);
+
+/* dtor */
+~sqlite ();
 
 #if __cplusplus >= 201103L
-  /* copy ctor */
-  sqlite(
-    sqlite const &
-  ) = delete;
+/* copy ctor */
+sqlite (
+  sqlite const &
+) = delete;
 
-  /* operator = */
-  sqlite &
-  operator=(
-    sqlite const &
-  ) = delete;
+/* operator = */
+sqlite &
+operator = (
+  sqlite const &
+) = delete;
 
-  /* move ctor */
-  sqlite(
-    sqlite &&
-  ) = default;
+/* move ctor */
+sqlite (
+  sqlite &&
+) = default;
 
-  /* move operator = */
-  sqlite &
-  operator=(
-    sqlite &&
-  ) = default;
+/* move operator = */
+sqlite &
+operator = (
+  sqlite &&
+) = default;
 #endif
 
-  /* create */
-  sqlite_statement
-  create(
-    char const * _query
-  );
+/* create */
+sqlite_statement
+create (
+  char const * _query
+);
 
-  /* step */
-  void
-  step(
-    sqlite_statement &
-  );
+/* step */
+void
+step (
+  sqlite_statement &
+);
 
-  /* step
-    Step through next statement in
-    the buffer.
-  */
-  void
-  step();
+/* step
+  Step through next statement in
+  the buffer.
+*/
+void
+step();
+
+/* iterator */
+class iterator
+: std::iterator <
+    sqlite::iterator
+  , std::input_iterator_tag
+  >
+{
+sqlite * db;
+
+public:
+
+/* ctor */
+explicit
+iterator (
+  sqlite &
+);
+
+/* ctor copy */
+iterator (
+  iterator const &
+) = default;
+
+iterator &
+operator = (
+  iterator const &
+) = default;
+
+/* ctor move */
+iterator (
+  iterator &&
+) = default;
+
+iterator &
+operator = (
+  iterator &&
+) = default;
+
+/* dtor */
+~iterator() = default;
+
+/* step statement */
+iterator &
+operator = (
+  sqlite_statement &
+);
+
+iterator &
+operator ++ ();
+
+iterator &
+operator ++ (
+  int
+);
+
+iterator &
+operator * ();
+
+iterator *
+operator -> ();
+} /* iterator */
 
 private:
-  sqlite3 * db;
-  char * zErrMsg;
-  char * result;
-  friend sqlite_statement;
-};
 
-data_model &
-operator<<(
-  data_model &
-, sqlite_statement const &
-);
+sqlite3 * db;
+char * zErrMsg;
+char * result;
+friend sqlite_statement;
+}; /* sqlite  */
 
 namespace bits {
 namespace sqlite {
@@ -252,5 +319,6 @@ check_error(
 } /* sqlite */ } /* bits */
 
 } /* data_pattern */
+#include "bits/sqlite_statement.tcc"
 #include "bits/sqlite.tcc"
 #endif
