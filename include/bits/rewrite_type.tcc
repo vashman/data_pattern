@@ -8,26 +8,23 @@
 #ifndef TYPESYSTEMS_REWRITE_TYPE_TCC
 #define TYPESYSTEMS_REWRITE_TYPE_TCC
 
-#include "variable_iterator.hpp"
+#include "../variable_iterator.hpp"
 
 namespace data_pattern {
 namespace bits {
 
 /* owrrite type */
-template <
-  typename Iter, typename Writer >
+template <typename T, typename Writer >
 struct owrite_type {
-Iter buffer_begin, buffer_end;
-Writer writer;
+T const & var;
+Writer const writer;
 
 explicit
 owrite_type (
-  Iter _begin
-, Iter _end
-, Writer _writer
+  T const & _var
+, Writer const _writer
 )
-: buffer_begin (_begin)
-, buffer_end (_end)
+: var (_var)
 , writer (_writer) {
 }
 
@@ -35,18 +32,17 @@ owrite_type (
 
 /* owrite type << output_model */
 template <
-  typename Iter
+  typename T
 , typename Writer
 , typename Buffer
 , typename MakeIter >
 output_model<Buffer,MakeIter> &
 operator << (
   output_model<Buffer,MakeIter> & _mdl
-, owrite_type<Iter,Writer> & _writer
+, owrite_type<T,Writer> const & _writer
 ){
 _writer.writer (
-  _writer.buffer_begin
-, _writer.buffer_end
+  _writer.var
 , _mdl.output_iterator(_mdl.buffer)
 );
 }
@@ -55,35 +51,35 @@ _writer.writer (
 template <typename T, typename Writer>
 struct iwrite_type {
 
-variable_iterator<T> iterator;
-Writer writer;
+T & var;
+Writer const writer;
 
 explicit
 iwrite_type (
   T & _var
-, Writer _writer
+, Writer const _writer
 )
-: iterator (_var)
+: var (_var)
 , writer (_writer) {
 }
 
-}; / iwrite type /
+}; /* iwrite type */
 
 /* iwrite type >> input */
 template <
-  typename Iter
+  typename T
 , typename Writer
 , typename Buffer
 , typename MakeIter >
 input_model<Buffer,MakeIter> &
 operator >> (
   input_model<Buffer,MakeIter> & _mdl
-, iwrite_type<Buffer,Writer> & _writer
+, iwrite_type<T,Writer> & _writer
 ){
 _writer.writer (
   _mdl.input_iterator(_mdl.buffer)
 , _mdl.input_iterator(_mdl.buffer)
-, _writer.iterator
+, _writer.var
 );
 }
 
@@ -91,56 +87,29 @@ _writer.writer (
 
 /* rewrite output */
 template <typename T, typename Writer>
-bits::owrite_type
+bits::owrite_type <T,Writer>
 rewrite_output (
-  T const & _var // input buffer
-, Writer _writer
+  T const & _var
+, Writer const _writer
 ){
-T * var_begin (& _var);
-T * var_end (var);
-return
-bits::owrite_type <T*, Writer>
-(_var_begin, ++_var_end, _writer);
+return bits::owrite_type <T, Writer>
+(_var, _writer);
 }
 
 /* rewrite input */
 template <typename T, typename Writer>
 bits::iwrite_type <T, Writer>
 rewrite_input (
-  T & _var // output variable
-, Writer _writer
+  T & _var
+, Writer const _writer
 ){
 return bits::iwrite_type <T, Writer>
 (_var, _writer);
 }
 
-/* rewriter iterator assignment operator
-*/
-template <
-  typename... Ts
-, typename Iterator
-, typename T >
-template <typename U>
-void
-operator = (
-  U const & _val
-){
-auto & writer = get<U>(this->map);
-writer(_val); 
-}
-
-/* rewriter iterator cast operator */
-template <
-  typename... Ts
-, typename Iterator
-, typename T >
-template <typename U>
-  rewrite_iterator<Ts...,Iterator,T>
-::operator U (){
-auto writer = get<U>(this->writer);
-return writer(*iter);
-}
-
 } /* data_pattern */
+#include "orewrite_iterator.tcc"
+#include "irewrite_iterator.tcc"
+//#include "rewrite_iterator.tcc"
 #endif
 

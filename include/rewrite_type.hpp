@@ -10,7 +10,9 @@
 #define DATA_PATTERN_REWRITE_TYPE_HPP
 
 #include <typesystems/writer.hpp>
-#include "data_model.hpp"
+#include <typesystems/type_map.hpp>
+#include "output_model.hpp"
+#include "input_model.hpp"
 
 namespace data_pattern {
 namespace bits {
@@ -22,14 +24,14 @@ struct owrite_type;
 
 /* owrite type << output_model */
 template <
-  typename Iter
+  typename T
 , typename Writer
 , typename Buffer
 , typename MakeIter >
 output_model<Buffer,MakeIter> &
 operator << (
   output_model<Buffer,MakeIter> &
-, owrite_type<Iter,Writer> &
+, owrite_type<T,Writer> const &
 );
 
 /* iwrite type */
@@ -38,24 +40,24 @@ struct iwrite_type;
 
 /* iwrite type >> input */
 template <
-  typename Iter
+  typename T
 , typename Writer
 , typename Buffer
 , typename MakeIter >
 input_model<Buffer,MakeIter> &
 operator >> (
   input_model<Buffer,MakeIter> &
-, iwrite_type<Buffer,Writer> &
+, iwrite_type<T,Writer> &
 );
 
 } /* bits */
 
 /* rewrite output */
 template <typename T, typename Writer>
-bits::owrite_type
+bits::owrite_type <T,Writer>
 rewrite_output (
   T const & // input buffer
-, Writer
+, Writer const
 );
 
 /* rewrite input */
@@ -63,52 +65,13 @@ template <typename T, typename Writer>
 bits::iwrite_type <T, Writer>
 rewrite_input (
   T &
-, Writer
+, Writer const
 );
-
-/* rewrite iterator */
-template <
-  typename... Ts
-  typename Iterator
-, typename T
-  = typesystems::writer_function >
-class rewrite_iterator  {
-
-Iterator iterator;
-typesystems::type_map<T,Ts...> map;
-
-/* assignment operator */
-template <typename U>
-operator = (
-  U const &
-);
-
-/* cast operator */
-template <typename U>
-operator U();
-
-rewrite_iterator<Ts...,Iterator,T> &
-operator * ();
-
-rewrite_iterator<Ts...,Iterator,T> * 
-operator -> ();
-}; /* rewrite_iterator */
-
-/* make rewrite iterator */
-template <
-  typename... Ts
-, typename Iterator
-, typename T >
-rewrite_iterator<Ts..., Iterator, T>
-make_rewrite_iterator (
-  Iterator _iter
-){
-return
-rewrite_iterator<Ts..., Iterator, T>
-(iter);
-}
 
 } /* data_pattern */
-#include "./bits/rewrite_type.tcc"
+#include "bits/irewrite_iterator.hpp"
+#include "bits/orewrite_iterator.hpp"
+//#include "bits/rewrite_iterator.hpp"
+#include "bits/rewrite_type.tcc"
 #endif
 
