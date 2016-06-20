@@ -8,179 +8,292 @@
 #ifndef DATA_PATTERN_INPUT_MODEL_TCC
 #define DATA_PATTERN_INPUT_MODEL_TCC
 
+#include <utility>
+
 namespace data_pattern {
 
 /* ctor */
 template <
-  typename Buffer, typename InputIter >
-  input_model <Buffer, InputIter>
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+  input_model <
+  Device
+, MakeInputIterator
+, Sync >
 ::input_model (
-  Buffer _buffer
-, InputIter _input_iter
+  Device _device
+, MakeInputIterator _input_iter
+, Sync _sync
 )
-: input_iterator (_input_iter)
-, buffer (_buffer) {
-}
+: model <Device,Sync> (
+    std::move(_device)
+  , std::move(_sync) )
+, input_iterator (
+  std::move(_input_iter) )
+{}
 
 /* make input model */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter>
-make_imodel (
-  Buffer _buffer
-, InputIter _input_iter
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model<
+  Device
+, MakeInputIterator
+, Sync >
+make_input_model (
+  Device _device
+, MakeInputIterator _input_iter
+, Sync _sync
 ){
-return
-input_model<Buffer,InputIter> (
-  _buffer
-, _input_iter );
-}
-
-/* empty 
-  Check if buffer is empty.
-*/
-template <
-  typename T
-, typename Buffer
-, typename InputIter >
-bool
-empty (
-  input_model <Buffer, InputIter>
-  const & _mdl
-){
-return empty<T>(_mdl.buffer);
+return input_model <
+Device, MakeInputIterator, Sync > (
+  std::move(_device)
+, std::move(_input_iter)
+, std::move(_sync) );
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer,InputIter> & _mdl
+  input_model <
+    Device, MakeInputIterator, Sync >
+  & _mdl
 , bool & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , signed short & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , unsigned short & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , signed int & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , unsigned int & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , signed long & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , unsigned long & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , float & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter> & _mdl
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+  & _mdl
 , double & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model<Buffer,InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model<Buffer,InputIter>
+  input_model <
+  Device
+, MakeInputIterator
+, Sync >
   & _mdl
 , long double & _var
 ){
 _var
-  = *_mdl.input_iterator(_mdl.buffer)++;
+  = *_mdl.input_iterator(_mdl.device)++;
+return _mdl;
+}
+
+/* input value */
+template <
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
+operator >> (
+  input_model <
+  Device
+, MakeInputIterator
+, Sync >
+  & _mdl
+, char & _var
+){
+_var
+  = *_mdl.input_iterator(_mdl.device)++;
 return _mdl;
 }
 
 } /* data_pattern */
 #endif
+

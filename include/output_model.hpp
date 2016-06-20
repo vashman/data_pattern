@@ -8,151 +8,284 @@
 #ifndef DATA_PATTERN_OUTPUT_MODEL_HPP
 #define DATA_PATTERN_OUTPUT_MODEL_HPP
 
+#include "model.hpp"
+
 namespace data_pattern {
 
 /* output model */
 template <
-  typename Buffer, typename OutputIter >
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
 class output_model;
 
 template <
-  typename Buffer, typename OutputIter >
-output_model<Buffer,OutputIter>
-make_omodel (
-  Buffer
-, OutputIter
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync >
+make_output_model (
+  Device
+, MakeOutputIterator
+, Sync
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer,OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , bool const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer,OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , signed short const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer,OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer,OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync> &
 , unsigned short const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer, OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , signed int const &
 );
 
 /* output value */
 template <
-  typename Buffer
-, typename OutputIter >
-output_model <Buffer, OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , unsigned int const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer, OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , signed long const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer, OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , unsigned long const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer, OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , float const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer, OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , double const &
 );
 
 /* output value */
 template <
-  typename Buffer, typename OutputIter >
-output_model <Buffer, OutputIter> &
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
 operator << (
-  output_model <Buffer, OutputIter> &
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
 , long double const &
+);
+
+/* output value */
+template <
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
+operator << (
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
+, unsigned char const &
+);
+
+/* output value */
+template <
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+output_model <
+  Device
+, MakeOutputIterator
+, Sync > &
+operator << (
+  output_model <
+    Device
+  , MakeOutputIterator
+  , Sync > &
+, signed char const &
 );
 
 /* output model */
 template <
-  typename Buffer, typename OutputIter >
-struct output_model {
-OutputIter output_iterator;
-Buffer buffer;
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+struct output_model
+: public virtual
+  model <Device,Sync>
+{
+MakeOutputIterator output_iterator;
 
-/* ctor */
+/* dtor */
 virtual
-~output_model() = default;
+~output_model() noexcept = default;
 
 /* ctor */
-explicit
-output_model(
-  Buffer
-, OutputIter
+output_model (
+  Device
+, MakeOutputIterator
+, Sync
 );
 
 /* ctor move */
 output_model (
-  output_model <Buffer,OutputIter> &&
+  output_model <
+    Device,MakeOutputIterator,Sync > &&
 ) = default;
 
 /* assignment operator move */
-output_model <Buffer,OutputIter> &
+output_model <
+  Device,MakeOutputIterator,Sync > &
 operator = (
-  output_model <Buffer,OutputIter> &&
+  output_model <
+    Device,MakeOutputIterator,Sync > &&
 ) = default;
 
 /* ctor copy */
 output_model (
-  output_model <Buffer,OutputIter>
+  output_model <
+    Device,MakeOutputIterator,Sync >
   const &
 ) = delete;
 
 /* assignment operator copy */
-output_model <Buffer,OutputIter> &
+output_model <
+  Device,MakeOutputIterator,Sync > &
 operator = (
-  output_model <Buffer,OutputIter>
+  output_model <
+    Device,MakeOutputIterator,Sync >
   const &
 ) = delete;
 

@@ -9,7 +9,6 @@
 #define DATA_PATTERN_SQLITE_CPP
 
 #include <string>
-#include <iostream>
 #include "../include/sqlite.hpp"
 
 namespace data_pattern {
@@ -21,13 +20,6 @@ sqlite_exception::sqlite_exception (
 )
 : std::runtime_error (what_arg)
 , rv (_rv) {
-}
-
-/* sqlite dtor */
-sqlite::~sqlite (){
-sqlite3_close(this->db);
-delete zErrMsg;
-delete result;
 }
 
 namespace bits {
@@ -67,7 +59,7 @@ switch (_rv){
     );
   case SQLITE_RANGE:
     throw sqlite_exception (
-      "Sqlite: 2nd parameter to"
+      "Sqlite: Nth parameter to"
       " sqlite3_bind out of range."
     , _rv
     );
@@ -208,18 +200,23 @@ void
 sqlite::step (
   sqlite_statement & _stmt
 ){
-  bits::sqlite
-::check_error (
-  sqlite3_step(_stmt.stmt) );
-_stmt.max_col = sqlite3_column_count (
-  _stmt.stmt );
+bits::sqlite::check_error (
+  sqlite3_step(_stmt.stmt.get()) );
+*_stmt.max_col = sqlite3_column_count (
+  _stmt.stmt.get() );
 _stmt.index = 0;
 }
 
-/* step */
+/* sqlite step */
 void
-sqlite::step (){
-this->step(stmt);
+sqlite::step (
+  sqlite_statement && _stmt
+){
+bits::sqlite::check_error (
+  sqlite3_step(_stmt.stmt.get()) );
+*_stmt.max_col = sqlite3_column_count (
+  _stmt.stmt.get() );
+_stmt.index = 0;
 }
 
 /* sqlite create */
@@ -230,263 +227,7 @@ sqlite::create (
 return sqlite_statement(_query, *this);
 }
 
-/* sqlite_statement */
-/* ctor */
-sqlite_statement::sqlite_statement (
-  char const * _query
-, sqlite & _db
-)
-/* index starts at 1 and then >1 */
-: index (1) 
-, stmt ()
-, max_col (0) {
-  bits::sqlite
-::check_error(
-  sqlite3_prepare_v2 (
-    _db.db
-  , _query
-  , -1 // Query is null terminated.
-  , & this->stmt
-  /* There is never an unused portion of
-    the statement.
-  */
-  , 0
-  )
-);
-}
-
-/* sqlite_statement bind_int */
-void
-sqlite_statement::bind (
-  int _index
-, int _var
-){
-  bits::sqlite
-::check_error (
-  sqlite3_bind_int (
-    this->stmt
-  , _index
-  , _var
-  )
-);
-}
-
-/* */
-void
-sqlite_dtor_data (
-  void *
-);
-
-void
-sqlite_dtor_data (
-  void * _data
-){
-// do nothing
-}
-
-/* sqlite_statement bind_blob */
-void
-sqlite_statement::bind (
-  int _index
-, void const * _blob
-, int _size
-){
-  bits::sqlite
-::check_error (
-  sqlite3_bind_blob (
-    this->stmt
-  , _index
-  , _blob
-  , _size
-  , sqlite_dtor_data
-  )
-);
-}
-
-/* sqlite_statement bind string */
-void
-sqlite_statement::bind (
-  int _index
-, char const * _str
-){
-bits::sqlite::check_error(
-  sqlite3_bind_text(
-    this->stmt
-  , _index
-  , _str
-  , static_cast<int>(
-        std
-      ::char_traits<char>::length(_str)
-    )
-  , sqlite_dtor_data
-  )
-);
-}
-
-/* sqlite_statement bind double */
-void
-sqlite_statement::bind (
-  int _index
-, double _var
-){
-bits::sqlite::check_error(
-  sqlite3_bind_double(
-    this->stmt
-  , _index
-  , _var
-  )
-);
-}
-
-/* sqlite bind null */
-void
-sqlite_statement::bind (
-  int _index
-){
-bits::sqlite::check_error(
-  sqlite3_bind_null(
-    this->stmt
-  , _index
-  )
-);
-}
-
-/* sqlite_statement column_int */
-int
-sqlite_statement::column_int (
-  int _index
-){
-  if (_index > this->max_col){
-  throw ;
-  }
-return sqlite3_column_int(
-  this->stmt
-, _index
-);
-}
-
-sqlite_statement::operator int(
-){
-return this->column_int(this->index++);
-}
-
-/* sqlite_statement column_double */
-double
-sqlite_statement::column_double(
-  int _index
-){
-  if (_index > this->max_col){
-  throw ;
-  }
-return sqlite3_column_double(
-  this->stmt
-, _index
-);
-}
-
-sqlite_statement::operator double (){
-return
-this->column_double(this->index++);
-}
-
-sqlite_statement::operator std::string (
-){
-return
-std::string(
-  reinterpret_cast<char const *>(
-    this->column_text(this->index++)
-  )
-);
-}
-
-sqlite_statement::operator raw (){
-raw temp(
-  this->column_blob(this->index)
-, static_cast<std::size_t>(
-    this->column_bytes(this->index)
-  )
-);
-++this->index;
-return temp;
-}
-
-/* sqlite_statement column_blob */
-const void *
-sqlite_statement::column_blob (
-  int _index
-){
-  if (_index > this->max_col){
-  throw ;
-  }
-return sqlite3_column_blob(
-  this->stmt
-, _index
-);
-}
-
-/* column bytes */
-int
-sqlite_statement::column_bytes (
-  int _index
-){
-return sqlite3_column_bytes(
-  this->stmt
-, _index
-);
-}
-
-/* column bytes 16 */
-int
-sqlite_statement::column_bytes16 (
-  int _index
-){
-return sqlite3_column_bytes16(
-  this->stmt
-, _index
-);
-}
-
-/* column text */
-const unsigned char *
-sqlite_statement::column_text (
-  int _index
-){
-return sqlite3_column_text(
-  this->stmt
-, _index
-);
-}
-
-/* column bytes 16 */
-const void *
-sqlite_statement::column_text16 (
-  int _index
-){
-return sqlite3_column_text16(
-  this->stmt
-, _index
-);
-}
-
-sqlite3_value *
-sqlite_statement::column_value (
-  int _index
-){
-return sqlite3_column_value(
-  this->stmt
-, _index
-);
-}
-
-int
-sqlite_statement::column_type (
-  int _index
-){
-return sqlite3_column_type(
-  this->stmt
-, _index
-);
-}
-
 } /* data_pattern */
+#include "bits/sqlite_statement.cpp"
 #endif
+

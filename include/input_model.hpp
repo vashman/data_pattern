@@ -8,169 +8,279 @@
 #ifndef DATA_PATTERN_INPUT_MODEL_HPP
 #define DATA_PATTERN_INPUT_MODEL_HPP
 
+#include "model.hpp"
+
 namespace data_pattern {
 
 /* input model */
 template <
-/* Buffer needs to support; begin, end
-  , empty<T> and MakeInputIter.
-*/
-  typename Buffer, typename InputIter >
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
 class input_model;
 
-/* empty
-  Check if buffer is empty.
-*/
 template <
-  typename T
-, typename Buffer
-, typename InputIter >
-bool
-empty (
-  input_model <Buffer, InputIter>
-  const &
-);
-
-template <
-  typename Buffer, typename InputIter >
-input_model <Buffer, InputIter>
-make_imodel (
-  Buffer
-, InputIter
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
+make_input_model (
+  Device
+, MakeInputIterator
+, Sync
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter>
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , bool &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , signed short &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , unsigned short &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , signed int &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync  >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , unsigned int &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , signed long &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter >
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , unsigned long &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter>
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , float &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter>
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , double &
 );
 
 /* input value */
 template <
-  typename Buffer, typename InputIter>
-input_model <Buffer, InputIter> &
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator >> (
-  input_model <Buffer, InputIter> &
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
 , long double &
+);
+
+/* input value */
+template <
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
+operator >> (
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &
+, char &
 );
 
 /* input model */
 template <
-/* Buffer needs to support; Begin, End
-  , empty<T> and MakeInputIter.
-*/
-  typename Buffer
-, typename InputIter >
-struct input_model {
-InputIter input_iterator;
-Buffer buffer;
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+struct input_model
+: public virtual 
+  model <Device,Sync>
+{
+MakeInputIterator input_iterator;
 
 /* ctor */
 input_model (
-  Buffer
-, InputIter
+  Device
+, MakeInputIterator
+, Sync
 );
 
 /* dtor */
 virtual
-~input_model() = default;
+~input_model() noexcept = default;
 
 /* ctor move */
 input_model (
-  input_model <Buffer, InputIter> &&
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &&
 ) = default;
 
 /* assignment operator move */
-input_model <Buffer, InputIter> &
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator = (
-  input_model <Buffer, InputIter> &&
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync > &&
 ) = default;
 
 /* ctor copy */
 input_model (
-  input_model <Buffer, InputIter>
+  input_model <
+    Device
+ , MakeInputIterator
+ , Sync >
   const &
 ) = delete;
 
 /* assignment operator copy */
-input_model <Buffer, InputIter> &
+input_model <
+  Device
+, MakeInputIterator
+, Sync > &
 operator = (
-  input_model <Buffer, InputIter>
+  input_model <
+    Device
+  , MakeInputIterator
+  , Sync >
   const &
 ) = delete;
 

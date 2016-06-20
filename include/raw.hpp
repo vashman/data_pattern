@@ -71,7 +71,7 @@ ptr () const;
     Page through the stream.
   */
 //  page();
-};
+}; /* raw */
 
 template <
   typename T, typename allocator >
@@ -141,8 +141,9 @@ raw_data<T,allocator>::operator = (
 return *this;
 }
 
-typedef raw_data<void> raw;
+using raw = raw_data <void>;
 
 } /* data_pattern */
 #include "bits/raw_data_model_shifts.hpp"
 #endif
+

@@ -8,12 +8,12 @@
 #include <iostream>
 #include "../include/raw.hpp"
 #include "../src/sqlite.cpp"
-#include "../src/sqlite_rewriters.cpp"
 
 using std::cout;
 using std::endl;
 using data_pattern::sqlite;
 using data_pattern::raw;
+using data_pattern::sqlite_statement;
 
 int main () {
 sqlite db("testdata");
@@ -21,15 +21,13 @@ sqlite db("testdata");
   yet.
 */
 
-auto query2 = db.create(
+db.step ( db.create (
   "CREATE TABLE IF NOT EXISTS test3"
   "(Value INT, str TEXT, dec REAL, "
   "raw Blob);"
-);
+) );
 
-db.step(query2);
-
-data_pattern::sqlite_statement query1 (
+sqlite_statement query1 (
   "CREATE TABLE IF NOT EXISTS test"
   "(ID INT PRIMARY KEY NOT NULL"
   ", Value INT);"
@@ -39,50 +37,61 @@ data_pattern::sqlite_statement query1 (
 /* Run the statement. */
 db.step(query1);
 
-/**/
-db << db.create(
+auto query3 = db.create(
   "INSERT INTO test3 "
-  "(Value, str, dec, raw) Values (?,?,?,?);"
-);
+  "(Value, str, dec, raw) Values"
+  " (?,?,?,?);" );
 
-db << 45 << std::string("test string")
-<< 12.04 << raw("0101", 4);
-db.step();
+*query3 = 45;
+++query3;
+*query3 = std::string("test string");
+++query3;
+*query3 = 12.04;
+++query3;
+*query3 = raw("0101", 4);
 
-/**/
-db << db.create(
+db.step(query3);
+
+try {
+auto query4 = db.create (
   "INSERT INTO test "
-  "(ID, Value) Values (?, ?);"
-);
+  "(ID, Value) Values (?, ?);" );
 
 /* bind data into data_model */
-db << 2 << 4;
+*query4 = 2; ++query4; *query4 = 4;
+db.step(query4);
 
+} catch (...) {
+
+}
+
+//
 int temp_int;
 std::string temp_str;
 data_pattern::raw temp_raw;
 double temp_dbl;
 
-/*
-db << db.create(
-  "SELECT ID, Value FROM test;"
-);
-db.step();
+auto query5 ( db.create (
+  "SELECT ID, Value FROM test;" ));
+db.step(query5);
 
 int temp;
-db >> temp; cout << temp;
-db >> temp; cout << temp << endl;
-*/
+temp = *query5++;
+temp = *query5++;
 
-db << db.create(
+auto query6 ( db.create (
   "SELECT Value, str, dec, raw FROM "
-  "test3;"
-);
-db.step();
+  "test3;" ));
+db.step(query6);
 
-db >> temp_int >> temp_str >> temp_dbl
->> temp_raw;
+temp_int = *query6++;
+temp_str = static_cast <
+  std::string >(*query6++);
+temp_dbl = *query6++;
 
+cout << "value: " << temp_int
+<< " str: " << temp_str << " dec: "
+<< temp_dbl;
 
 return 0;
 }

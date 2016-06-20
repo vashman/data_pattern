@@ -1,5 +1,11 @@
-#ifndef DATA_PATTERN_STRING_DATA_MODEL_SHIFTS_HPP
-#define DATA_PATTERN_STRING_DATA_MODEL_SHIFTS_HPP
+// Include to add <<>> operators
+
+#ifdef DATA_PATTERN_INPUT_MODEL_HPP
+
+#ifndef DATA_PATTERN_STRING_INPUT_MODEL\
+_HPP
+#define DATA_PATTERN_STRING_INPUT_MODEL\
+_HPP
 
 #include <string>
 
@@ -8,10 +14,58 @@ namespace data_pattern {
 template <
   typename charT
 , typename allocator
->
-data_model &
-operator<<(
-  data_model &
+, typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <Device,MakeInputIterator,Sync> &
+operator >> (
+  input_model<Device,MakeInputIterator,Sync> &
+, std::basic_string<charT,allocator> &
+);
+
+template <
+  typename charT
+, typename allocator
+, typename Device
+, typename MakeInputIterator
+, typename Sync >
+input_model <Device,MakeInputIterator,Sync> &
+operator >> (
+  input_model <
+    Device, MakeInputIterator, Sync >
+  & _mdl
+, std::basic_string<charT,allocator>
+  & _string
+){
+_string =
+*_mdl.input_iterator(_mdl.device)++;
+return _mdl;
+}
+
+} /* data_pattern */
+#endif
+#endif
+
+#ifdef DATA_PATTERN_OUTPUT_MODEL_HPP
+
+#ifndef DATA_PATTERN_STRING_OUTPUT\
+_MODEL_HPP
+#define DATA_PATTERN_STRING_OUTPUT\
+_MODEL_HPP
+
+#include <string>
+
+namespace data_pattern {
+
+template <
+  typename charT
+, typename allocator
+, typename Device
+, typename MakeInputIterator
+, typename Sync >
+output_model <Device,MakeInputIterator,Sync> &
+operator << (
+  output_model<Device,MakeInputIterator,Sync> &
 , std::basic_string<charT,allocator>
   const &
 );
@@ -19,40 +73,23 @@ operator<<(
 template <
   typename charT
 , typename allocator
->
-data_model &
-operator>>(
-  data_model &
-, std::basic_string<charT,allocator> &
-);
-
-template <
-  typename charT
-, typename allocator
->
-data_model &
-operator<<(
-  data_model & _mdl
+, typename Device
+, typename MakeInputIterator
+, typename Sync >
+output_model <Device,MakeInputIterator,Sync> &
+operator << (
+  output_model <
+    Device, MakeInputIterator, Sync >
+  & _mdl
 , std::basic_string<charT,allocator>
-  const & _str
+  const & _string
 ){
-rewrite(_mdl,_str);
+*_mdl.output_iterator(_mdl.device)++
+  = _string;
 return _mdl;
 }
 
-template <
-  typename charT
-, typename allocator
->
-data_model &
-operator>>(
-  data_model & _mdl
-, std::basic_string<charT,allocator> &
-  _str
-){
-rewrite(_mdl,_str);
-return _mdl;
-}
-
-} /* data_pattern */
+} /* data pattern */
 #endif
+#endif
+

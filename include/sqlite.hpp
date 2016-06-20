@@ -40,13 +40,30 @@ int const rv;
 /* query_statement wraps an sqlite
   statement and does some book keeping.
 */
-class sqlite_statement {
+class sqlite_statement
+: public std::iterator <
+  void, std::input_iterator_tag >{
+
+std::shared_ptr<sqlite3_stmt> stmt;
+std::shared_ptr<sqlite3> db;
+
+/* When a statement runs, set this to
+  max column.
+*/
+std::shared_ptr<int> max_col;
+
 public:
+
+/* Column counter used to keep track
+  of which column in the current
+  table is currently active.
+*/
+int index;
 
 /* ctor */
 explicit
 sqlite_statement (
-  char const *
+  char const * // query
 , sqlite &
 );
 
@@ -60,7 +77,7 @@ sqlite_statement (
   sqlite_statement &&
 ) = default;
 
-/**/
+/* operator = */
 sqlite_statement &
 operator = (
   sqlite_statement const &
@@ -68,6 +85,47 @@ operator = (
 
 /* dtor */
 ~sqlite_statement() = default;
+
+sqlite_statement &
+operator ++ ();
+
+sqlite_statement
+operator ++ (int);
+
+sqlite_statement &
+operator * ();
+
+sqlite_statement *
+operator -> ();
+
+operator int ();
+
+operator double ();
+
+explicit
+operator std::string ();
+
+operator raw ();
+
+sqlite_statement &
+operator = (
+  int
+);
+
+sqlite_statement &
+operator = (
+  double
+);
+
+sqlite_statement &
+operator = (
+  std::string
+);
+
+sqlite_statement &
+operator = (
+  raw
+);
 
 /* bind double */
 void
@@ -156,25 +214,11 @@ column_value (
   int
 );
 
-operator int();
-operator double();
-operator std::string();
-operator raw();
+bool
+operator == (
+  sqlite_statement const &
+) const;
 
-/* Column counter used to keep track
-  of which column in the current
-  table is currently active.
-*/
-int index;
-
-private:
-
-std::shared_ptr<sqlite3_stmt> stmt;
-
-/* When a statement runs, set this to
-  max column.
-*/
-int max_col;
 friend class sqlite;
 }; /* sqlite satemenmt */
 
@@ -192,9 +236,8 @@ sqlite (
 );
 
 /* dtor */
-~sqlite ();
+~sqlite () = default;
 
-#if __cplusplus >= 201103L
 /* copy ctor */
 sqlite (
   sqlite const &
@@ -216,7 +259,6 @@ sqlite &
 operator = (
   sqlite &&
 ) = default;
-#endif
 
 /* create */
 sqlite_statement
@@ -230,79 +272,18 @@ step (
   sqlite_statement &
 );
 
-/* step
-  Step through next statement in
-  the buffer.
-*/
+/* step */
 void
-step();
-
-/* iterator */
-class iterator
-: std::iterator <
-    sqlite::iterator
-  , std::input_iterator_tag
-  >
-{
-sqlite * db;
-
-public:
-
-/* ctor */
-explicit
-iterator (
-  sqlite &
+step (
+  sqlite_statement &&
 );
 
-/* ctor copy */
-iterator (
-  iterator const &
-) = default;
-
-iterator &
-operator = (
-  iterator const &
-) = default;
-
-/* ctor move */
-iterator (
-  iterator &&
-) = default;
-
-iterator &
-operator = (
-  iterator &&
-) = default;
-
-/* dtor */
-~iterator() = default;
-
-/* step statement */
-iterator &
-operator = (
-  sqlite_statement &
-);
-
-iterator &
-operator ++ ();
-
-iterator &
-operator ++ (
-  int
-);
-
-iterator &
-operator * ();
-
-iterator *
-operator -> ();
-} /* iterator */
 
 private:
 
-sqlite3 * db;
-char * zErrMsg;
-char * result;
+std::shared_ptr<sqlite3> db;
+std::unique_ptr<char> zErrMsg;
+std::unique_ptr<char> result;
 friend sqlite_statement;
 }; /* sqlite  */
 
@@ -316,9 +297,10 @@ void
 check_error(
   int
 );
+
 } /* sqlite */ } /* bits */
 
 } /* data_pattern */
-#include "bits/sqlite_statement.tcc"
 #include "bits/sqlite.tcc"
 #endif
+
