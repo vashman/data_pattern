@@ -9,7 +9,6 @@
 #define DATA_PATTERN_OUTPUT_MODEL_TCC
 
 #include <utility>
-#include <iostream>
 
 namespace data_pattern {
 
@@ -138,7 +137,6 @@ operator << (
   & _mdl
 , signed int const & _var
 ){
-std::cout << "int: " << _var << "\n";
 *_mdl.output_iterator(_mdl.device)++
   = _var;
 return _mdl;
@@ -249,7 +247,6 @@ operator << (
   & _mdl
 , double const & _var
 ){
-std::cout << "double\n";
 *_mdl.output_iterator(_mdl.device)++
   = _var;
 return _mdl;

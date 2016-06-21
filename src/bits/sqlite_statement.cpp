@@ -209,6 +209,10 @@ sqlite_statement &
 sqlite_statement::operator = (
   raw _var
 ){
+this->bind (
+  this->index
+, _var.ptr()
+, static_cast<int>(_var.size()) );
 return *this;
 }
 

@@ -52,18 +52,13 @@ auto query3 = db.create(
 
 db.step(query3);
 
-try {
 auto query4 = db.create (
   "INSERT INTO test "
   "(ID, Value) Values (?, ?);" );
 
 /* bind data into data_model */
-*query4 = 2; ++query4; *query4 = 4;
+*query4 = 1; ++query4; *query4 = 4;
 db.step(query4);
-
-} catch (...) {
-
-}
 
 //
 int temp_int;
