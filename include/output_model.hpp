@@ -289,7 +289,114 @@ operator = (
   const &
 ) = delete;
 
+class iterator
+: public
+  std::iterator <
+    std::output_iterator_tag, void >{
+
+output_model <
+  Device, MakeOutputIterator, Sync >
+* output_mdl;
+
+public:
+
+explicit
+iterator (
+  output_model <
+    Device, MakeOutputIterator, Sync >
+ & _mdl
+)
+: output_mdl (&_mdl)
+{}
+
+iterator (iterator const &) = default;
+
+iterator &
+operator = (iterator const &) = default;
+
+iterator (iterator &&) = default;
+
+iterator &
+operator = (iterator &&) = default;
+
+~iterator () = default;
+
+iterator &
+operator * (){
+return *this;
+}
+
+iterator &
+operator -> (){
+return this;
+}
+
+iterator
+operator ++ (int){
+sync(*(this->output_mdl));
+return *this;
+}
+
+iterator &
+operator ++ (){
+sync(*(this->output_mdl));
+return *this;
+}
+
+template <typename T>
+void
+operator = (
+  T const & _var
+){
+*(this->output_mdl) << _var;
+}
+
+bool
+operator == (
+  iterator const &
+) const {
+return (
+  (this->input_mdl->state == model_state::message)
+||
+  (this->input_mdl->state == model_state::transmission)
+||
+  (this->input_mdl->state == model_state::end)
+);
+}
+
+bool
+operator != (
+  iterator const & _lhs
+) const {
+return !(*this == _lhs);
+}
+
+}; /*  iterator */
 }; /* odata_model */
+
+template <
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+  typename output_model <
+    Device, MakeOutputIterator, Sync >
+::iterator
+begin (
+  output_model <
+    Device, MakeOutputIterator, Sync > &
+);
+
+template <
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+  typename output_model <
+    Device, MakeOutputIterator, Sync >
+::iterator
+end (
+  output_model <
+    Device, MakeOutputIterator, Sync > &
+);
 
 } /* data_pattern */
 #include "bits/output_model.tcc"

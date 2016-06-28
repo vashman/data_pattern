@@ -54,6 +54,40 @@ return output_model <
 , std::move(_sync) );
 }
 
+template <
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+  typename output_model <
+    Device, MakeOutputIterator, Sync >
+::iterator
+begin (
+  output_model <
+    Device, MakeOutputIterator, Sync >
+& _mdl
+){
+return typename output_model <
+  Device, MakeOutputIterator, Sync >
+::iterator(_mdl);
+}
+
+template <
+  typename Device
+, typename MakeOutputIterator
+, typename Sync >
+  typename output_model <
+    Device, MakeOutputIterator, Sync >
+::iterator
+end (
+  output_model <
+    Device, MakeOutputIterator, Sync >
+& _mdl
+){
+return typename output_model <
+  Device, MakeOutputIterator, Sync >
+::iterator(_mdl);
+}
+
 /* output value */
 template <
   typename Device
