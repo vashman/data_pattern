@@ -33,6 +33,40 @@ template <
   std::move(_input_iter) )
 {}
 
+template <
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+  typename input_model <
+    Device, MakeInputIterator, Sync >
+::iterator
+begin (
+  input_model <
+    Device, MakeInputIterator, Sync >
+  & _mdl
+){
+return typename input_model <
+    Device, MakeInputIterator, Sync >
+::iterator (_mdl);
+}
+
+template <
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+  typename input_model <
+    Device, MakeInputIterator, Sync >
+::iterator
+end (
+  input_model <
+    Device, MakeInputIterator, Sync >
+  & _mdl
+){
+return typename input_model <
+    Device, MakeInputIterator, Sync >
+::iterator(_mdl);
+}
+
 /* make input model */
 template <
   typename Device

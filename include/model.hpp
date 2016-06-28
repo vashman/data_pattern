@@ -18,11 +18,22 @@ sync (
   model <Device, Sync> &
 );
 
+enum class model_state {
+  busy // Device is inoperable.
+, incoming // Device is busy with incoming data.
+, outgoing // Device is busy with outgoing data.
+, standby // Device is operable
+, message // EOL / EOM end of message / section processed.
+, transmission // transmission processed.
+, end // Device is standing by at end of file.
+};
+
 template <
   typename Device, typename Sync >
 struct model {
 Device device;
 Sync sync;
+model_state state;
 
 model (
   Device
@@ -60,6 +71,7 @@ model<Device,Sync>::model (
 )
 : device (std::move(_device))
 , sync (std::move(_sync))
+, state (model_state::standby)
 {}
 
 template <
@@ -68,7 +80,7 @@ void
 sync (
   model <Device, Sync> & _mdl
 ){
-_mdl.sync(_mdl.device);
+_mdl.sync(_mdl.device, _mdl.state);
 }
 
 } /* data pattern */

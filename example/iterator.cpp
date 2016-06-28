@@ -5,36 +5,51 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#include "simple_data_model.hpp"
-#include "../include/iterator.hpp"
+#include <iostream>
+#include <memory>
+#include <iterator>
+#include "../include/input_model.hpp"
 
-using data_pattern::idata_model_iterator;
-using data_pattern::odata_model_iterator;
+using std::cout;
+using std::cin;
+using std::istream_iterator;
+using data_pattern::make_input_model;
+using data_pattern::model_state;
+using data_pattern::begin;
+
+typedef std::shared_ptr<std::istream>
+iptr_t;
+
+typedef std::shared_ptr<std::ostream>
+optr_t;
 
 int main(){
-simple_data_model mdl;
-odata_model_iterator<int> oend;
-idata_model_iterator<int> iend;
 
-odata_model_iterator<int> obegin(mdl);
-idata_model_iterator<int> ibegin(mdl);
+auto imdl ( make_input_model (
+  iptr_t (&cin, [](void*){} )
 
-idata_model_iterator<int> cei (iend);
-odata_model_iterator<int> ceo (oend);
+, [](iptr_t _device){
+  return istream_iterator<char> (
+    *_device.get() );
+  }
 
-idata_model_iterator<int> ci (ibegin);
-odata_model_iterator<int> co (obegin);
+, [](iptr_t _device, model_state & _state){
+  char temp;
+  cout << "\nenter z to exit.";
+  *_device.get() >> temp;
+    if (temp == 'z') _state = model_state::end;
+  return ;
+  }
+));
 
-ci = ibegin;
-co = obegin;
-ceo = oend;
-cei = iend;
+auto first = begin(imdl);
+auto last = end(imdl);
 
-int value = 44;
-
-  if (obegin != oend) obegin = value;
-
-  if (ibegin != iend) value = *ibegin;
+while (first != last){
+cout << "\nThe input was: "
+<< static_cast<char>(*first);
+++first;
+}
 
 return 0;
 }

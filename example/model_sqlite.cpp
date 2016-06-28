@@ -16,6 +16,7 @@ using data_pattern::sqlite;
 using data_pattern::raw;
 using data_pattern::sqlite_statement;
 using data_pattern::make_data_model;
+using data_pattern::model_state;
 
 vector <std::string> query = {
   "CREATE TABLE IF NOT EXISTS "
@@ -83,12 +84,10 @@ auto io ( make_data_model (
   return *stmt;
   }
 // sync
-, [&](sqlite & _db){
+, [&](sqlite& _db, model_state& _state){
     if (istmt_active == false){
-std::cout << "A";
     _db.step(*stmt);
     }
-std::cout << "B";
   ++stage;
   ostmt_active = false;
   istmt_active = false;

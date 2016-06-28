@@ -284,7 +284,113 @@ operator = (
   const &
 ) = delete;
 
+class iterator
+: public
+  std::iterator <
+    std::input_iterator_tag, iterator >{
+
+input_model <
+  Device, MakeInputIterator, Sync >
+* input_mdl;
+
+public:
+
+explicit
+iterator (
+  input_model <
+    Device, MakeInputIterator, Sync >
+ & _mdl
+)
+: input_mdl (&_mdl)
+{}
+
+iterator (iterator const &) = default;
+
+iterator &
+operator = (iterator const &) = default;
+
+iterator (iterator &&) = default;
+
+iterator &
+operator = (iterator &&) = default;
+
+~iterator () = default;
+
+iterator &
+operator * (){
+return *this;
+}
+
+iterator &
+operator -> (){
+return this;
+}
+
+iterator
+operator ++ (int){
+sync(*(this->input_mdl));
+return *this;
+}
+
+iterator &
+operator ++ (){
+sync(*(this->input_mdl));
+return *this;
+}
+
+template <typename T>
+operator T(){
+T temp;
+*(this->input_mdl) >> temp;
+return temp;
+}
+
+bool
+operator == (
+  iterator const &
+) const {
+return (
+  (this->input_mdl->state == model_state::message)
+||
+  (this->input_mdl->state == model_state::transmission)
+||
+  (this->input_mdl->state == model_state::end)
+);
+}
+
+bool
+operator != (
+  iterator const & _lhs
+) const {
+return !(*this == _lhs);
+}
+
+}; /*  iterator */
 }; /* input model */
+
+template <
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+  typename input_model <
+    Device, MakeInputIterator, Sync >
+::iterator
+begin (
+  input_model <
+    Device, MakeInputIterator, Sync > &
+);
+
+template <
+  typename Device
+, typename MakeInputIterator
+, typename Sync >
+  typename input_model <
+    Device, MakeInputIterator, Sync >
+::iterator
+end (
+  input_model <
+    Device, MakeInputIterator, Sync > &
+);
 
 } /* data_pattern */
 #include "bits/input_model.tcc"
