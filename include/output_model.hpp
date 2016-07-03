@@ -292,7 +292,7 @@ operator = (
 class iterator
 : public
   std::iterator <
-    std::output_iterator_tag, void >{
+    std::output_iterator_tag, void, int, void, void >{
 
 output_model <
   Device, MakeOutputIterator, Sync >
@@ -381,19 +381,7 @@ template <
   typename output_model <
     Device, MakeOutputIterator, Sync >
 ::iterator
-begin (
-  output_model <
-    Device, MakeOutputIterator, Sync > &
-);
-
-template <
-  typename Device
-, typename MakeOutputIterator
-, typename Sync >
-  typename output_model <
-    Device, MakeOutputIterator, Sync >
-::iterator
-end (
+make_output_iterator (
   output_model <
     Device, MakeOutputIterator, Sync > &
 );

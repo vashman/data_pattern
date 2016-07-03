@@ -304,6 +304,9 @@ iterator (
 : input_mdl (&_mdl)
 {}
 
+explicit
+iterator () : input_mdl (nullptr){}
+
 iterator (iterator const &) = default;
 
 iterator &
@@ -389,7 +392,8 @@ template <
 ::iterator
 end (
   input_model <
-    Device, MakeInputIterator, Sync > &
+    Device, MakeInputIterator, Sync >
+  const &
 );
 
 } /* data_pattern */

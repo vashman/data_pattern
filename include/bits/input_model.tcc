@@ -60,11 +60,11 @@ template <
 end (
   input_model <
     Device, MakeInputIterator, Sync >
-  & _mdl
+  const & _mdl
 ){
 return typename input_model <
     Device, MakeInputIterator, Sync >
-::iterator(_mdl);
+::iterator();
 }
 
 /* make input model */

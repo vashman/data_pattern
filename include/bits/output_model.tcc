@@ -61,24 +61,7 @@ template <
   typename output_model <
     Device, MakeOutputIterator, Sync >
 ::iterator
-begin (
-  output_model <
-    Device, MakeOutputIterator, Sync >
-& _mdl
-){
-return typename output_model <
-  Device, MakeOutputIterator, Sync >
-::iterator(_mdl);
-}
-
-template <
-  typename Device
-, typename MakeOutputIterator
-, typename Sync >
-  typename output_model <
-    Device, MakeOutputIterator, Sync >
-::iterator
-end (
+make_output_iterator (
   output_model <
     Device, MakeOutputIterator, Sync >
 & _mdl

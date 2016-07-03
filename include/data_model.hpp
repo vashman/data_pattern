@@ -71,6 +71,99 @@ operator = (
   const &
 ) = delete;
 
+class iterator
+: public
+  std::iterator <
+    std::input_iterator_tag, iterator >{
+
+data_model <
+  Device, MakeInputIterator, MakeOutputIterator, Sync >
+* mdl;
+
+public:
+
+explicit
+iterator (
+  data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync >
+ & _mdl
+)
+: mdl (&_mdl)
+{}
+
+explicit
+iterator () : mdl (nullptr){}
+
+iterator (iterator const &) = default;
+
+iterator &
+operator = (iterator const &) = default;
+
+iterator (iterator &&) = default;
+
+iterator &
+operator = (iterator &&) = default;
+
+~iterator () = default;
+
+iterator &
+operator * (){
+return *this;
+}
+
+iterator &
+operator -> (){
+return this;
+}
+
+iterator
+operator ++ (int){
+sync(*(this->mdl));
+return *this;
+}
+
+iterator &
+operator ++ (){
+sync(*(this->mdl));
+return *this;
+}
+
+template <typename T>
+operator T(){
+T temp;
+*(this->mdl) >> temp;
+return temp;
+}
+
+template <typename T>
+void
+operator = (
+  T const& _var
+){
+*(this->mdl) << _var;
+}
+
+bool
+operator == (
+  iterator const &
+) const {
+return (
+  (this->mdl->state == model_state::message)
+||
+  (this->mdl->state == model_state::transmission)
+||
+  (this->mdl->state == model_state::end)
+);
+}
+
+bool
+operator != (
+  iterator const & _lhs
+) const {
+return !(*this == _lhs);
+}
+
+}; /*  iterator */
 }; /* data model */
 
 template <
@@ -131,11 +224,69 @@ data_model <
   Device
 , MakeInputIterator
 , MakeOutputIterator
-, Sync > (
-  std::move(_device)
+, Sync >
+( std::move(_device)
 , std::move(_in_iter)
 , std::move(_out_iter)
 , std::move(_sync) );
+}
+
+template <
+  typename Device
+, typename MakeInputIterator
+, typename MakeOutputIterator
+, typename Sync >
+  typename data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync >
+::iterator
+begin (
+  data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync > &
+);
+
+template <
+  typename Device
+, typename MakeInputIterator
+, typename MakeOutputIterator
+, typename Sync >
+  typename data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync >
+::iterator
+end (
+   data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync > const &
+);
+
+template <
+  typename Device
+, typename MakeInputIterator
+, typename MakeOutputIterator
+, typename Sync >
+  typename data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync >
+::iterator
+begin (
+  data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync > & _mdl
+){
+return typename data_model <Device,MakeInputIterator,MakeOutputIterator,Sync>
+::iterator (_mdl);
+}
+
+template <
+  typename Device
+, typename MakeInputIterator
+, typename MakeOutputIterator
+, typename Sync >
+  typename data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync >
+::iterator
+end (
+ data_model <
+    Device, MakeInputIterator, MakeOutputIterator, Sync > const &
+){
+return typename data_model <Device,MakeInputIterator,MakeOutputIterator,Sync>
+::iterator ();
 }
 
 } /* data_pattern */
