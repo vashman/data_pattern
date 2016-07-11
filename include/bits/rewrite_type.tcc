@@ -5,8 +5,8 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef TYPESYSTEMS_REWRITE_TYPE_TCC
-#define TYPESYSTEMS_REWRITE_TYPE_TCC
+#ifndef DATA_PATTERN_REWRITE_TYPE_TCC
+#define DATA_PATTERN_REWRITE_TYPE_TCC
 
 #include "../variable_iterator.hpp"
 
@@ -115,8 +115,5 @@ return bits
 }
 
 } /* data_pattern */
-#include "orewrite_iterator.tcc"
-#include "irewrite_iterator.tcc"
-//#include "rewrite_iterator.tcc"
 #endif
 

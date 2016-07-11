@@ -75,9 +75,6 @@ rewrite_input (
 );
 
 } /* data_pattern */
-#include "bits/irewrite_iterator.hpp"
-#include "bits/orewrite_iterator.hpp"
-//#include "bits/rewrite_iterator.hpp"
 #include "bits/rewrite_type.tcc"
 #endif
 
