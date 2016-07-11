@@ -16,12 +16,12 @@ template <
 , typename Iterator
 , typename... Ts >
 template <
-  typename Buffer, typename... Writers >
+  typename Device, typename... Writers >
   orewrite_iterator <
     MakeIterator, Iterator, Ts... >
 ::orewrite_iterator (
   MakeIterator _mkiter
-, Buffer & _buffer
+, Device & _buffer
 , Writers... _writers
 )
 : make_iterator (_mkiter)
@@ -90,13 +90,13 @@ template <
   typename MakeIterator
 , typename Iterator
 , typename... Ts >
-template <typename Buffer>
+template <typename Device>
 orewrite_iterator <
   MakeIterator, Iterator, Ts... > &
   orewrite_iterator <
     MakeIterator, Iterator, Ts... >
 ::operator ()(
-  Buffer & _buffer
+  Device & _buffer
 ){
 this->iterator
   = this->make_iterator(_buffer);
@@ -106,12 +106,12 @@ return *this;
 template <
   typename... Ts
 , typename MakeIterator
-, typename Buffer
+, typename Device
 , typename... Writers >
 auto
 make_orewrite_iterator (
   MakeIterator _makeiter
-, Buffer & _buffer
+, Device & _buffer
 , Writers... _writers
 ) -> orewrite_iterator <
   MakeIterator

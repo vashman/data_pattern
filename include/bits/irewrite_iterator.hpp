@@ -34,11 +34,11 @@ public:
 
 /* ctor */
 template <
-  typename Buffer, typename... Writers >
+  typename Device, typename... Writers >
 irewrite_iterator (
   MakeBeginIterator
 , MakeEndIterator
-, Buffer &
+, Device &
 , Writers...
 );
 
@@ -113,14 +113,14 @@ irewrite_iterator <
 , Ts... > * 
 operator -> ();
 
-template <typename Buffer>
+template <typename Device>
 irewrite_iterator <
   MakeBeginIterator
 , MakeEndIterator
 , Iterator
 , Ts... > &
 operator ()(
-  Buffer &
+  Device &
 );
 
 }; /* irewrite iterator */
@@ -129,13 +129,13 @@ template <
   typename... Ts
 , typename MakeBeginIterator
 , typename MakeEndIterator
-, typename Buffer
+, typename Device
 , typename... Writers >
 auto
 make_irewrite_iterator (
   MakeBeginIterator _make_iterator
 , MakeEndIterator _make_end_iterator
-, Buffer & _buffer
+, Device & _buffer
 , Writers... _writers
 ) -> irewrite_iterator <
     MakeBeginIterator

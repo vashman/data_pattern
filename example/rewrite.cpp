@@ -1,127 +1,86 @@
+//
+
 #include <vector>
 #include <iostream>
+#include <iterator>
 #include "../include/rewrite_type.hpp"
 
-using namespace data_pattern;
-using std::begin;
-using std::end;
-using std::cout;
-using std::endl;
+using data_pattern::make_orewrite_iterator;
+using data_pattern::make_irewrite_iterator;
 
-template <typename Iter>
-class fout {
-public:
-  bool
-  operator ()(int const &, Iter) {
-  return true;
-  }
-};
-
-template <typename Iter>
-class fchar {
-public:
-  bool
-  operator ()(char const & _var, Iter _out) {
-  *_out = _var;
-  ++_out;
-  return true;
-  }
-};
-
-template <typename Iter>
-struct fin {
-bool
-operator ()(int & _var, Iter _begin, Iter _end){
-_var = *_begin;
-return true;
-}
-
-};
-
-template <typename Iter>
-struct fvalue {
-bool
-operator ()(double & _var, Iter _in, Iter _end){
-double temp;
-temp = static_cast<double>(*_in);
-  if (_in == _end) return false;
-
-_var = temp + static_cast<double>(*_in);
-return true;
-}
-
-};
-
-typedef std::vector<int>::iterator it;
-
-struct make_iterator {
-it
-operator () (std::vector<int> & _vec){
-return _vec.begin();
-}
-};
-
-struct make_end_iterator {
-it
-operator () (std::vector<int> & _vec){
-return _vec.end();
-}
-};
+typedef std::vector<int> con_t;
+typedef std::vector<int>::iterator it_t;
+typedef std::back_insert_iterator <
+  std::vector<int> > in_t;
 
 int main() {
 
-std::vector<int> vec(4);
+std::vector<int> con;
 
-make_iterator mk;
-orewrite_iterator <
-  make_iterator, it, int, char >
-oiter (
-  mk, vec, fout<it>(), fchar<it>() );
+auto oo (
+  make_orewrite_iterator <int, char> (
 
-auto oo = make_orewrite_iterator
-  <int,char>(
-  make_iterator()
-, vec
-, fout<it>()
-, fchar<it>() );
+  [](con_t & _con) {
+  return std::back_inserter(_con);
+  }
 
-irewrite_iterator <
-  make_iterator, make_end_iterator
-, it, int, double >
-iiter (
-  mk
-, make_end_iterator()
-, vec
-, fin <it> ()
-, fvalue <it> ()
-);
+, con
 
-auto ii = make_irewrite_iterator
-  <int,double>(
-  make_iterator()
-, make_end_iterator()
-, vec
-, fin<it>()
-, fvalue<it>() );
+, [](int const _var, in_t _iter) {
+  return true;
+  }
+
+, [](char const _var, in_t _iter) {
+  *_iter = _var;
+  ++_iter;
+  return true;
+  }
+));
+
+auto ii (
+  make_irewrite_iterator <int, double> (
+
+  [](con_t & _con) {return begin(_con);}
+
+, [](con_t & _con) {return end(_con); }
+
+, con
+
+,  [](int & _var, it_t _iter, it_t){
+  _var = *_iter;
+  return true;
+  }
+
+, [](double & _var, it_t _iter, it_t _end){
+  double temp;
+  temp = static_cast<double>(*_iter);
+    if (_iter == _end) return false;
+  _var = temp + static_cast<double>(*_iter);
+  return true;
+  }
+));
 
 int a = 3;
 char b = 'A'; 
 
 oo = a;
 oo = b;
-oiter = a;
-oiter = b;
 
 a = 99;
 b = 'b';
 double c = 4.4;
 
-cout << vec[0] << " : " << vec[1] << endl;
+std::cout << "Values in con are: "
+ << con[0] << " and " << con[1]
+ << std::endl;
 
+con.push_back(99);
 a = *ii;
-c = *iiter;
+c = *ii;
 
-cout << a << " : " << c << endl;
+std::cout << "int is: " << a
+  << " and as a double: " << c
+  << std::endl;
 
 return 0;
 }

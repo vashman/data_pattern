@@ -19,42 +19,48 @@ namespace bits {
 
 /* owrrite type */
 template <
-  typename Iter, typename Writer >
-struct owrite_type;
+  typename Iterator, typename Writer >
+struct output_rewrite_type;
 
 /* owrite type << output_model */
 template <
   typename T
 , typename Writer
-, typename Buffer
-, typename MakeIter >
-output_model<Buffer,MakeIter> &
+, typename Device
+, typename MakeIterator
+, typename Sync >
+output_model <
+  Device, MakeIterator, Sync > &
 operator << (
-  output_model<Buffer,MakeIter> &
-, owrite_type<T,Writer> const &
+  output_model <
+    Device, MakeIterator, Sync > &
+, output_rewrite_type<T,Writer> const &
 );
 
 /* iwrite type */
 template <typename T, typename Writer>
-struct iwrite_type;
+struct input_rewrite_type;
 
 /* iwrite type >> input */
 template <
   typename T
 , typename Writer
-, typename Buffer
-, typename MakeIter >
-input_model<Buffer,MakeIter> &
+, typename Device
+, typename MakeIterator
+, typename Sync >
+input_model <
+  Device, MakeIterator, Sync> &
 operator >> (
-  input_model<Buffer,MakeIter> &
-, iwrite_type<T,Writer> &
+  input_model <
+    Device, MakeIterator, Sync > &
+, input_rewrite_type<T,Writer> &
 );
 
 } /* bits */
 
 /* rewrite output */
 template <typename T, typename Writer>
-bits::owrite_type <T,Writer>
+bits::output_rewrite_type <T,Writer>
 rewrite_output (
   T const & // input buffer
 , Writer const
@@ -62,7 +68,7 @@ rewrite_output (
 
 /* rewrite input */
 template <typename T, typename Writer>
-bits::iwrite_type <T, Writer>
+bits::input_rewrite_type <T, Writer>
 rewrite_input (
   T &
 , Writer const

@@ -22,6 +22,8 @@ char opt;
 char ** argv;
 std::string opts;
 
+/*
+*/
 void
 get();
 
@@ -56,10 +58,10 @@ operator = (
 ~getopt_iterator () = default;
 
 getopt_iterator &
-operator ++();
+operator ++ ();
 
 getopt_iterator
-operator ++(int);
+operator ++ (int);
 
 char
 operator * ();
@@ -111,7 +113,8 @@ operator != (
 , getopt_iterator const &
 );
 
-getopt_iterator::getopt_iterator (
+  getopt_iterator
+::getopt_iterator (
   int _argc
 , char ** _argv
 , std::string _opts
@@ -124,7 +127,8 @@ getopt_iterator::getopt_iterator (
 this->get();
 }
 
-getopt_iterator::getopt_iterator ()
+  getopt_iterator
+::getopt_iterator ()
 : count (0)
 , opt (-1)
 , argv (nullptr)
@@ -149,7 +153,8 @@ return *this;
 }
 
 void
-getopt_iterator::get(){
+  getopt_iterator
+::get(){
 this->opt = getopt (
   this->count
 , this->argv
@@ -182,20 +187,6 @@ operator != (
 , getopt_iterator const & _rhs
 ){
 return !(_lhs==_rhs);
-}
-
-template <typename T>
-bool
-empty (
-  char **
-);
-
-template <typename T>
-bool
-empty (
-  char **
-){
-return false;
 }
 
 } /* data_pattern */

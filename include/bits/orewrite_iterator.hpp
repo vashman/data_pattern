@@ -29,10 +29,10 @@ public:
 
 /* ctor */
 template <
-  typename Buffer, typename... Writers >
+  typename Device, typename... Writers >
 orewrite_iterator (
   MakeIterator
-, Buffer &
+, Device &
 , Writers...
 );
 
@@ -85,11 +85,11 @@ orewrite_iterator <
   MakeIterator, Iterator, Ts... > * 
 operator -> ();
 
-template <typename Buffer>
+template <typename Device>
 orewrite_iterator <
   MakeIterator, Iterator, Ts... > &
 operator ()(
-  Buffer &
+  Device &
 );
 
 }; /* orewrite_iterator */
@@ -97,12 +97,12 @@ operator ()(
 template <
   typename... Ts
 , typename MakeIterator
-, typename Buffer
+, typename Device
 , typename... Writers >
 auto
 make_orewrite_iterator (
   MakeIterator _makeiter
-, Buffer & _buffer
+, Device & _buffer
 , Writers... _writers
 ) -> orewrite_iterator <
   MakeIterator

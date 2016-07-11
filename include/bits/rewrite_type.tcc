@@ -14,13 +14,13 @@ namespace data_pattern {
 namespace bits {
 
 /* owrrite type */
-template <typename T, typename Writer >
-struct owrite_type {
+template <typename T, typename Writer>
+struct output_rewrite_type {
 T const & var;
 Writer const writer;
 
 explicit
-owrite_type (
+output_rewrite_type (
   T const & _var
 , Writer const _writer
 )
@@ -34,12 +34,15 @@ owrite_type (
 template <
   typename T
 , typename Writer
-, typename Buffer
-, typename MakeIter >
-output_model<Buffer,MakeIter> &
+, typename Device
+, typename MakeIterator
+, typename Sync >
+output_model<Device,MakeIterator,Sync> &
 operator << (
-  output_model<Buffer,MakeIter> & _mdl
-, owrite_type<T,Writer> const & _writer
+  output_model<Device,MakeIterator,Sync>
+  & _mdl
+, output_rewrite_type<T,Writer>
+  const & _writer
 ){
 _writer.writer (
   _writer.var
@@ -49,13 +52,13 @@ _writer.writer (
 
 /* iwrite type */
 template <typename T, typename Writer>
-struct iwrite_type {
+struct input_rewrite_type {
 
 T & var;
 Writer const writer;
 
 explicit
-iwrite_type (
+input_rewrite_type (
   T & _var
 , Writer const _writer
 )
@@ -69,12 +72,14 @@ iwrite_type (
 template <
   typename T
 , typename Writer
-, typename Buffer
-, typename MakeIter >
-input_model<Buffer,MakeIter> &
+, typename Device
+, typename MakeIterator
+, typename Sync >
+input_model<Device,MakeIterator,Sync> &
 operator >> (
-  input_model<Buffer,MakeIter> & _mdl
-, iwrite_type<T,Writer> & _writer
+  input_model<Device,MakeIterator,Sync>
+  & _mdl
+, input_rewrite_type<T,Writer> & _writer
 ){
 _writer.writer (
   _mdl.input_iterator(_mdl.buffer)
@@ -87,23 +92,25 @@ _writer.writer (
 
 /* rewrite output */
 template <typename T, typename Writer>
-bits::owrite_type <T,Writer>
+bits::output_rewrite_type <T,Writer>
 rewrite_output (
   T const & _var
 , Writer const _writer
 ){
-return bits::owrite_type <T, Writer>
+return bits
+::output_rewrite_type <T, Writer>
 (_var, _writer);
 }
 
 /* rewrite input */
 template <typename T, typename Writer>
-bits::iwrite_type <T, Writer>
+bits::input_rewrite_type <T, Writer>
 rewrite_input (
   T & _var
 , Writer const _writer
 ){
-return bits::iwrite_type <T, Writer>
+return bits
+::input_rewrite_type <T, Writer>
 (_var, _writer);
 }
 

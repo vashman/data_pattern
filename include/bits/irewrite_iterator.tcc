@@ -17,7 +17,7 @@ template <
 , typename Iterator
 , typename... Ts >
 template <
-  typename Buffer, typename... Writers >
+  typename Device, typename... Writers >
   irewrite_iterator <
     MakeBeginIterator
   , MakeEndIterator
@@ -26,7 +26,7 @@ template <
 ::irewrite_iterator (
   MakeBeginIterator _make_iterator
 , MakeEndIterator _make_end_iterator
-, Buffer & _buffer
+, Device & _buffer
 , Writers... _writers
 )
 : make_iterator (_make_iterator)
@@ -114,7 +114,7 @@ template <
 , typename MakeEndIterator
 , typename Iterator
 , typename... Ts >
-template <typename Buffer>
+template <typename Device>
 irewrite_iterator <
   MakeBeginIterator
 , MakeEndIterator
@@ -126,7 +126,7 @@ irewrite_iterator <
   , Iterator
   , Ts... >
 ::operator () (
-  Buffer & _buffer
+  Device & _buffer
 ){
 this->begin
   = this->make_iterator (_buffer);
@@ -139,13 +139,13 @@ template <
   typename... Ts
 , typename MakeBeginIterator
 , typename MakeEndIterator
-, typename Buffer
+, typename Device
 , typename... Writers >
 auto
 make_irewrite_iterator (
   MakeBeginIterator _make_iterator
 , MakeEndIterator _make_end_iterator
-, Buffer & _buffer
+, Device & _buffer
 , Writers... _writers
 ) -> irewrite_iterator <
     MakeBeginIterator
