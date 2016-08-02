@@ -19,12 +19,7 @@ sync (
 );
 
 enum class model_state {
-  busy // Device is inoperable.
-, incoming // Device is busy with incoming data.
-, outgoing // Device is busy with outgoing data.
-, standby // Device is operable
-, message // EOL / EOM end of message / section processed.
-, transmission // transmission processed.
+  good // Device is in good io state.
 , end // Device is standing by at end of file.
 };
 
@@ -71,7 +66,7 @@ model<Device,Sync>::model (
 )
 : device (std::move(_device))
 , sync (std::move(_sync))
-, state (model_state::standby)
+, state (model_state::good)
 {}
 
 template <
