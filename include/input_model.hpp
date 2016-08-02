@@ -15,226 +15,180 @@ namespace data_pattern {
 /* input model */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 class input_model;
 
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-    Device
-  , MakeInputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
 make_input_model (
   Device
-, MakeInputIterator
+, GetIteratorMap
 , Sync
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , bool &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , signed short &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , unsigned short &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , signed int &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync  >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , unsigned int &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , signed long &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , unsigned long &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , float &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , double &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , long double &
 );
 
 /* input value */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &
+    Device, GetIteratorMap, Sync > &
 , char &
 );
 
 /* input model */
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
 struct input_model
 : public virtual 
   model <Device,Sync>
 {
-MakeInputIterator input_iterator;
+GetIteratorMap iterator_map;
 
 /* ctor */
 input_model (
   Device
-, MakeInputIterator
+, GetIteratorMap
 , Sync
 );
 
@@ -245,42 +199,30 @@ virtual
 /* ctor move */
 input_model (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &&
+    Device, GetIteratorMap, Sync > &&
 ) = default;
 
 /* assignment operator move */
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator = (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync > &&
+    Device, GetIteratorMap, Sync > &&
 ) = default;
 
 /* ctor copy */
 input_model (
   input_model <
-    Device
- , MakeInputIterator
- , Sync >
+    Device, GetIteratorMap, Sync >
   const &
 ) = delete;
 
 /* assignment operator copy */
 input_model <
-  Device
-, MakeInputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator = (
   input_model <
-    Device
-  , MakeInputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   const &
 ) = delete;
 
@@ -290,7 +232,7 @@ class iterator
     std::input_iterator_tag, iterator >{
 
 input_model <
-  Device, MakeInputIterator, Sync >
+  Device, GetIteratorMap, Sync >
 * input_mdl;
 
 public:
@@ -298,7 +240,7 @@ public:
 explicit
 iterator (
   input_model <
-    Device, MakeInputIterator, Sync >
+    Device, GetIteratorMap, Sync >
  & _mdl
 )
 : input_mdl (&_mdl)
@@ -353,11 +295,8 @@ operator == (
   iterator const &
 ) const {
 return (
-  (this->input_mdl->state == model_state::message)
-||
-  (this->input_mdl->state == model_state::transmission)
-||
-  (this->input_mdl->state == model_state::end)
+  this->input_mdl->state
+== model_state::end
 );
 }
 
@@ -373,26 +312,26 @@ return !(*this == _lhs);
 
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
   typename input_model <
-    Device, MakeInputIterator, Sync >
+    Device, GetIteratorMap, Sync >
 ::iterator
 begin (
   input_model <
-    Device, MakeInputIterator, Sync > &
+    Device, GetIteratorMap, Sync > &
 );
 
 template <
   typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
   typename input_model <
-    Device, MakeInputIterator, Sync >
+    Device, GetIteratorMap, Sync >
 ::iterator
 end (
   input_model <
-    Device, MakeInputIterator, Sync >
+    Device, GetIteratorMap, Sync >
   const &
 );
 

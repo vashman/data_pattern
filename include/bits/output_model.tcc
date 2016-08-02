@@ -15,323 +15,295 @@ namespace data_pattern {
 /* ctor */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
 ::output_model (
   Device _device
-, MakeOutputIterator _output_iter
+, GetIteratorMap _output_iter
 , Sync _sync
 )
 : model <Device,Sync> (
     std::move(_device)
-  , std::move(_sync) )
-, output_iterator (
-    std::move(_output_iter) )
+  , std::move(_sync)
+  )
+, iterator_map (std::move(_output_iter))
 {}
 
 /* make output model */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync >
+  Device, GetIteratorMap, Sync >
 make_output_model (
   Device _device
-, MakeOutputIterator _output_iter
+, GetIteratorMap _iter_map
 , Sync _sync
 ){
 return output_model <
-  Device, MakeOutputIterator, Sync > (
+  Device, GetIteratorMap, Sync > (
   std::move(_device)
-, std::move(_output_iter)
+, std::move(_iter_map)
 , std::move(_sync) );
 }
 
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
   typename output_model <
-    Device, MakeOutputIterator, Sync >
+    Device, GetIteratorMap, Sync >
 ::iterator
 make_output_iterator (
   output_model <
-    Device, MakeOutputIterator, Sync >
+    Device, GetIteratorMap, Sync >
 & _mdl
 ){
 return typename output_model <
-  Device, MakeOutputIterator, Sync >
+  Device, GetIteratorMap, Sync >
 ::iterator(_mdl);
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , bool const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter =
+  get<bool>(_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , signed short const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter = get<signed short>
+  (_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , unsigned short const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter = get<unsigned short>
+  (_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , signed int const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter = get<signed int>
+  (_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , unsigned int const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter = get<unsigned int>
+  (_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , signed long const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter = get<signed long>
+  (_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , unsigned long const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter = get<unsigned long>
+  (_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
  output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , float const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter =
+  get<float>(_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , double const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter =
+  get<double>(_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , long double const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter =
+  get<long double>(_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , signed char const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter =
+  get<signed char>(_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
 /* output value */
 template <
   typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
 output_model <
-  Device
-, MakeOutputIterator
-, Sync > &
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device
-  , MakeOutputIterator
-  , Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , unsigned char const & _var
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _var;
+auto & iter = get<unsigned char>
+  (_mdl.iterator_map());
+*iter = _var;
+++iter;
 return _mdl;
 }
 
