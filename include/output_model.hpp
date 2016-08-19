@@ -9,6 +9,7 @@
 #define DATA_PATTERN_OUTPUT_MODEL_HPP
 
 #include "model.hpp"
+#include "bits/map_type.hpp"
 
 namespace data_pattern {
 
@@ -26,10 +27,29 @@ template <
 output_model <
     Device, GetIteratorMap, Sync >
 make_output_model (
-  Device
-, GetIteratorMap
-, Sync
+  Device &&
+, GetIteratorMap &&
+, Sync &&
 );
+
+template <
+  typename T
+, typename Device
+, typename GetIteratorMap
+, typename Sync >
+auto
+get (
+  output_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
+)
+-> decltype ( typesystems::get<T> (
+  _mdl.iterator_map(_mdl.device)
+  ))
+{
+return typesystems::get<T> (
+  _mdl.iterator_map(_mdl.device)
+);}
 
 /* output value */
 template <
@@ -187,6 +207,19 @@ operator << (
 , signed char const &
 );
 
+/* output value */
+template <
+  typename Device
+, typename GetIteratorMap
+, typename Sync >
+output_model <
+  Device, GetIteratorMap, Sync > &
+operator << (
+  output_model <
+    Device, GetIteratorMap, Sync > &
+, char const &
+);
+
 /* output model */
 template <
   typename Device
@@ -196,6 +229,7 @@ struct output_model
 : public virtual
   model <Device, Sync>
 {
+
 GetIteratorMap iterator_map;
 
 /* dtor */
@@ -204,9 +238,9 @@ virtual
 
 /* ctor */
 output_model (
-  Device
-, GetIteratorMap
-, Sync
+  Device &&
+, GetIteratorMap &&
+, Sync &&
 );
 
 /* ctor move */
@@ -239,15 +273,14 @@ operator = (
   const &
 ) = delete;
 
-class iterator
-: public
-  std::iterator <
-      std::output_iterator_tag
-    , void
-    , int
-    , void
-    , void >
-{
+template <typename T>
+class iterator {
+typedef std::output_iterator_tag
+  iterator_catagory;
+typedef T value_type;
+typedef std::size_t difference_type;
+typedef void pointer;
+typedef void reference;
 
 output_model <
   Device, GetIteratorMap, Sync >
@@ -298,7 +331,6 @@ sync(*(this->output_mdl));
 return *this;
 }
 
-template <typename T>
 void
 operator = (
   T const & _var
@@ -327,12 +359,13 @@ return !(*this == _lhs);
 }; /* odata_model */
 
 template <
-  typename Device
+  typename T
+, typename Device
 , typename GetIteratorMap
 , typename Sync >
   typename output_model <
     Device, GetIteratorMap, Sync >
-::iterator
+:: template iterator<T>
 make_output_iterator (
   output_model <
     Device, GetIteratorMap, Sync > &

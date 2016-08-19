@@ -20,49 +20,51 @@ template <
   input_model <
   Device, GetIteratorMap, Sync >
 ::input_model (
-  Device _device
-, GetIteratorMap _map
-, Sync _sync
+  Device && _device
+, GetIteratorMap &&_map
+, Sync && _sync
 )
 : model <Device,Sync> (
-    std::move(_device)
-  , std::move(_sync)
+    std::forward<Device>(_device)
+  , std::forward<Sync>(_sync)
   )
-, iterator_map (std::move(_map))
+, iterator_map (std::forward<GetIteratorMap>(_map))
 {}
 
 template <
-  typename Device
+  typename T
+, typename Device
 , typename GetIteratorMap
 , typename Sync >
   typename input_model <
     Device, GetIteratorMap, Sync >
-::iterator
-begin (
+:: template iterator<T>
+make_input_iterator (
   input_model <
     Device, GetIteratorMap, Sync >
   & _mdl
 ){
 return typename input_model <
     Device, GetIteratorMap, Sync >
-::iterator (_mdl);
+:: template iterator<T> (_mdl);
 }
 
 template <
-  typename Device
+  typename T
+, typename Device
 , typename GetIteratorMap
 , typename Sync >
   typename input_model <
     Device, GetIteratorMap, Sync >
-::iterator
-end (
+:: template iterator<T>
+make_end_input_iterator (
   input_model <
     Device, GetIteratorMap, Sync >
-  const & _mdl
+  & _mdl
 ){
 return typename input_model <
-  Device, GetIteratorMap, Sync >
-::iterator();
+    Device, GetIteratorMap, Sync >
+:: template iterator<T> (_mdl);
 }
 
 /* make input model */
@@ -73,16 +75,16 @@ template <
 input_model<
   Device, GetIteratorMap, Sync >
 make_input_model (
-  Device _device
-, GetIteratorMap _map
-, Sync _sync
+  Device && _device
+, GetIteratorMap && _map
+, Sync && _sync
 ){
 return input_model <
   Device, GetIteratorMap, Sync >
 (
-  std::move(_device)
-, std::move(_map)
-, std::move(_sync)
+  std::forward<Device>(_device)
+, std::forward<GetIteratorMap>(_map)
+, std::forward<Sync>(_sync)
 );
 }
 
@@ -100,7 +102,7 @@ operator >> (
 , bool & _var
 ){
 auto & iter =
-  get<bool>(_mdl.iterator_map());
+  get<bool>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -119,8 +121,7 @@ operator >> (
   & _mdl
 , signed short & _var
 ){
-auto & iter = get<signed short>
-  (_mdl.iterator_map());
+auto & iter = get<signed short>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -139,8 +140,7 @@ operator >> (
   & _mdl
 , unsigned short & _var
 ){
-auto & iter = get<unsigned shor>
-  (_mdl.iterator_map());
+auto & iter = get<unsigned short>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -159,8 +159,7 @@ operator >> (
   & _mdl
 , signed int & _var
 ){
-auto & iter = get<signed int>
-  (_mdl.iterator_map());
+auto & iter = get<signed int>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -179,8 +178,7 @@ operator >> (
   & _mdl
 , unsigned int & _var
 ){
-auto & iter = get<unsigned int>
-  (_mdl.iterator_map());
+auto & iter = get<unsigned int>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -199,8 +197,7 @@ operator >> (
   & _mdl
 , signed long & _var
 ){
-auto & iter =
-  get<signed long>(_mdl.iterator_map());
+auto & iter = get<signed long>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -219,8 +216,7 @@ operator >> (
   & _mdl
 , unsigned long & _var
 ){
-auto & iter = get<unsigned long>
-  (_mdl.iterator_map());
+auto & iter = get<unsigned long>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -239,8 +235,7 @@ operator >> (
   & _mdl
 , float & _var
 ){
-auto & iter =
-  get<float>(_mdl.iterator_map());
+auto & iter = get<float>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -259,8 +254,7 @@ operator >> (
   & _mdl
 , double & _var
 ){
-auto & iter =
-  get<double>(_mdl.iterator_map());
+auto & iter = get<double>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -279,8 +273,7 @@ operator >> (
   & _mdl
 , long double & _var
 ){
-auto & iter =
-  get<long double>(_mdl.iterator_map());
+auto & iter = get<long double>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -299,8 +292,46 @@ operator >> (
   & _mdl
 , char & _var
 ){
-auto & iter =
-  get<char>(_mdl.iterator_map());
+using data_pattern::get;
+auto & iter = data_pattern::get<char>(_mdl);
+_var = *iter;
+++iter;
+return _mdl;
+}
+
+/* input value */
+template <
+  typename Device
+, typename GetIteratorMap
+, typename Sync >
+input_model <
+  Device, GetIteratorMap, Sync > &
+operator >> (
+  input_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
+, signed char & _var
+){
+auto & iter = get<signed char>(_mdl);
+_var = *iter;
+++iter;
+return _mdl;
+}
+
+/* input value */
+template <
+  typename Device
+, typename GetIteratorMap
+, typename Sync >
+input_model <
+  Device, GetIteratorMap, Sync > &
+operator >> (
+  input_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
+, unsigned char & _var
+){
+auto & iter = get<unsigned char>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;

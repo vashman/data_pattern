@@ -11,8 +11,7 @@
 
 #include <typesystems/writer.hpp>
 #include <typesystems/type_map.hpp>
-#include "output_model.hpp"
-#include "input_model.hpp"
+#include "data_model.hpp"
 
 namespace data_pattern {
 namespace bits {
@@ -60,7 +59,7 @@ operator >> (
 
 /* rewrite output */
 template <typename T, typename Writer>
-bits::output_rewrite_type <T,Writer>
+bits::output_rewrite_type <T, Writer>
 rewrite_output (
   T const & // input buffer
 , Writer const

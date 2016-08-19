@@ -8,8 +8,6 @@
 #ifndef DATA_PATTERN_REWRITE_TYPE_TCC
 #define DATA_PATTERN_REWRITE_TYPE_TCC
 
-#include "../variable_iterator.hpp"
-
 namespace data_pattern {
 namespace bits {
 
@@ -37,18 +35,19 @@ template <
 , typename Device
 , typename MakeIterator
 , typename Sync >
-output_model<Device,MakeIterator,Sync> &
+output_model <
+  Device, MakeIterator, Sync > &
 operator << (
-  output_model<Device,MakeIterator,Sync>
+  output_model <
+    Device, MakeIterator, Sync >
   & _mdl
-, output_rewrite_type<T,Writer>
+, output_rewrite_type<T, Writer>
   const & _writer
 ){
 _writer.writer (
   _writer.var
-, _mdl.output_iterator(_mdl.buffer)
-);
-}
+, _mdl.iterator_map(_mdl.device)
+);}
 
 /* iwrite type */
 template <typename T, typename Writer>
@@ -81,12 +80,9 @@ operator >> (
   & _mdl
 , input_rewrite_type<T,Writer> & _writer
 ){
-_writer.writer (
-  _mdl.input_iterator(_mdl.buffer)
-, _mdl.input_iterator(_mdl.buffer)
-, _writer.var
-);
-}
+_writer.var = _writer.writer (
+  _mdl.iterator_map(_mdl.device)
+);}
 
 } /* bits */
 

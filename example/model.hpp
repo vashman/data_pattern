@@ -1,14 +1,12 @@
 #include <sstream>
 #include <vector>
-#include "../include/model.hpp"
+#include "../include/data_model.hpp"
 
 using namespace std;
 using data_pattern::model;
+using data_pattern::get;
 
 int main (int argc, char* argv[]){
-model<ostream> m ((stringstream ()));
-
-model<ostream,vector<int>> mm(
-  (stringstream ()), vector<int>() );
+int i = 9;
 return 0;
 }

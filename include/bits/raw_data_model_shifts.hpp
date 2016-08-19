@@ -11,11 +11,14 @@ template <
   typename T
 , typename Alloc
 , typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
-input_model <Device,MakeInputIterator,Sync> &
+input_model <
+  Device, GetIteratorMap, Sync > &
 operator >> (
-  input_model <Device,MakeInputIterator,Sync> & _mdl
+  input_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
 , raw_data<T,Alloc> &
 );
 
@@ -23,15 +26,20 @@ template <
   typename T
 , typename Alloc
 , typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
-input_model <Device,MakeInputIterator,Sync> &
+input_model <
+  Device, GetIteratorMap, Sync > &
 operator >> (
-  input_model <Device,MakeInputIterator,Sync> & _mdl
+  input_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
 , raw_data<T,Alloc> & _data
 ){
-_data =
-*_mdl.input_iterator(_mdl.device)++;
+auto & iter =
+   get<raw_data<T,Alloc>>(_mdl);
+_data = *iter;
+++iter;
 return _mdl;
 }
  
@@ -53,11 +61,14 @@ template <
   typename T
 , typename Alloc
 , typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
-output_model <Device,MakeOutputIterator,Sync> &
+output_model <
+  Device, GetIteratorMap, Sync > &
 operator << (
-  output_model <Device,MakeOutputIterator,Sync> & _mdl
+  output_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
 , raw_data<T,Alloc> const &
 );
 
@@ -65,15 +76,20 @@ template <
   typename T
 , typename Alloc
 , typename Device
-, typename MakeOutputIterator
+, typename GetIteratorMap
 , typename Sync >
-output_model <Device,MakeOutputIterator,Sync> &
+output_model <
+  Device, GetIteratorMap, Sync > &
 operator << (
-  output_model <Device,MakeOutputIterator,Sync> & _mdl
+  output_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
 , raw_data<T,Alloc> const & _data
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _data;
+auto & iter =
+  get<raw_data<T,Alloc>>(_mdl);
+*iter = _data;
+++iter;
 return _mdl;
 }
 

@@ -8,7 +8,7 @@
 namespace data_pattern {
 
 template <
-typename Device, typename Sync >
+  typename Device, typename Sync >
 struct model;
 
 template <
@@ -31,8 +31,8 @@ Sync sync;
 model_state state;
 
 model (
-  Device
-, Sync
+  Device &&
+, Sync &&
 );
 
 model (
@@ -61,11 +61,11 @@ virtual
 template <
   typename Device, typename Sync >
 model<Device,Sync>::model (
-  Device _device
-, Sync _sync
+  Device && _device
+, Sync && _sync
 )
-: device (std::move(_device))
-, sync (std::move(_sync))
+: device (std::forward<Device>(_device))
+, sync (std::forward<Sync>(_sync))
 , state (model_state::good)
 {}
 
@@ -75,7 +75,7 @@ void
 sync (
   model <Device, Sync> & _mdl
 ){
-_mdl.sync(_mdl.device, _mdl.state);
+_mdl.sync (_mdl.device, _mdl.state);
 }
 
 } /* data pattern */

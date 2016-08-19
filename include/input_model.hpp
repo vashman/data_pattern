@@ -9,6 +9,7 @@
 #define DATA_PATTERN_INPUT_MODEL_HPP
 
 #include "model.hpp"
+#include "bits/map_type.hpp"
 
 namespace data_pattern {
 
@@ -26,10 +27,29 @@ template <
 input_model <
     Device, GetIteratorMap, Sync >
 make_input_model (
-  Device
-, GetIteratorMap
-, Sync
+  Device &&
+, GetIteratorMap &&
+, Sync &&
 );
+
+template <
+  typename T
+, typename Device
+, typename GetIteratorMap
+, typename Sync >
+auto
+get (
+  input_model <
+    Device, GetIteratorMap, Sync >
+  & _mdl
+)
+-> decltype ( typesystems::get<T> (
+  _mdl.iterator_map(_mdl.device)
+  ))
+{
+return typesystems::get<T> (
+  _mdl.iterator_map(_mdl.device)
+);}
 
 /* input value */
 template <
@@ -174,6 +194,32 @@ operator >> (
 , char &
 );
 
+/* input value */
+template <
+  typename Device
+, typename GetIteratorMap
+, typename Sync >
+input_model <
+  Device, GetIteratorMap, Sync > &
+operator >> (
+  input_model <
+    Device, GetIteratorMap, Sync > &
+, signed char &
+);
+
+/* input value */
+template <
+  typename Device
+, typename GetIteratorMap
+, typename Sync >
+input_model <
+  Device, GetIteratorMap, Sync > &
+operator >> (
+  input_model <
+    Device, GetIteratorMap, Sync > &
+, unsigned char &
+);
+
 /* input model */
 template <
   typename Device
@@ -187,9 +233,9 @@ GetIteratorMap iterator_map;
 
 /* ctor */
 input_model (
-  Device
-, GetIteratorMap
-, Sync
+  Device &&
+, GetIteratorMap &&
+, Sync &&
 );
 
 /* dtor */
@@ -226,14 +272,21 @@ operator = (
   const &
 ) = delete;
 
-class iterator
-: public
-  std::iterator <
-    std::input_iterator_tag, iterator >{
+template <typename T>
+class iterator {
+
+typedef std::input_iterator_tag
+  iterator_catagory;
+typedef T value_type;
+typedef std::size_t difference_type;
+typedef T* pointer;
+typedef T& reference;
 
 input_model <
   Device, GetIteratorMap, Sync >
 * input_mdl;
+
+T temp;
 
 public:
 
@@ -244,10 +297,17 @@ iterator (
  & _mdl
 )
 : input_mdl (&_mdl)
-{}
+, temp ()
+{
+sync(*(this->input_mdl));
+*(this->input_mdl) >> this->temp;
+}
 
 explicit
-iterator () : input_mdl (nullptr){}
+iterator ()
+: input_mdl (nullptr)
+, temp ()
+{}
 
 iterator (iterator const &) = default;
 
@@ -261,14 +321,14 @@ operator = (iterator &&) = default;
 
 ~iterator () = default;
 
-iterator &
+T &
 operator * (){
-return *this;
+return this->temp;
 }
 
-iterator &
+iterator *
 operator -> (){
-return this;
+return &this->temp;
 }
 
 iterator
@@ -283,56 +343,49 @@ sync(*(this->input_mdl));
 return *this;
 }
 
-template <typename T>
-operator T(){
-T temp;
-*(this->input_mdl) >> temp;
-return temp;
-}
-
 bool
 operator == (
-  iterator const &
+  iterator<T> const _rhs
 ) const {
 return (
   this->input_mdl->state
 == model_state::end
-);
-}
+);}
 
 bool
 operator != (
-  iterator const & _lhs
+  iterator<T> const _rhs
 ) const {
-return !(*this == _lhs);
+return !(_rhs == *this);
 }
 
 }; /*  iterator */
 }; /* input model */
 
 template <
-  typename Device
+  typename T
+, typename Device
 , typename GetIteratorMap
 , typename Sync >
   typename input_model <
     Device, GetIteratorMap, Sync >
-::iterator
-begin (
+:: template iterator<T>
+make_input_iterator (
   input_model <
     Device, GetIteratorMap, Sync > &
 );
 
 template <
-  typename Device
+  typename T
+, typename Device
 , typename GetIteratorMap
 , typename Sync >
   typename input_model <
     Device, GetIteratorMap, Sync >
-::iterator
-end (
+:: template iterator<T>
+make_end_input_iterator (
   input_model <
-    Device, GetIteratorMap, Sync >
-  const &
+    Device, GetIteratorMap, Sync > &
 );
 
 } /* data_pattern */

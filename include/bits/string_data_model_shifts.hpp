@@ -15,11 +15,13 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
-input_model <Device,MakeInputIterator,Sync> &
+input_model <
+  Device, GetIteratorMap, Sync > &
 operator >> (
-  input_model<Device,MakeInputIterator,Sync> &
+  input_model<
+  Device, GetIteratorMap, Sync > &
 , std::basic_string<charT,allocator> &
 );
 
@@ -27,18 +29,23 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
-input_model <Device,MakeInputIterator,Sync> &
+input_model <
+  Device, GetIteratorMap, Sync > &
 operator >> (
   input_model <
-    Device, MakeInputIterator, Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , std::basic_string<charT,allocator>
   & _string
 ){
-_string =
-*_mdl.input_iterator(_mdl.device)++;
+auto & iter = get<
+  std::basic_string<charT,allocator> >
+(_mdl);
+
+_string = *iter;
+++iter;
 return _mdl;
 }
 
@@ -61,11 +68,13 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
-output_model <Device,MakeInputIterator,Sync> &
+output_model <
+  Device, GetIteratorMap, Sync > &
 operator << (
-  output_model<Device,MakeInputIterator,Sync> &
+  output_model<
+    Device, GetIteratorMap, Sync > &
 , std::basic_string<charT,allocator>
   const &
 );
@@ -74,18 +83,23 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename MakeInputIterator
+, typename GetIteratorMap
 , typename Sync >
-output_model <Device,MakeInputIterator,Sync> &
+output_model <
+  Device, GetIteratorMap, Sync > &
 operator << (
   output_model <
-    Device, MakeInputIterator, Sync >
+    Device, GetIteratorMap, Sync >
   & _mdl
 , std::basic_string<charT,allocator>
   const & _string
 ){
-*_mdl.output_iterator(_mdl.device)++
-  = _string;
+auto & iter = get<
+  std::basic_string<charT,allocator> >
+(_mdl);
+
+*iter = _string;
+++iter;
 return _mdl;
 }
 

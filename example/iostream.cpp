@@ -1,38 +1,37 @@
 #include <iostream>
+#include <fstream>
 #include <iterator>
-#include "../include/output_model.hpp"
-#include "../include/input_model.hpp"
+//#include "../include/streambuf_model.hpp"
+#include "../include/stream_model.hpp"
 
 using std::cout;
-using std::ostreambuf_iterator;
 using std::cin;
-using std::istreambuf_iterator;
-using data_pattern::make_input_model;
-using data_pattern::make_output_model;
+using std::fstream;
+using std::ios;
+using data_pattern::make_istream_model;
+using data_pattern::make_ostream_model;
 
 int main (int argc, char *argv[]){
 
-auto output ( make_output_model (
-  cout.rdbuf()
-, [](std::basic_streambuf<char> * _buf){
-    return ostreambuf_iterator<char>(_buf);
-  }
-, [](std::basic_streambuf<char> * _buf){
-  _buf->pubsync();
-  }
-) );
+fstream fstrm
+  ("./testing.test", ios::out);
 
-output << 'g' << 'A' << 'b';
+auto file (
+  make_ostream_model<int, double, char>
+  (fstrm)
+);
 
-auto input ( make_input_model (
-  cin.rdbuf()
-, [](std::streambuf * _buf){
-  return istreambuf_iterator<char>(_buf);
-  }
-, [](std::streambuf * _buf){
-  _buf->pubsync();
-  }
-) );
+//file.device << "test";
+file.device << 99 << '+' << 1.1 << ' ' << '=' << 100.1;
+
+auto output =
+  make_ostream_model<char, int> (cout);
+
+output << 'g' << 'A' << 'b' << 44 << 44;
+
+auto input (
+  make_istream_model<char> (cin)
+);
 
 char v;
 input >> v;

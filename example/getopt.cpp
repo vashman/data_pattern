@@ -9,6 +9,8 @@ using data_pattern::getopt_iterator;
 using data_pattern::make_getopt_iterator;
 using data_pattern::make_input_model;
 using data_pattern::model_state;
+using data_pattern::make_input_iterator;
+using data_pattern::make_end_input_iterator;
 
 int main (int argc, char * argv[]){
 
@@ -22,20 +24,33 @@ getopt_iterator last (argc, argv, ops);
 std::cout << *first;
 
 // get opt model
-auto iter ( make_getopt_iterator (
-  argc, argv, ops) );
+auto iter_map (
+typesystems::make_type_map <char> (
+  std::make_tuple (
+  make_getopt_iterator (argc, argv, ops)
+) ) );
 
 auto input ( make_input_model (
   argv
-, [&](char ** _argv){ return iter; }
+, [&](char ** _argv)
+  -> decltype (
+  typesystems::make_type_map <char> (
+    std::make_tuple (
+    make_getopt_iterator (argc, argv, ops)
+  ) )
+  ) &
+  { return iter_map; }
 , [&](char ** _argv, model_state & _state){
-    if (iter == make_getopt_iterator())
+  auto & t = typesystems::get<char>(iter_map);
+    if (t == make_getopt_iterator())
     _state = model_state::end;
   }
 ) );
 
-auto start (begin(input))
-, finish (end(input));
+auto start =
+  make_input_iterator<char>(input);
+auto finish =
+  make_end_input_iterator<char>(input);
 
 while (start != finish){
 std::cout << "current option is: "
