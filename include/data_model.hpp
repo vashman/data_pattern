@@ -19,12 +19,11 @@ namespace data_pattern {
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
+, typename GetOutputMap >
 struct data_model
 : public
-  input_model <Device,GetInputMap,Sync>
-, output_model <Device,GetOutputMap,Sync>
+  input_model <Device,GetInputMap>
+, output_model <Device,GetOutputMap>
 {
 
 /* dtor */
@@ -35,7 +34,6 @@ data_model (
   Device
 , GetInputMap
 , GetOutputMap
-, Sync
 );
 
 /* ctor move */
@@ -43,31 +41,30 @@ data_model (
   data_model <
     Device
   , GetInputMap
-  , GetOutputMap
-  , Sync > &&
+  , GetOutputMap > &&
 ) = default;
 
 /* assignment operator move */
 data_model <
-  Device, GetInputMap, GetOutputMap, Sync > &
+  Device, GetInputMap, GetOutputMap > &
 operator = (
   data_model <
-    Device, GetInputMap, GetOutputMap, Sync > &&
+    Device, GetInputMap, GetOutputMap > &&
 ) = default;
 
 /* ctor copy */
 data_model (
   data_model <
-    Device, GetInputMap, GetOutputMap, Sync >
+    Device, GetInputMap, GetOutputMap >
   const &
 ) = delete;
 
 /* assignment operator copy */
 data_model <
-  Device, GetInputMap, GetOutputMap, Sync > &
+  Device, GetInputMap, GetOutputMap > &
 operator = (
   data_model <
-    Device, GetInputMap, GetOutputMap, Sync >
+    Device, GetInputMap, GetOutputMap >
   const &
 ) = delete;
 
@@ -79,8 +76,7 @@ class iterator
 data_model <
     Device
   , GetInputMap
-  , GetOutputMap
-  , Sync >
+  , GetOutputMap >
 * mdl;
 
 public:
@@ -90,8 +86,7 @@ iterator (
   data_model <
      Device
    , GetInputMap
-   , GetOutputMap
-   , Sync >
+   , GetOutputMap >
   & _mdl
 )
 : mdl (&_mdl)
@@ -170,131 +165,113 @@ return !(*this == _lhs);
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
-data_model <Device,GetInputMap,GetOutputMap, Sync>
+, typename GetOutputMap >
+data_model <Device,GetInputMap,GetOutputMap>
 make_data_model (
   Device
 , GetInputMap
 , GetOutputMap
-, Sync
 );
 
 /* ctor */
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
+, typename GetOutputMap >
   data_model <
     Device
   , GetInputMap
-  , GetOutputMap
-  , Sync >
+  , GetOutputMap >
 ::data_model (
   Device _device
 , GetInputMap _input_iter
 , GetOutputMap _output_iter
-, Sync _sync
 )
-: model <Device,Sync> (
-    std::move(_device)
-  , std::move(_sync) )
+: model <Device> (std::move(_device))
 , input_model <
       Device
-    , GetInputMap
-    , Sync >
+    , GetInputMap >
   (
     std::move(_device)
   , std::move(_input_iter)
-  , std::move(_sync)
   )
-, output_model <Device, GetOutputMap, Sync> (
+, output_model <Device, GetOutputMap> (
     std::move(_device)
-  , std::move(_output_iter)
-  , std::move(_sync) )
+  , std::move(_output_iter) )
 {
 }
 
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
-data_model <Device,GetInputMap,GetOutputMap,Sync>
+, typename GetOutputMap >
+data_model <Device,GetInputMap,GetOutputMap>
 make_data_model (
   Device _device
 , GetInputMap _in_iter
 , GetOutputMap _out_iter
-, Sync _sync
 ){
 return
 data_model <
   Device
 , GetInputMap
-, GetOutputMap
-, Sync >
+, GetOutputMap >
 ( std::move(_device)
 , std::move(_in_iter)
-, std::move(_out_iter)
-, std::move(_sync) );
+, std::move(_out_iter) );
 }
 
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
+, typename GetOutputMap >
   typename data_model <
-    Device, GetInputMap, GetOutputMap, Sync >
+    Device, GetInputMap, GetOutputMap >
 ::iterator
 begin (
   data_model <
-    Device, GetInputMap, GetOutputMap, Sync > &
+    Device, GetInputMap, GetOutputMap > &
 );
 
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
+, typename GetOutputMap >
   typename data_model <
-    Device, GetInputMap, GetOutputMap, Sync >
+    Device, GetInputMap, GetOutputMap >
 ::iterator
 end (
    data_model <
-    Device, GetInputMap, GetOutputMap, Sync > const &
+    Device, GetInputMap, GetOutputMap > const &
 );
 
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
+, typename GetOutputMap >
   typename data_model <
-    Device, GetInputMap, GetOutputMap, Sync >
+    Device, GetInputMap, GetOutputMap >
 ::iterator
 begin (
   data_model <
-    Device, GetInputMap, GetOutputMap, Sync > & _mdl
+    Device, GetInputMap, GetOutputMap > & _mdl
 ){
-return typename data_model <Device,GetInputMap,GetOutputMap,Sync>
+return typename data_model <Device,GetInputMap,GetOutputMap,>
 ::iterator (_mdl);
 }
 
 template <
   typename Device
 , typename GetInputMap
-, typename GetOutputMap
-, typename Sync >
+, typename GetOutputMap >
   typename data_model <
-    Device, GetInputMap, GetOutputMap, Sync >
+    Device, GetInputMap, GetOutputMap >
 ::iterator
 end (
  data_model <
-    Device, GetInputMap, GetOutputMap, Sync > const &
+    Device, GetInputMap, GetOutputMap > const &
 ){
-return typename data_model <Device,GetInputMap,GetOutputMap,Sync>
+return typename data_model <Device,GetInputMap,GetOutputMap>
 ::iterator ();
 }
 

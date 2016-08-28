@@ -19,231 +19,156 @@ namespace data_pattern {
 namespace bits {
 
 template <
-  typename CharT
-, typename Traits
+  typename MapType
+, typename Stream
 , typename... Ts >
-struct ositer {
+struct stream_iter {
 
-typedef typesystems::type_map <
-  std::tuple < std::ostream_iterator
-    <Ts, CharT, Traits>... >
-, Ts...
-> map_type;
+MapType map;
 
-map_type map;
+stream_iter (
+  Stream & _stream
+, MapType _map
+)
+: map (_map)
+{}
 
-ositer (
-  std::basic_ostream<CharT, Traits>
-  & _stream
-) : map (
-  typesystems::make_type_map<Ts...> (
-    std::make_tuple ( std
-      ::ostream_iterator
-        <Ts, CharT, Traits >(_stream)...
-    )
-  )
-){}
-
-map_type &
+MapType &
 operator ()(
-  std::basic_ostream<CharT,Traits>
-  const &
+  model <Stream const &> & _mdl
 ){
+  if (_mdl.state == model_state::sync)
+  _mdl.device.flush();
+  if (_mdl.device.good())
+  _mdl.state = model_state::good;
+  else
+  _mdl.state = model_state::end;
 return this->map;
 }
 
-map_type &
+/*MapType &
 operator ()(
-  std::basic_ostream<CharT,Traits>
-  const *
+  model <(Stream const *)> & _mdl
 ){
+  if (_mdl.state == model_state::sync)
+  _mdl.device.flush();
+  if (_mdl.device.good())
+  _mdl.state = model_state::good;
+  else
+  _mdl.state = model_state::end;
 return this->map;
-}
+}*/
 
 }; //
 
 template <
-  typename CharT
-, typename Traits
+  typename MapType
+, typename Stream
 , typename... Ts >
-struct isiter {
+struct istream_iter {
 
-typedef typesystems::type_map <
-  std::tuple < std::istream_iterator
-    <Ts, CharT, Traits>... >
-, Ts...
-> map_type;
+MapType map;
 
-map_type map;
+istream_iter (
+  Stream & _stream
+, MapType _map
+)
+: map (_map)
+{}
 
-isiter (
-  std::basic_istream<CharT, Traits>
-  & _stream
-) : map (
-  typesystems::make_type_map<Ts...> (
-    std::make_tuple ( std
-      ::istream_iterator
-        <Ts, CharT, Traits >(_stream)...
-    )
-  )
-){}
-
-map_type &
+MapType &
 operator ()(
-  std::basic_istream<CharT,Traits>
-  const &
+  model <Stream const &> & _mdl
 ){
-return this->map;
-}
-
-map_type &
-operator ()(
-  std::basic_istream<CharT,Traits>
-  const *
-){
+  if (_mdl.device.good())
+  _mdl.state = model_state::good;
+  else
+  _mdl.state = model_state::end;
 return this->map;
 }
 
 }; //
-
-template <
-  typename... Ts
-, typename CharT
-, typename Traits >
-ositer <CharT,Traits,Ts...>
-make_ositer (
-  std::basic_ostream<CharT, Traits>
-  & _stream
-){
-return
-ositer<CharT,Traits,Ts...>(_stream);
-}
-
-template <
-  typename... Ts
-, typename CharT
-, typename Traits >
-isiter <CharT,Traits,Ts...>
-make_isiter (
-  std::basic_istream<CharT, Traits>
-  & _stream
-){
-return
-isiter<CharT,Traits,Ts...>(_stream);
-}
-
-template <
-  typename CharT, typename Traits >
-struct ostreamsync {
-
-void
-operator ()(
-  std::basic_ostream<CharT,Traits>
-  const & _stream
-, model_state & _state
-){
-_stream.flush();
-  if (_stream.good())
-  _state = model_state::good;
-  else
-  _state = model_state::end;
-}
-
-void
-operator ()(
-  std::basic_ostream<CharT,Traits>
-  const * _stream
-, model_state & _state
-){
-this->operator ()(*_stream, _state);
-}
-
-}; // streamsync
-
-template <
-  typename CharT, typename Traits >
-struct istreamsync {
-
-void
-operator ()(
-  std::basic_istream<CharT,Traits>
-  & _stream
-, model_state & _state
-){
-_stream.flush();
-  if (_stream.good())
-  _state = model_state::good;
-  else
-  _state = model_state::end;
-}
-
-void
-operator ()(
-  std::basic_istream<CharT,Traits>
-  * _stream
-, model_state & _state
-){
-this->operator ()(*_stream, _state);
-}
-
-}; // streamsync
-
-template <
-  typename CharT, typename Traits >
-ostreamsync<CharT,Traits>
-make_ostreamsync(
-  std::basic_ostream<CharT,Traits>
-  & _stream
-){
-return ostreamsync<CharT,Traits>();
-}
-
-template <
-  typename CharT, typename Traits >
-istreamsync<CharT,Traits>
-make_istreamsync(
-  std::basic_istream<CharT,Traits>
-  & _stream
-){
-return istreamsync<CharT,Traits>();
-}
 
 } /* bits */
 
 template <
-  typename... Ts, typename Ostream >
+  typename... Ts, typename Stream >
 auto
-make_ostream_model (
-  Ostream && _ostream
+get_ostream_manager (
+  Stream && _stream
 )
--> decltype ( make_output_model (
-   std::forward<Ostream> (_ostream)
-  , bits::make_ositer<Ts...>(_ostream)
-  , bits::make_ostreamsync(_ostream)
-))
+-> bits::stream_iter <
+    decltype (typesystems::make_type_map<Ts...>
+    (std::make_tuple (std::ostream_iterator<Ts>(_stream)...))
+    )
+  , Stream
+  , Ts... >
 {
-return make_output_model (
-  std::forward<Ostream> (_ostream)
-, bits::make_ositer<Ts...>(_ostream)
-, bits::make_ostreamsync(_ostream) 
+return bits::stream_iter <
+  decltype (typesystems::make_type_map<Ts...>
+  (std::make_tuple (std::ostream_iterator<Ts>(_stream)...))
+  )
+, Stream
+, Ts... >
+(
+  _stream
+, typesystems::make_type_map<Ts...>
+  (std::make_tuple (std::ostream_iterator<Ts>(_stream)...))
 );
 }
 
 template <
-  typename... Ts, typename Istream >
+  typename... Ts, typename Stream >
 auto
-make_istream_model (
-  Istream && _istream
-) -> decltype ( make_input_model (
-    std::forward<Istream> (_istream)
-  , bits::make_isiter<Ts...>(_istream)
-  , bits::make_istreamsync(_istream)
-))
+get_istream_manager (
+  Stream && _stream
+)
+-> bits::istream_iter <
+    decltype (typesystems::make_type_map<Ts...>
+    (std::make_tuple (std::istream_iterator<Ts>(_stream)...))
+    )
+  , Stream
+  , Ts... >
 {
-return make_input_model (
-  std::forward<Istream> (_istream)
-, bits::make_isiter<Ts...>(_istream)
-, bits::make_istreamsync(_istream) 
+return bits::istream_iter <
+  decltype (typesystems::make_type_map<Ts...>
+  (std::make_tuple (std::istream_iterator<Ts>(_stream)...))
+  )
+, Stream
+, Ts... >
+(
+  _stream
+, typesystems::make_type_map<Ts...>
+  (std::make_tuple (std::istream_iterator<Ts>(_stream)...))
+);
+}
+
+template <
+  typename... Ts
+, typename Stream
+, typename... Iterator >
+auto
+get_stream_manager (
+  Stream && _stream
+, Iterator... _iters
+)
+-> bits::stream_iter <
+    decltype (typesystems::make_type_map<Ts...>
+    (std::make_tuple (_iters...))
+    )
+  , Stream
+  , Ts... >
+{
+return bits::stream_iter <
+  decltype (typesystems::make_type_map<Ts...>
+  (std::make_tuple (_iters...))
+  )
+, Stream
+, Ts... >
+(
+  _stream
+, typesystems::make_type_map<Ts...>
+  (std::make_tuple (_iters...))
 );
 }
 
