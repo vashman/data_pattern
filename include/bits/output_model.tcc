@@ -16,17 +16,14 @@ namespace data_pattern {
 template <
   typename Device
 , typename GetIteratorMap
-, typename Sync >
-  output_model <
-    Device, GetIteratorMap, Sync >
+ >
+  output_model <Device, GetIteratorMap>
 ::output_model (
   Device && _device
 , GetIteratorMap && _output_iter
-, Sync && _sync
 )
-: model <Device, Sync> (
+: model <Device> (
     std::forward<Device>(_device)
-  , std::forward<Sync>(_sync)
   )
 , iterator_map (std::forward<GetIteratorMap>(_output_iter))
 {}
@@ -34,50 +31,38 @@ template <
 /* make output model */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync >
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap>
 make_output_model (
   Device && _device
 , GetIteratorMap && _iter_map
-, Sync && _sync
 ){
-return output_model <
-  Device, GetIteratorMap, Sync > (
+return output_model <Device, GetIteratorMap> (
   std::forward<Device>(_device)
-, std::forward<GetIteratorMap>(_iter_map)
-, std::forward<Sync>(_sync) );
+, std::forward<GetIteratorMap>(_iter_map));
 }
 
 template <
   typename T
 , typename Device
-, typename GetIteratorMap
-, typename Sync >
-  typename output_model <
-    Device, GetIteratorMap, Sync >
+, typename GetIteratorMap >
+  typename output_model <Device, GetIteratorMap>
 :: template iterator<T>
 make_output_iterator (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 ){
-return typename output_model <
-  Device, GetIteratorMap, Sync >
+return typename output_model <Device, GetIteratorMap>
 :: template iterator<T> (_mdl);
 }
 
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , bool const & _var
 ){
@@ -91,13 +76,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , signed short const & _var
 ){
@@ -111,13 +93,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , unsigned short const & _var
 ){
@@ -131,13 +110,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , signed int const & _var
 ){
@@ -150,13 +126,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , unsigned int const & _var
 ){
@@ -170,13 +143,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , signed long const & _var
 ){
@@ -189,13 +159,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , unsigned long const & _var
 ){
@@ -209,13 +176,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
- output_model <
-    Device, GetIteratorMap, Sync >
+ output_model <Device, GetIteratorMap>
   & _mdl
 , float const & _var
 ){
@@ -229,13 +193,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , double const & _var
 ){
@@ -249,13 +210,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , long double const & _var
 ){
@@ -269,13 +227,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , signed char const & _var
 ){
@@ -289,13 +244,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , unsigned char const & _var
 ){
@@ -308,13 +260,10 @@ return _mdl;
 /* output value */
 template <
   typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
+  output_model <Device, GetIteratorMap>
   & _mdl
 , char const & _var
 ){

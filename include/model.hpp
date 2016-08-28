@@ -7,50 +7,61 @@
 
 namespace data_pattern {
 
-template <
-  typename Device, typename Sync >
+template <typename Device>
 struct model;
-
-template <
-  typename Device, typename Sync >
-void
-sync (
-  model <Device, Sync> &
-);
 
 enum class model_state {
   good // Device is in good io state.
 , end // Device is standing by at end of file.
+, sync // ask the model to sync.
 };
 
-template <
-  typename Device, typename Sync >
+template <typename Device>
+model<Device> &
+sync (
+ model <Device> &
+);
+
+template <typename Device>
+model<Device> &
+operator << (
+  model<Device> &
+, model<Device> & (*pf)(model<Device> &)
+);
+
+template <typename Device>
+model<Device> &
+operator >> (
+  model<Device> &
+, model<Device> & (*pf)(model<Device> &)
+);
+
+template <typename Device>
 struct model {
 Device device;
-Sync sync;
 model_state state;
 
+template <typename T>
 model (
-  Device &&
-, Sync &&
+  T &&
 );
 
 model (
-  model<Device,Sync> const &
+  model<Device> const &
 ) = default;
 
 model (
-  model<Device,Sync> &&
+  model<Device> &&
 ) = default;
 
-model<Device,Sync> &
+model<Device> &
 operator = (
-  model<Device,Sync> const &
+  model<Device> const &
 ) = default;
 
-model<Device,Sync> &
+model<Device> &
 operator = (
-  model<Device,Sync> &&
+  model<Device> &&
 ) = default;
 
 virtual
@@ -58,24 +69,40 @@ virtual
 
 }; /* model */
 
-template <
-  typename Device, typename Sync >
-model<Device,Sync>::model (
-  Device && _device
-, Sync && _sync
+template <typename Device>
+template <typename T>
+model<Device>::model (
+  T && _device
 )
-: device (std::forward<Device>(_device))
-, sync (std::forward<Sync>(_sync))
+: device (std::forward<T>(_device))
 , state (model_state::good)
 {}
 
-template <
-  typename Device, typename Sync >
-void
+template <typename Device>
+model<Device> &
 sync (
-  model <Device, Sync> & _mdl
+  model<Device> & _mdl
 ){
-_mdl.sync (_mdl.device, _mdl.state);
+_mdl.state = model_state::sync;
+return _mdl;
+}
+
+template <typename Device>
+model<Device> &
+operator << (
+  model<Device> & _mdl
+, model<Device> & (*pf)(model<Device> &)
+){
+return pf(_mdl);
+}
+
+template <typename Device>
+model<Device> &
+operator >> (
+  model<Device> & _mdl
+, model<Device> & (*pf)(model<Device> &)
+){
+return pf(_mdl);
 }
 
 } /* data pattern */
