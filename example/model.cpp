@@ -10,7 +10,6 @@ model <int> mdll (i);
 model <int> mdl(3);
 sync (mdl);
 sync (mdll);
-mdl << sync >> sync;
 
 return 0;
 }

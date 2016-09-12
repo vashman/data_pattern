@@ -25,8 +25,7 @@ struct obufiter {
 typedef typesystems::type_map <
   std::tuple < std::ostreambuf_iterator
     <CharT, Traits> >
-, CharT
-> map_type;
+, CharT > map_type;
 
 map_type map;
 
@@ -37,7 +36,8 @@ obufiter (
   typesystems::make_type_map<CharT> (
     std::make_tuple ( std
       ::ostreambuf_iterator <
-        CharT,Traits >(& _buf)
+        CharT,Traits >
+    (& _buf)
     )
   )
 ){}

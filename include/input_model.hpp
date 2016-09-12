@@ -8,6 +8,7 @@
 #ifndef DATA_PATTERN_INPUT_MODEL_HPP
 #define DATA_PATTERN_INPUT_MODEL_HPP
 
+#include <type_traits>
 #include "model.hpp"
 #include "bits/map_type.hpp"
 
@@ -29,6 +30,27 @@ make_input_model (
 );
 
 template <
+  typename Device
+, typename GetIteratorMap >
+input_model<Device,GetIteratorMap> &
+sync (
+  input_model<Device,GetIteratorMap> &
+);
+
+template <
+  typename Device
+, typename GetIteratorMap >
+input_model<Device,GetIteratorMap> &
+sync (
+  input_model<Device,GetIteratorMap> &
+  _mdl
+){
+_mdl.state = model_state::sync;
+_mdl.iterator_map(_mdl);
+return _mdl;
+}
+
+template <
   typename T
 , typename Device
 , typename GetIteratorMap >
@@ -41,9 +63,87 @@ get (
   _mdl.iterator_map(_mdl)
   ))
 {
-return typesystems::get<T> (
-  _mdl.iterator_map(_mdl)
-);}
+return typesystems::get<T>
+(_mdl.iterator_map(_mdl));
+}
+
+namespace bits {
+
+struct end_of_placeholder {
+
+bool operator == (
+  end_of_placeholder const &
+) const {
+return false;
+}
+
+};
+
+template <typename T, typename Model>
+struct end_of_get {
+
+static auto get_if (
+  Model const & _mdl
+)
+-> decltype
+  (get<T>(const_cast<Model&>(_mdl)))
+{
+return get<T>(const_cast<Model&>(_mdl));
+}
+
+};
+
+template <typename Model>
+struct end_of_get
+<end_of_placeholder, Model> {
+
+static end_of_placeholder get_if (
+  Model const & _mdl
+){
+return end_of_placeholder();
+}
+
+};
+
+} /* bits */
+
+template <
+  typename T
+, typename Device
+, typename GetIteratorMap >
+bool
+end_of (
+  input_model <Device, GetIteratorMap>
+  const & _mdl
+){
+
+using mdl_t = typename std
+::remove_reference <
+  decltype (
+  const_cast<
+    input_model<Device,GetIteratorMap>&
+  >(_mdl)
+    .iterator_map (
+  const_cast <
+    input_model<Device,GetIteratorMap>&
+  >(_mdl))
+  )
+>::type;
+
+return (
+  bits::end_of_get <
+    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
+      ,T,bits::end_of_placeholder>::type
+  , input_model <Device, GetIteratorMap>
+  >::get_if (_mdl)
+==
+  bits::end_of_get <
+    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
+      ,end_tag<T>,bits::end_of_placeholder>::type
+  , input_model <Device, GetIteratorMap>
+  >::get_if (_mdl)
+);
+}
 
 /* input value */
 template <
@@ -242,7 +342,7 @@ iterator (
   input_model <Device, GetIteratorMap>
  & _mdl
 )
-: input_mdl (&_mdl)
+: input_mdl (& _mdl)
 , temp ()
 {
 sync(*(this->input_mdl));
@@ -291,12 +391,16 @@ return *this;
 
 bool
 operator == (
-  iterator<T> const _rhs
+  iterator<T> const & _rhs
 ) const {
+  if (_rhs.input_mdl == nullptr)
+  return end_of<T>(*this->input_mdl);
+
 return (
-  this->input_mdl->state
-== model_state::end
-);}
+   end_of<T>(*(_rhs.input_mdl))
+|| end_of<T>(*this->input_mdl)
+);
+}
 
 bool
 operator != (

@@ -29,6 +29,27 @@ make_output_model (
 );
 
 template <
+  typename Device
+, typename GetIteratorMap >
+output_model<Device,GetIteratorMap> &
+sync (
+  output_model<Device,GetIteratorMap> &
+);
+
+template <
+  typename Device
+, typename GetIteratorMap >
+output_model<Device,GetIteratorMap> &
+sync (
+  output_model<Device,GetIteratorMap> &
+  _mdl
+){
+_mdl.state = model_state::sync;
+_mdl.iterator_map(_mdl);
+return _mdl;
+}
+
+template <
   typename T
 , typename Device
 , typename GetIteratorMap >
@@ -44,6 +65,82 @@ get (
 return typesystems::get<T> (
   _mdl.iterator_map(_mdl)
 );}
+
+namespace bits {
+
+struct end_of_oplaceholder {
+
+bool operator == (
+  end_of_oplaceholder const &
+) const {
+return false;
+}
+
+};
+
+template <typename T, typename Model>
+struct end_of_oget {
+
+static auto get_if (
+  Model const & _mdl
+)
+-> decltype (get<T>(const_cast<Model&>(_mdl)))
+{
+return get<T>(const_cast<Model&>(_mdl));
+}
+
+};
+
+template <typename Model>
+struct end_of_oget
+<end_of_oplaceholder, Model> {
+
+static end_of_oplaceholder get_if (
+  Model const & _mdl
+){
+return end_of_oplaceholder();
+}
+
+};
+
+} /* bits */
+
+template <
+  typename T
+, typename Device
+, typename GetIteratorMap >
+bool
+end_of (
+  output_model <Device, GetIteratorMap>
+  const & _mdl
+){
+using mdl_t = typename std
+::remove_reference <
+  decltype (
+  const_cast<
+    output_model<Device,GetIteratorMap>&
+  >(_mdl)
+    .iterator_map (
+  const_cast <
+    output_model<Device,GetIteratorMap>&
+  >(_mdl))
+  )
+>::type;
+
+return (
+  bits::end_of_oget <
+    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
+      ,T,bits::end_of_oplaceholder>::type
+  , output_model <Device, GetIteratorMap>
+  >::get_if (_mdl)
+==
+  bits::end_of_oget <
+    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
+      ,end_tag<T>,bits::end_of_oplaceholder>::type
+  , output_model <Device, GetIteratorMap>
+  >::get_if (_mdl)
+);
+}
 
 /* output value */
 template <
@@ -286,11 +383,14 @@ operator = (
 
 bool
 operator == (
-  iterator const &
+  iterator const & _rhs
 ) const {
+  if (_rhs.output_mdl == nullptr)
+  return end_of<T>(*this->output_mdl);
+
 return (
-   this->input_mdl->state
-== model_state::end
+   end_of<T>(*(_rhs.output_mdl))
+|| end_of<T>(*this->output_mdl)
 );
 }
 

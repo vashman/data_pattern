@@ -275,6 +275,38 @@ return typename data_model <Device,GetInputMap,GetOutputMap>
 ::iterator ();
 }
 
+template <
+  typename Device
+, typename GetInputMap
+, typename GetOutputMap >
+data_model <
+  Device,GetInputMap,GetOutputMap > &
+sync (
+data_model <
+  Device,GetInputMap,GetOutputMap >
+  & _mdl
+);
+
+template <
+  typename Device
+, typename GetInputMap
+, typename GetOutputMap >
+data_model <
+  Device,GetInputMap,GetOutputMap > &
+sync (
+data_model <
+  Device,GetInputMap,GetOutputMap >
+  & _mdl
+){
+_mdl.state = model_state::sync;
+static_cast<output_model<Device,GetOutputMap>&>(_mdl)
+  .iterator_map(_mdl);
+_mdl.state = model_state::sync;
+static_cast<Input_model<Device,GetInputMap>&>(_mdl)
+  .iterator_map(_mdl);
+return _mdl;
+}
+
 } /* data_pattern */
 #endif
 

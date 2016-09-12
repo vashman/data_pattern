@@ -14,6 +14,7 @@ using data_pattern::get_ostream_manager;
 using data_pattern::get_stream_manager;
 using data_pattern::get_istream_manager;
 using data_pattern::sync;
+using data_pattern::end_of;
 
 int main (int argc, char *argv[]){
 
@@ -25,9 +26,10 @@ auto file ( make_output_model (
 , get_ostream_manager
   <int, double, char>(fstrm)
 ));
-sync(file);
+
 file.device << 99 << '+' << 1.1
   << ' ' << '=' << 100.1;
+sync(file);
 
 auto output = make_output_model (
   cout
@@ -45,12 +47,17 @@ auto input (
   (cin, get_istream_manager <char>(cin))
 );
 
-char v;
-input >> v;
-
 output << 'i' << 'n' << 'p' << 'u'
 << 't' << ' ' << 'w' << 'a' <<'s'
-<<':' << v;
+<<':';
+
+char v;
+  if (! end_of <char>(input)){
+  input >> v;
+  output << v;
+  } else {
+  output << 'n' << 'o' << 'p' << 'e';
+  }
 
 return 0;
 }

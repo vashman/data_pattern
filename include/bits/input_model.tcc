@@ -86,8 +86,7 @@ operator >> (
   & _mdl
 , bool & _var
 ){
-auto & iter =
-  get<bool>(_mdl);
+auto && iter = get<bool>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -103,7 +102,7 @@ operator >> (
   & _mdl
 , signed short & _var
 ){
-auto & iter = get<signed short>(_mdl);
+auto && iter = get<signed short>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -119,7 +118,7 @@ operator >> (
   & _mdl
 , unsigned short & _var
 ){
-auto & iter = get<unsigned short>(_mdl);
+auto && iter = get<unsigned short>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -135,7 +134,7 @@ operator >> (
   & _mdl
 , signed int & _var
 ){
-auto & iter = get<signed int>(_mdl);
+auto && iter = get<signed int>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -151,7 +150,7 @@ operator >> (
   & _mdl
 , unsigned int & _var
 ){
-auto & iter = get<unsigned int>(_mdl);
+auto && iter = get<unsigned int>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -167,7 +166,7 @@ operator >> (
   & _mdl
 , signed long & _var
 ){
-auto & iter = get<signed long>(_mdl);
+auto && iter = get<signed long>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -183,7 +182,7 @@ operator >> (
   & _mdl
 , unsigned long & _var
 ){
-auto & iter = get<unsigned long>(_mdl);
+auto && iter = get<unsigned long>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -199,7 +198,7 @@ operator >> (
   & _mdl
 , float & _var
 ){
-auto & iter = get<float>(_mdl);
+auto && iter = get<float>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -215,7 +214,7 @@ operator >> (
   & _mdl
 , double & _var
 ){
-auto & iter = get<double>(_mdl);
+auto && iter = get<double>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -231,7 +230,7 @@ operator >> (
   & _mdl
 , long double & _var
 ){
-auto & iter = get<long double>(_mdl);
+auto && iter = get<long double>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -248,7 +247,7 @@ operator >> (
 , char & _var
 ){
 using data_pattern::get;
-auto & iter = data_pattern::get<char>(_mdl);
+auto &&  iter = data_pattern::get<char>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -264,7 +263,7 @@ operator >> (
   & _mdl
 , signed char & _var
 ){
-auto & iter = get<signed char>(_mdl);
+auto && iter = get<signed char>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;
@@ -280,7 +279,7 @@ operator >> (
   & _mdl
 , unsigned char & _var
 ){
-auto & iter = get<unsigned char>(_mdl);
+auto && iter = get<unsigned char>(_mdl);
 _var = *iter;
 ++iter;
 return _mdl;

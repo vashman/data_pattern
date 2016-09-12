@@ -11,33 +11,17 @@ template <typename Device>
 struct model;
 
 enum class model_state {
-  good // Device is in good io state.
-, end // Device is standing by at end of file.
-, sync // ask the model to sync.
+  operable // Device is in good io state.
+, inoperable // Device is inoperable, but io may contuinue.
+, sync // Have the model go into sync mode.
 };
 
-template <typename Device>
-model<Device> &
-sync (
- model <Device> &
-);
-
-template <typename Device>
-model<Device> &
-operator << (
-  model<Device> &
-, model<Device> & (*pf)(model<Device> &)
-);
-
-template <typename Device>
-model<Device> &
-operator >> (
-  model<Device> &
-, model<Device> & (*pf)(model<Device> &)
-);
+template <typename Iterator>
+struct end_tag;
 
 template <typename Device>
 struct model {
+
 Device device;
 model_state state;
 
@@ -75,35 +59,8 @@ model<Device>::model (
   T && _device
 )
 : device (std::forward<T>(_device))
-, state (model_state::good)
+, state (model_state::operable)
 {}
-
-template <typename Device>
-model<Device> &
-sync (
-  model<Device> & _mdl
-){
-_mdl.state = model_state::sync;
-return _mdl;
-}
-
-template <typename Device>
-model<Device> &
-operator << (
-  model<Device> & _mdl
-, model<Device> & (*pf)(model<Device> &)
-){
-return pf(_mdl);
-}
-
-template <typename Device>
-model<Device> &
-operator >> (
-  model<Device> & _mdl
-, model<Device> & (*pf)(model<Device> &)
-){
-return pf(_mdl);
-}
 
 } /* data pattern */
 #endif

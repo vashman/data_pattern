@@ -40,9 +40,9 @@ operator ()(
   if (_mdl.state == model_state::sync)
   _mdl.device.flush();
   if (_mdl.device.good())
-  _mdl.state = model_state::good;
+  _mdl.state = model_state::operable;
   else
-  _mdl.state = model_state::end;
+  _mdl.state = model_state::inoperable;
 return this->map;
 }
 
@@ -81,9 +81,9 @@ operator ()(
   model <Stream const &> & _mdl
 ){
   if (_mdl.device.good())
-  _mdl.state = model_state::good;
+  _mdl.state = model_state::operable;
   else
-  _mdl.state = model_state::end;
+  _mdl.state = model_state::inoperable;
 return this->map;
 }
 
