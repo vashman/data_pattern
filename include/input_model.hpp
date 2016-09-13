@@ -112,7 +112,7 @@ template <
 , typename Device
 , typename GetIteratorMap >
 bool
-end_of (
+end_of_input (
   input_model <Device, GetIteratorMap>
   const & _mdl
 ){
@@ -394,11 +394,11 @@ operator == (
   iterator<T> const & _rhs
 ) const {
   if (_rhs.input_mdl == nullptr)
-  return end_of<T>(*this->input_mdl);
+  return end_of_input<T>(*this->input_mdl);
 
 return (
-   end_of<T>(*(_rhs.input_mdl))
-|| end_of<T>(*this->input_mdl)
+   end_of_input<T>(*(_rhs.input_mdl))
+|| end_of_input<T>(*this->input_mdl)
 );
 }
 

@@ -14,7 +14,7 @@ using data_pattern::get_ostream_manager;
 using data_pattern::get_stream_manager;
 using data_pattern::get_istream_manager;
 using data_pattern::sync;
-using data_pattern::end_of;
+using data_pattern::end_of_input;
 
 int main (int argc, char *argv[]){
 
@@ -52,7 +52,7 @@ output << 'i' << 'n' << 'p' << 'u'
 <<':';
 
 char v;
-  if (! end_of <char>(input)){
+  if (! end_of_input <char>(input)){
   input >> v;
   output << v;
   } else {

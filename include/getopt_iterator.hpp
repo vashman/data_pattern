@@ -44,6 +44,14 @@ auto getopt_lam =
   /* restore get opt state */
   optind = global_optind;
   std::get<5>(_mdl.device) = optarg;
+  std::tuple <char*, std::string*> tup;
+
+(
+      & std::get<2>(_mdl.device)
+    , & std::get<5>(_mdl.device)
+    )
+
+
   return typesystems::make_type_map
   <char, std::string> (
     std::tuple <char*, std::string*>(
