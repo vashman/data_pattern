@@ -75,7 +75,7 @@ example: $(EXAMPLES)
 
 lib: $(SLIB) $(DLIB)
 
-install: $(DLIB)
+install:
 	mkdir -p -m 655 $(INCDIR)
 #	install -c $(DLIB) $(LIBDIR)
 #	ldconfig -v -n $(LIBDIR)
@@ -83,6 +83,6 @@ install: $(DLIB)
 #	ln -sf $(LIBDIR)/$(LIB).$(MAJOR) $(LIBDIR)/$(LIB)
 	cp -r ../include/* $(INCDIR)
 
-remove: $(LIBDIR)/$(LIB) $(INCDIR)
+remove: $(INCDIR)
 	rm -r $(INCDIR)
-	rm $(LIBDIR)/$(LIB)*
+#	rm $(LIBDIR)/$(LIB)*
