@@ -156,7 +156,7 @@ _mdl.state = model_state::sync;
 static_cast<output_model<Device,GetOutputMap>&>(_mdl)
   .iterator_map(_mdl);
 _mdl.state = model_state::sync;
-static_cast<Input_model<Device,GetInputMap>&>(_mdl)
+static_cast<input_model<Device,GetInputMap>&>(_mdl)
   .iterator_map(_mdl);
 return _mdl;
 }
