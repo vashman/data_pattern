@@ -15,14 +15,10 @@
 namespace data_pattern {
 
 /* input model */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 class input_model;
 
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap>
 make_input_model (
   Device &&
@@ -30,41 +26,16 @@ make_input_model (
 );
 
 template <
-  typename Device
-, typename GetIteratorMap >
-input_model<Device,GetIteratorMap> &
-sync (
-  input_model<Device,GetIteratorMap> &
-);
-
-template <
-  typename Device
-, typename GetIteratorMap >
-input_model<Device,GetIteratorMap> &
-sync (
-  input_model<Device,GetIteratorMap> &
-  _mdl
-){
-_mdl.state = model_state::sync;
-_mdl.iterator_map(_mdl);
-return _mdl;
-}
-
-template <
   typename T
 , typename Device
 , typename GetIteratorMap >
 auto
 get (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 )
--> decltype ( typesystems::get<T> (
-  _mdl.iterator_map(_mdl)
-  ))
+-> decltype ( typesystems::get<T> (_mdl.iterator_map(_mdl)))
 {
-return typesystems::get<T>
-(_mdl.iterator_map(_mdl));
+return typesystems::get<T> (_mdl.iterator_map(_mdl));
 }
 
 namespace bits {
@@ -85,8 +56,7 @@ struct end_of_get {
 static auto get_if (
   Model const & _mdl
 )
--> decltype
-  (get<T>(const_cast<Model&>(_mdl)))
+-> decltype(get<T>(const_cast<Model&>(_mdl)))
 {
 return get<T>(const_cast<Model&>(_mdl));
 }
@@ -113,22 +83,17 @@ template <
 , typename GetIteratorMap >
 bool
 end_of_input (
-  input_model <Device, GetIteratorMap>
-  const & _mdl
+  input_model <Device, GetIteratorMap> const & _mdl
 ){
+  if (_mdl.state == model_state::inoperable) return true;
 
-using mdl_t = typename std
-::remove_reference <
-  decltype (
-  const_cast<
-    input_model<Device,GetIteratorMap>&
-  >(_mdl)
-    .iterator_map (
-  const_cast <
-    input_model<Device,GetIteratorMap>&
-  >(_mdl))
+using mdl_t = typename std::remove_reference <
+decltype (
+  const_cast<input_model<Device,GetIteratorMap>&>(_mdl)
+  .iterator_map (
+    const_cast <input_model<Device,GetIteratorMap>&>(_mdl)
   )
->::type;
+)>::type;
 
 return (
   bits::end_of_get <
@@ -146,9 +111,7 @@ return (
 }
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -156,21 +119,15 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap
-, typename Sync >
-input_model <
-  Device, GetIteratorMap> &
+template <typename Device, typename GetIteratorMap>
+input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
 , signed short &
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -178,9 +135,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -188,9 +143,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -198,9 +151,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -208,9 +159,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -218,9 +167,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -228,9 +175,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -238,9 +183,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -248,9 +191,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -258,9 +199,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -268,9 +207,7 @@ operator >> (
 );
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
   input_model <Device, GetIteratorMap> &
@@ -278,9 +215,7 @@ operator >> (
 );
 
 /* input model */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 struct input_model
 : public virtual  model <Device>
 {
@@ -416,8 +351,7 @@ template <
   typename T
 , typename Device
 , typename GetIteratorMap >
-  typename input_model
-  <Device, GetIteratorMap>
+  typename input_model <Device, GetIteratorMap>
 :: template iterator<T>
 make_input_iterator (
   input_model <Device, GetIteratorMap> &
@@ -427,8 +361,7 @@ template <
   typename T
 , typename Device
 , typename GetIteratorMap >
-  typename input_model
-  <Device, GetIteratorMap>
+  typename input_model<Device, GetIteratorMap>
 :: template iterator<T>
 make_end_input_iterator (
   input_model <Device, GetIteratorMap> &
@@ -436,5 +369,6 @@ make_end_input_iterator (
 
 } /* data_pattern */
 #include "bits/input_model.tcc"
+#include "bits/string_data_model_shifts.hpp"
 #endif
 

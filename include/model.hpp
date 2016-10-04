@@ -13,7 +13,6 @@ struct model;
 enum class model_state {
   operable // Device is in good io state.
 , inoperable // Device is inoperable, but io may contuinue.
-, sync // Have the model go into sync mode.
 };
 
 template <typename Iterator>
@@ -25,9 +24,9 @@ struct model {
 Device device;
 model_state state;
 
-template <typename T>
+template <typename DeviceType>
 model (
-  T &&
+  DeviceType &&
 );
 
 model (
@@ -54,11 +53,11 @@ virtual
 }; /* model */
 
 template <typename Device>
-template <typename T>
+template <typename DeviceType>
 model<Device>::model (
-  T && _device
+  DeviceType && _device
 )
-: device (std::forward<T>(_device))
+: device (std::forward<DeviceType>(_device))
 , state (model_state::operable)
 {}
 

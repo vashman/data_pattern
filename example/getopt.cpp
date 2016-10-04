@@ -1,20 +1,24 @@
 //
 
 #include <iostream>
-#include <functional>
 #include "../include/input_model.hpp"
 #include "../include/getopt_iterator.hpp"
 
-using typesystems::get;
-using data_pattern::make_getopt_model;
+using data_pattern::getopt_model_sync;
+using data_pattern::end_of_input;
+using data_pattern::program_option;
 
 int main (int argc, char * argv[]){
 
-char const * const ops = "abcde:";
+program_option j;
+auto i = make_input_model (
+  argv, getopt_model_sync ("abcde:", argc) );
 
-auto i = make_getopt_model (argv, argc,ops);
-char j;
-i >> j;
+  if (end_of_input<char>(i) == false){
+  i >> j;
+  std::cout << "option is: " << j.get_option() << " ";
+    if (j.has_arg()) std::cout << "arg is: " << j.get_arg();
+  }
 
 return 0;
 }

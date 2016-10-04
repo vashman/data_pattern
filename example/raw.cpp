@@ -1,12 +1,14 @@
 #include "../include/raw.hpp"
-#include <string>
+#include <vector>
 
 using data_pattern::raw;
 
 int main (){
-std::string str("sfdgdgdsgg");
-const void * data = static_cast<const void*>(str.c_str());
-raw b(data, str.size());
+std::vector<unsigned char> vec {};
+raw<> blob(vec.data(), vec.size());
+raw<> zlob(blob);
+blob = zlob;
+raw<> temp;
 return 0;
 }
 

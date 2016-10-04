@@ -14,14 +14,10 @@
 namespace data_pattern {
 
 /* output model */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 class output_model;
 
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap>
 make_output_model (
   Device &&
@@ -29,42 +25,17 @@ make_output_model (
 );
 
 template <
-  typename Device
-, typename GetIteratorMap >
-output_model<Device,GetIteratorMap> &
-sync (
-  output_model<Device,GetIteratorMap> &
-);
-
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model<Device,GetIteratorMap> &
-sync (
-  output_model<Device,GetIteratorMap> &
-  _mdl
-){
-_mdl.state = model_state::sync;
-_mdl.iterator_map(_mdl);
-return _mdl;
-}
-
-template <
   typename T
 , typename Device
 , typename GetIteratorMap >
 auto
 get (
-  output_model <Device, GetIteratorMap>
-  & _mdl
+  output_model <Device, GetIteratorMap> & _mdl
 )
--> decltype ( typesystems::get<T> (
-  _mdl.iterator_map(_mdl)
-  ))
+-> decltype ( typesystems::get<T> (_mdl.iterator_map(_mdl)))
 {
-return typesystems::get<T> (
-  _mdl.iterator_map(_mdl)
-);}
+return typesystems::get<T> (_mdl.iterator_map(_mdl));
+}
 
 namespace bits {
 
@@ -114,18 +85,15 @@ end_of_output (
   output_model <Device, GetIteratorMap>
   const & _mdl
 ){
-using mdl_t = typename std
-::remove_reference <
-  decltype (
-  const_cast<
-    output_model<Device,GetIteratorMap>&
-  >(_mdl)
-    .iterator_map (
-  const_cast <
-    output_model<Device,GetIteratorMap>&
-  >(_mdl))
+ if (_mdl.state == model_state::inoperable) return true;
+
+using mdl_t = typename std::remove_reference <
+decltype (
+  const_cast<output_model<Device,GetIteratorMap>&>(_mdl)
+  .iterator_map (
+    const_cast <output_model<Device,GetIteratorMap>&>(_mdl)
   )
->::type;
+)>::type;
 
 return (
   bits::end_of_oget <
@@ -143,9 +111,7 @@ return (
 }
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -153,9 +119,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model<Device, GetIteratorMap> &
@@ -163,9 +127,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -173,9 +135,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -183,9 +143,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -193,9 +151,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -203,9 +159,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -213,9 +167,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -223,9 +175,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -233,9 +183,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -243,9 +191,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -253,9 +199,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <Device, GetIteratorMap> &
 operator << (
   output_model <Device, GetIteratorMap> &
@@ -263,9 +207,7 @@ operator << (
 );
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 output_model <
   Device, GetIteratorMap> &
 operator << (
@@ -274,9 +216,7 @@ operator << (
 );
 
 /* output model */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 struct output_model
 : public virtual model <Device>
 {
@@ -417,5 +357,6 @@ make_output_iterator (
 
 } /* data_pattern */
 #include "bits/output_model.tcc"
+#include "bits/string_data_model_shifts.hpp"
 #endif
 

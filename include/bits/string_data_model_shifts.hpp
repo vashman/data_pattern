@@ -15,13 +15,10 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename GetIteratorMap
-, typename Sync >
-input_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+input_model <Device, GetIteratorMap> &
 operator >> (
-  input_model<
-  Device, GetIteratorMap, Sync > &
+  input_model<Device, GetIteratorMap> &
 , std::basic_string<charT,allocator> &
 );
 
@@ -29,19 +26,13 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename GetIteratorMap
-, typename Sync >
-input_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+input_model <Device, GetIteratorMap> &
 operator >> (
-  input_model <
-    Device, GetIteratorMap, Sync >
-  & _mdl
-, std::basic_string<charT,allocator>
-  & _string
+  input_model <Device, GetIteratorMap> & _mdl
+, std::basic_string<charT,allocator> & _string
 ){
-auto & iter = get<
-  std::basic_string<charT,allocator> >
+auto && iter = get<std::basic_string<charT,allocator> >
 (_mdl);
 
 _string = *iter;
@@ -68,13 +59,10 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model<
-    Device, GetIteratorMap, Sync > &
+  output_model<Device, GetIteratorMap> &
 , std::basic_string<charT,allocator>
   const &
 );
@@ -83,19 +71,13 @@ template <
   typename charT
 , typename allocator
 , typename Device
-, typename GetIteratorMap
-, typename Sync >
-output_model <
-  Device, GetIteratorMap, Sync > &
+, typename GetIteratorMap >
+output_model <Device, GetIteratorMap> &
 operator << (
-  output_model <
-    Device, GetIteratorMap, Sync >
-  & _mdl
-, std::basic_string<charT,allocator>
-  const & _string
+  output_model <Device, GetIteratorMap> & _mdl
+, std::basic_string<charT,allocator> const & _string
 ){
-auto & iter = get<
-  std::basic_string<charT,allocator> >
+auto && iter = get<std::basic_string<charT,allocator> >
 (_mdl);
 
 *iter = _string;
