@@ -9,73 +9,228 @@
 #define TYPESYSTEMS_REWRITE_ITERATOR_TCC
 
 namespace data_pattern {
+
 /* ctor */
 template <
-  typename OutIterator
-, typename InIterator, typename... Ts >
-  rewrite_iterator <
-  OutIterator,InIterator,Ts... >
-::rewrite_iterator (
-  orewrite_iterator<OutIterator,Ts...>
-  _oiter
-, irewrite_iterator<InIterator,Ts...>
-  _iiter
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+  input_rewrite_iterator <T, Writer, Check, Model>
+::input_rewrite_iterator (
+  Writer & _writer
+, Check & _check
+, Model & _model
 )
-: orewrite_iterator <OutIterator,Ts...>
-  (_oiter)
-, irewrite_iterator <InIterator,Ts...>
-  (_iiter) {
+: bits::rewrite_iterator <T, Writer, Check, Model>
+  (_writer, _check, _model)
+{
+this->temp = this->writer (this->model->iterator_map());
 }
 
-/* rewriter iterator assignment
-  operator. */
 template <
-  typename OutIterator
-, typename InIterator, typename... Ts >
-template <typename U>
-rewrite_iterator <
-  OutIterator,InIterator,Ts... > &
-  rewrite_iterator <
-    OutIterator,InIterator,Ts... >
-::operator = (
-  U const & _val
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+T &
+  input_rewrite_iterator <T, Writer, Check, Model>
+::operator * (
 ){
-  orewrite_iterator <
-    OutIterator, InIterator, Ts... >
-::operator = (*this, _val);
+return this->temp;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+T *
+  input_rewrite_iterator <T, Writer, Check, Model>
+::operator -> (
+){
+return &this->temp;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+input_rewrite_iterator <T, Writer, Check, Model> &
+  input_rewrite_iterator <T, Writer, Check, Model>
+::operator ++ (
+){
+this->temp = this->writer (this->map);s
+return *this;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+input_rewrite_iterator <T, Writer, Check, Model> &
+  input_rewrite_iterator <T, Writer, Check, Model>
+::operator ++ (
+  int
+){
+auto temp_iter = *this;
+this->temp = this->writer (this->map);
+return temp_iter;
+}
+
+/* ctor */
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+  output_rewrite_iterator <T, Writer, Check, Model>
+::output_rewrite_iterator (
+  Writer & _writer
+, Check & _check
+, Model & _sync_map
+)
+: bits::rewrite_iterator <T, Writer, Check, Model>
+  (_writer, _check, _sync_map)
+{}
+
+/* rewriter iterator assignment operator. */
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+output_rewrite_iterator <T, Writer, Check, Model> &
+  output_rewrite_iterator <T, Writer, Check, Model>
+::operator = (
+  T const & _val
+){
+this->writer (_val, this->map);
+return *this;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+output_rewrite_iterator <T, Writer, Check, Model> &
+  output_rewrite_iterator <T, Writer, Check, Model>
+::operator ++ (
+){
+return *this;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+output_rewrite_iterator <T, Writer, Check, Model> &
+  output_rewrite_iterator <T, Writer, Check, Model>
+::operator ++ (
+  int
+){
+return *this;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+output_rewrite_iterator <T, Writer, Check, Model> &
+  output_rewrite_iterator <T, Writer, Check, Model>
+::operator * (
+){
 return *this;
 }
 
 /* make rewrite iterator */
 template <
-  typename OutIterator
-, typename InIterator, typename... Ts >
-rewrite_iterator <
-  OutIterator, InIterator, Ts... >
-make_rewrite_iterator (
-  orewrite_iterator<OutIterator,Ts...> _oiter
-, irewrite_iterator<InIterator,Ts...> _iiter
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+input_rewrite_iterator <T, Writer, Check, Model>
+make_input_rewrite_iterator (
+  Writer & _writer
+, Check & _check
+, Model & _map
 ){
-return
-rewrite_iterator <
-  OutIterator, InIterator, Ts... >
-  (_oiter,_iiter);
+return input_rewrite_iterator <T, Writer, Check, Model>
+(_writer, _check, _map);
 }
 
 /* make rewrite iterator */
 template <
-  typename... Ts, typename Iterator>
-rewrite_iterator<Iterator, Ts...>
-make_rewrite_iterator (
-  Iterator _iterator
-, Ts... _ts
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+output_rewrite_iterator <T, Writer, Check, Model>
+make_output_rewrite_iterator (
+  Writer & _writer
+, Check & _check
+, Model & _map
 ){
-return
-rewrite_iterator<Iterator, Ts...>
-  (_iterator, _ts...);
+return output_rewrite_iterator <T, Writer, Check, Model>
+(_writer, _check, _map);
 }
 
-} /* data_pattern */
+namespace bits {
 
+/* ctor */
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+  rewrite_iterator <T, Writer, Check, Model>
+::rewrite_iterator (
+  Writer & _writer
+, Check & _check
+, Model & _sync_map
+)
+: temp()
+, writer (& _writer)
+, check (& _check)
+, sync_map (& _sync_map)
+{}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+bool
+  rewrite_iterator <T, Writer, Check, Model>
+::operator == (
+  rewrite_iterator <T, Writer, Check, Model> const & _rhs
+) const {
+  if (
+     (this->sync_map != _rhs.sync_map)
+  || (this->check != _rhs.check)){
+  return false;
+return *this->check (*this->sync_map);
+}
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Model >
+bool
+  rewrite_iterator <T, Writer, Check, Model>
+::operator != (
+  rewrite_iterator <T, Writer, Check, Model> const & _rhs
+) const {
+return !(*this==_rhs);
+}
+
+} /* bits */ } /* data_pattern */
 #endif
 

@@ -17,8 +17,7 @@ namespace data_pattern {
 namespace bits {
 
 /* owrrite type */
-template <
-  typename Iterator, typename Writer >
+template <typename Iterator, typename Writer>
 struct output_rewrite_type;
 
 /* owrite type << output_model */
@@ -26,14 +25,11 @@ template <
   typename T
 , typename Writer
 , typename Device
-, typename MakeIterator
 , typename Sync >
-output_model <
-  Device, MakeIterator, Sync > &
+output_model <Device, Sync> &
 operator << (
-  output_model <
-    Device, MakeIterator, Sync > &
-, output_rewrite_type<T,Writer> const &
+  output_model <Device, Sync> &
+, output_rewrite_type <T, Writer> &&
 );
 
 /* iwrite type */
@@ -45,14 +41,11 @@ template <
   typename T
 , typename Writer
 , typename Device
-, typename MakeIterator
 , typename Sync >
-input_model <
-  Device, MakeIterator, Sync> &
+input_model <Device, Sync> &
 operator >> (
-  input_model <
-    Device, MakeIterator, Sync > &
-, input_rewrite_type<T,Writer> &
+  input_model <Device, Sync> &
+, input_rewrite_type <T, Writer> &&
 );
 
 } /* bits */
@@ -75,5 +68,6 @@ rewrite_input (
 
 } /* data_pattern */
 #include "bits/rewrite_type.tcc"
+#include "bits/rewrite_iterator.hpp"
 #endif
 

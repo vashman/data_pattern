@@ -280,7 +280,6 @@ iterator (
 : input_mdl (& _mdl)
 , temp ()
 {
-sync(*(this->input_mdl));
 *(this->input_mdl) >> this->temp;
 }
 
@@ -314,13 +313,16 @@ return &this->temp;
 
 iterator
 operator ++ (int){
-sync(*(this->input_mdl));
-return *this;
+auto temp_iter = *this;
+auto && iter = get<T>(*this->input_mdl);
+++iter;
+return temp_iter;
 }
 
 iterator &
 operator ++ (){
-sync(*(this->input_mdl));
+auto && iter = get<T>(*this->input_mdl);
+++iter;
 return *this;
 }
 

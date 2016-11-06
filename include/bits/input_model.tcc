@@ -13,50 +13,33 @@
 namespace data_pattern {
 
 /* ctor */
-template <
-  typename Device
-, typename GetIteratorMap >
-  input_model <
-  Device, GetIteratorMap >
-::input_model (
+template <typename Device, typename GetIteratorMap>
+input_model <Device, GetIteratorMap>::input_model (
   Device && _device
 , GetIteratorMap && _map
 )
-: model <Device> (
-    std::forward<Device>(_device)
-  )
+: model <Device> (std::forward<Device>(_device))
 , iterator_map (std::forward<GetIteratorMap>(_map))
 {}
 
 template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-  typename input_model
-  <Device, GetIteratorMap>
+  typename T, typename Device, typename GetIteratorMap >
+  typename input_model<Device, GetIteratorMap>
 :: template iterator<T>
 make_input_iterator (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 ){
-return typename input_model
-  <Device, GetIteratorMap>
+return typename input_model<Device, GetIteratorMap>
 :: template iterator<T> (_mdl);
 }
 
 template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-  typename input_model
-  <Device, GetIteratorMap>
-:: template iterator<T>
-make_end_input_iterator (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  typename T, typename Device, typename GetIteratorMap >
+  typename input_model <Device, GetIteratorMap>
+:: template iterator<T> make_end_input_iterator (
+  input_model <Device, GetIteratorMap> & _mdl
 ){
-return typename input_model
-  <Device, GetIteratorMap>
+return typename input_model <Device, GetIteratorMap>
 :: template iterator<T> (_mdl);
 }
 
@@ -77,13 +60,10 @@ return input_model
 }
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 , bool & _var
 ){
 auto && iter = get<bool>(_mdl);
@@ -93,13 +73,10 @@ return _mdl;
 }
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 , signed short & _var
 ){
 auto && iter = get<signed short>(_mdl);
@@ -109,13 +86,10 @@ return _mdl;
 }
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 , unsigned short & _var
 ){
 auto && iter = get<unsigned short>(_mdl);
@@ -125,13 +99,10 @@ return _mdl;
 }
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 , signed int & _var
 ){
 auto && iter = get<signed int>(_mdl);
@@ -141,13 +112,10 @@ return _mdl;
 }
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap> &
 operator >> (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 , unsigned int & _var
 ){
 auto && iter = get<unsigned int>(_mdl);
@@ -270,13 +238,10 @@ return _mdl;
 }
 
 /* input value */
-template <
-  typename Device
-, typename GetIteratorMap >
+template <typename Device, typename GetIteratorMap>
 input_model <Device, GetIteratorMap > &
 operator >> (
-  input_model <Device, GetIteratorMap>
-  & _mdl
+  input_model <Device, GetIteratorMap> & _mdl
 , unsigned char & _var
 ){
 auto && iter = get<unsigned char>(_mdl);

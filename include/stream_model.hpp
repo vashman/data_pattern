@@ -19,8 +19,11 @@ namespace data_pattern {
 template <typename MapType, typename Stream>
 struct stream_model_sync {
 
-typedef typename Stream::char_type char_type;
-typedef typename Stream::traits_type traits_type;
+typedef typename std
+::remove_reference<Stream>::type::char_type char_type;
+
+typedef typename std
+::remove_reference<Stream>::type::traits_type traits_type;
 
 MapType map;
 
@@ -56,25 +59,15 @@ sync (
 
 MapType &
 operator ()(
-  model <Stream &> & _mdl
-){
-  if (this->sync(_mdl.device))
-  _mdl.state = model_state::operable;
-  else
-  _mdl.state = model_state::inoperable;
-return this->map;
-}
-
-/*MapType & no stream move ctor in this std lib.
-operator ()(
   model <Stream> & _mdl
 ){
   if (this->sync(_mdl.device))
   _mdl.state = model_state::operable;
+
   else
   _mdl.state = model_state::inoperable;
 return this->map;
-}*/
+}
 
 }; //
 
@@ -82,32 +75,31 @@ template <typename... Ts, typename Stream>
 stream_model_sync <
   typesystems::type_map <
     std::tuple<std::ostream_iterator<Ts>...>, Ts... >
-, Stream >
+, Stream & >
 make_ostream_sync (
-  Stream & _stream
+  Stream && _stream
 ){
 return stream_model_sync <
   typesystems::type_map <
     std::tuple<std::ostream_iterator<Ts>...>, Ts... >
-, Stream > (
-  typesystems::make_type_map<Ts...>
+, Stream & >
+(typesystems::make_type_map<Ts...>
   (std::make_tuple(std::ostream_iterator<Ts>(_stream)...))
 );
-
 }
 
 template <typename... Ts, typename Stream>
 stream_model_sync <
   typesystems::type_map <
     std::tuple<std::istream_iterator<Ts>...>, Ts... >
-, Stream >
+, Stream & >
 make_istream_sync (
-  Stream & _stream
+  Stream && _stream
 ){
 return stream_model_sync <
   typesystems::type_map <
     std::tuple<std::istream_iterator<Ts>...>, Ts... >
-, Stream > (
+, Stream & > (
   typesystems::make_type_map<Ts...>
   (std::make_tuple(std::istream_iterator<Ts>(_stream)...))
 );

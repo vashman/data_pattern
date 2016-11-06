@@ -18,49 +18,35 @@ namespace data_pattern {
 
 namespace bits {
 
-template <
-  typename CharT, typename Traits >
-struct obufiter {
+template <typename CharT, typename Traits, typename Map>
+struct streambuf_model_sync {
 
-typedef typesystems::type_map <
-  std::tuple < std::ostreambuf_iterator
-    <CharT, Traits> >
-, CharT > map_type;
+Map map;
 
-map_type map;
-
-obufiter (
-  std::basic_streambuf<CharT,Traits>
-  & _buf
-) : map (
+streambuf_model_sync (
+  std::basic_streambuf<CharT,Traits> & _buf
+)
+: map (
   typesystems::make_type_map<CharT> (
-    std::make_tuple ( std
-      ::ostreambuf_iterator <
-        CharT,Traits >
+    std::make_tuple (std::ostreambuf_iterator <CharT,Traits>
     (& _buf)
     )
   )
 ){}
 
-map_type &
+Map &
 operator ()(
-  std::basic_streambuf<CharT,Traits>
-  const & _buf
+  std::basic_streambuf<CharT,Traits> const & _buf
 ){
+  if (-1 == _buf.pubsync())
+  _state = model_state::end;
+  else
+  _state = model_state::good;
+
 return this->map;
 }
 
 }; //
-
-template <
-  typename CharT, typename Traits >
-obufiter<CharT,Traits>
-make_obufiter(
-  std::basic_streambuf<CharT,Traits>
-  & _buf
-){
-return obufiter<CharT,Traits>(_buf);
-}
 
 template <
   typename CharT, typename Traits >
@@ -87,51 +73,13 @@ ibufiter (
   )
 ) {}
 
-map_type &
+Map &
 operator ()(
   std::basic_streambuf<CharT,Traits>
   const & _buf
 ){
 return this->map;
 }
-}; //
-
-template <
-  typename CharT, typename Traits >
-ibufiter<CharT,Traits>
-make_ibufiter(
-  std::basic_streambuf<CharT,Traits>
-  & _buf
-){
-return ibufiter<CharT,Traits>(_buf);
-}
-
-template <
-  typename CharT, typename Traits >
-struct bufsync {
-
-void
-operator ()(
-  std::basic_streambuf<CharT,Traits>
-  & _buf
-, model_state & _state
-){
-  if (-1 == _buf.pubsync())
-  _state = model_state::end;
-  else
-  _state = model_state::good;
-}
-
-template <
-  typename CharT, typename Traits >
-bufsync<CharT,Traits>
-make_bufsync (
-  std::basic_streambuf<CharT,Traits>
-  const &
-){
-return bufsync<CharT,Traits>;
-}
-
 }; //
 
 } // bits

@@ -17,13 +17,11 @@ namespace data_pattern {
 
 /* data_model */
 template <
-  typename Device
-, typename GetInputMap
-, typename GetOutputMap >
+  typename Device, typename InputSync, typename OutputSync >
 struct data_model
 : public
-  input_model <Device,GetInputMap>
-, output_model <Device,GetOutputMap>
+  input_model <Device, InputSync>
+, output_model <Device, OutputSync>
 {
 
 /* dtor */
@@ -31,111 +29,77 @@ struct data_model
 
 /* ctor */
 data_model (
-  Device
-, GetInputMap
-, GetOutputMap
+  Device &&
+, InputSync &&
+, OutputSync &&
 );
 
 /* ctor move */
 data_model (
-  data_model <Device, GetInputMap, GetOutputMap> &&
+  data_model <Device, InputSync, OutputSync> &&
 ) = default;
 
 /* assignment operator move */
-data_model <Device, GetInputMap, GetOutputMap> &
+data_model <Device, InputSync, OutputSync> &
 operator = (
-  data_model <Device, GetInputMap, GetOutputMap> &&
+  data_model <Device, InputSync, OutputSync> &&
 ) = default;
 
 /* ctor copy */
 data_model (
-  data_model <Device, GetInputMap, GetOutputMap> const &
+  data_model <Device, InputSync, OutputSync> const &
 ) = delete;
 
 /* assignment operator copy */
-data_model <Device, GetInputMap, GetOutputMap> &
+data_model <Device, InputSync, OutputSync> &
 operator = (
-  data_model <Device, GetInputMap, GetOutputMap> const &
+  data_model <Device, InputSync, OutputSync> const &
 ) = delete;
 
 }; /* data model */
 
 template <
-  typename Device
-, typename GetInputMap
-, typename GetOutputMap >
-data_model <Device,GetInputMap,GetOutputMap>
+  typename Device, typename InputSync, typename OutputSync >
+data_model <Device, InputSync, OutputSync>
 make_data_model (
   Device
-, GetInputMap
-, GetOutputMap
+, InputSync
+, OutputSync
 );
 
 /* ctor */
 template <
-  typename Device
-, typename GetInputMap
-, typename GetOutputMap >
-data_model <Device, GetInputMap, GetOutputMap>::data_model (
-  Device _device
-, GetInputMap _input_iter
-, GetOutputMap _output_iter
+  typename Device, typename InputSync, typename OutputSync >
+data_model <Device, InputSync, OutputSync>::data_model (
+  Device && _device
+, InputSync && _input_iter
+, OutputSync && _output_iter
 )
 : model <Device> (std::move(_device))
-, input_model <Device, GetInputMap> (
-    std::move(_device)
-  , std::move(_input_iter)
+, input_model <Device, InputSync> (
+    std::forward <Device>(_device)
+  , std::forward <InputSync>(_input_iter)
   )
-, output_model <Device, GetOutputMap> (
-    std::move(_device)
-  , std::move(_output_iter)
+, output_model <Device, OutputSync> (
+    std::forward <Device>(_device)
+  , std::forward <OutputSync>(_output_iter)
   )
 {
 }
 
 template <
-  typename Device
-, typename GetInputMap
-, typename GetOutputMap >
-data_model <Device, GetInputMap, GetOutputMap>
+  typename Device, typename InputSync, typename OutputSync >
+data_model <Device, InputSync, OutputSync>
 make_data_model (
   Device _device
-, GetInputMap _in_iter
-, GetOutputMap _out_iter
+, InputSync _in_iter
+, OutputSync _out_iter
 ){
-return data_model <Device, GetInputMap, GetOutputMap> (
+return data_model <Device, InputSync, OutputSync> (
   std::move(_device)
 , std::move(_in_iter)
 , std::move(_out_iter)
 );
-}
-
-template <
-  typename Device
-, typename GetInputMap
-, typename GetOutputMap >
-data_model <Device,GetInputMap,GetOutputMap> &
-sync (
-data_model <Device,GetInputMap,GetOutputMap> & _mdl
-);
-
-template <
-  typename Device
-, typename GetInputMap
-, typename GetOutputMap >
-data_model <Device,GetInputMap,GetOutputMap> &
-sync (
-data_model <Device,GetInputMap,GetOutputMap> & _mdl
-){
-_mdl.state = model_state::sync;
-static_cast<output_model<Device,GetOutputMap>&>(_mdl)
-  .iterator_map(_mdl);
-
-_mdl.state = model_state::sync;
-static_cast<input_model<Device,GetInputMap>&>(_mdl)
-  .iterator_map(_mdl);
-
-return _mdl;
 }
 
 } /* data_pattern */

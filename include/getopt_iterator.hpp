@@ -2,8 +2,8 @@
 
 //          Copyright Sundeep S. Sangha 2013 - 2014.
 
-#ifndef DATA_PATTERN_GETOPT_ITERATOR_HPP
-#define DATA_PATTERN_GETOPT_ITERATOR_HPP
+#ifndef DATA_PATTERN_GETOPT_MODEL_HPP
+#define DATA_PATTERN_GETOPT_MODEL_HPP
 
 #include <unistd.h>
 #include <tuple>
