@@ -8,6 +8,7 @@
 #ifndef DATA_PATTERN_OUTPUT_MODEL_HPP
 #define DATA_PATTERN_OUTPUT_MODEL_HPP
 
+#include <iterator>
 #include "model.hpp"
 #include "bits/map_type.hpp"
 
@@ -39,7 +40,7 @@ return typesystems::get<T> (_mdl.iterator_map(_mdl));
 
 namespace bits {
 
-struct end_of_oplaceholder {
+/*struct end_of_oplaceholder {
 
 bool operator == (
   end_of_oplaceholder const &
@@ -72,7 +73,30 @@ static end_of_oplaceholder get_if (
 return end_of_oplaceholder();
 }
 
-};
+};*/
+template <
+  typename T
+, typename Device
+, typename GetIteratorMap >
+bool
+end_of_output (
+  output_model <Device, GetIteratorMap> const & _mdl
+, std::output_iterator_tag
+){
+return false;
+}
+
+template <
+  typename T
+, typename Device
+, typename GetIteratorMap >
+bool
+end_of_output (
+  output_model <Device, GetIteratorMap> const & _mdl
+, std::output_iterator_tag
+){
+return get<T>(_mdl) == get<decltype(get<T>(_mdl))>(_mdl); 
+}
 
 } /* bits */
 
@@ -82,12 +106,12 @@ template <
 , typename GetIteratorMap >
 bool
 end_of_output (
-  output_model <Device, GetIteratorMap>
-  const & _mdl
+  output_model <Device, GetIteratorMap> const & _mdl
 ){
  if (_mdl.state == model_state::inoperable) return true;
 
-using mdl_t = typename std::remove_reference <
+return bits::end_of_output <T>(_mdl, typename std::iterator_traits<decltype(get<T>(_mdl))>::iterator_category());
+/*using mdl_t = typename std::remove_reference <
 decltype (
   const_cast<output_model<Device,GetIteratorMap>&>(_mdl)
   .iterator_map (
@@ -107,7 +131,7 @@ return (
       ,end_tag<T>,bits::end_of_oplaceholder>::type
   , output_model <Device, GetIteratorMap>
   >::get_if (_mdl)
-);
+);*/
 }
 
 /* output value */

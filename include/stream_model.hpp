@@ -98,12 +98,11 @@ make_istream_sync (
 ){
 return stream_model_sync <
   typesystems::type_map <
-    std::tuple<std::istream_iterator<Ts>...>, Ts... >
+    std::tuple<std::istream_iterator<Ts>...>, Ts..., std::istream_iterator<Ts>... >
 , Stream & > (
   typesystems::make_type_map<Ts...>
-  (std::make_tuple(std::istream_iterator<Ts>(_stream)...))
+  (std::make_tuple(std::istream_iterator<Ts>(_stream)..., std::istream_iterator<Ts>(_stream)...))
 );
-
 }
 
 } /* data pattern */

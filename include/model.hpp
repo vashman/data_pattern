@@ -15,8 +15,11 @@ enum class model_state {
 , inoperable // Device is inoperable, but io may contuinue.
 };
 
-template <typename Iterator>
-struct end_tag;
+template <typename T>
+struct end_iterator_tag;
+
+template <typename T>
+struct sync_iterator_tag;
 
 template <typename Device>
 struct model {
@@ -50,6 +53,9 @@ operator = (
 virtual
 ~model() = default;
 
+bool
+is_operable () const;
+
 }; /* model */
 
 template <typename Device>
@@ -60,6 +66,13 @@ model<Device>::model (
 : device (std::forward<DeviceType>(_device))
 , state (model_state::operable)
 {}
+
+template <typename Device>
+bool
+model<Device>::is_operable (
+) const {
+return model_state::operable == this->state;
+}
 
 } /* data pattern */
 #endif

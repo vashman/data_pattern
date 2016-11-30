@@ -9,222 +9,225 @@
 #define DATA_PATTERN_INPUT_MODEL_HPP
 
 #include <type_traits>
+#include <iterator>
 #include "model.hpp"
 #include "bits/map_type.hpp"
 
 namespace data_pattern {
 
 /* input model */
-template <typename Device, typename GetIteratorMap>
+template <typename Device, typename Map>
 class input_model;
 
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap>
+template <typename Device, typename Map>
+input_model <Device, Map>
 make_input_model (
   Device &&
-, GetIteratorMap &&
+, Map &&
 );
 
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
+template <typename T, typename Device, typename Map>
 auto
-get (
-  input_model <Device, GetIteratorMap> & _mdl
+begin (
+  input_model <Device, Map> & _mdl
 )
--> decltype ( typesystems::get<T> (_mdl.iterator_map(_mdl)))
+-> decltype (typesystems::get<T> (_mdl.map)(_mdl.device))
 {
-return typesystems::get<T> (_mdl.iterator_map(_mdl));
+return typesystems::get<T> (_mdl.map)(_mdl.device);
+}
+
+template <typename T, typename Device, typename Map>
+auto
+cbegin (
+  input_model <Device, Map> const & _mdl
+)
+-> decltype (typesystems::get<const T> (_mdl.map)(_mdl.device))
+{
+return typesystems::get<const T> (_mdl.map)(_mdl.device);
+}
+
+template <typename T, typename Device, typename Map>
+auto
+end (
+  input_model <Device, Map> & _mdl
+)
+-> decltype ( typesystems::get<end_iterator_tag<T>>
+  (_mdl.map)(_mdl.device)
+){
+return typesystems
+::get<end_iterator_tag<T>>(_mdl.map)(_mdl.device);
+}
+
+template <typename T, typename Device, typename Map>
+auto
+cend (
+  input_model <Device, Map> const & _mdl
+)
+-> decltype (typesystems::get<end_iterator_tag<const T>>
+  (_mdl.map)(_mdl.device)
+){
+return typesystems
+::get<end_iterator_tag<const T>>(_mdl.map)(_mdl.device);
 }
 
 namespace bits {
 
-struct end_of_placeholder {
-
-bool operator == (
-  end_of_placeholder const &
-) const {
-return false;
-}
-
-};
-
-template <typename T, typename Model>
-struct end_of_get {
-
-static auto get_if (
-  Model const & _mdl
-)
--> decltype(get<T>(const_cast<Model&>(_mdl)))
-{
-return get<T>(const_cast<Model&>(_mdl));
-}
-
-};
-
-template <typename Model>
-struct end_of_get
-<end_of_placeholder, Model> {
-
-static end_of_placeholder get_if (
-  Model const & _mdl
+template <typename T, typename Device, typename Map>
+bool
+empty (
+  input_model <Device, Map> const & _mdl
+, std::output_iterator_tag const
 ){
-return end_of_placeholder();
+return true;
 }
 
-};
+template <typename T, typename Device, typename Map>
+bool
+empty (
+  input_model <Device, Map> const & _mdl
+, std::input_iterator_tag const
+){
+return cbegin<T>(_mdl) == cend<T>(_mdl);
+}
 
 } /* bits */
 
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
+template <typename T, typename Device, typename Map>
 bool
-end_of_input (
-  input_model <Device, GetIteratorMap> const & _mdl
+empty (
+  input_model <Device, Map> const & _mdl
 ){
-  if (_mdl.state == model_state::inoperable) return true;
-
-using mdl_t = typename std::remove_reference <
-decltype (
-  const_cast<input_model<Device,GetIteratorMap>&>(_mdl)
-  .iterator_map (
-    const_cast <input_model<Device,GetIteratorMap>&>(_mdl)
-  )
-)>::type;
-
-return (
-  bits::end_of_get <
-    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
-      ,T,bits::end_of_placeholder>::type
-  , input_model <Device, GetIteratorMap>
-  >::get_if (_mdl)
-==
-  bits::end_of_get <
-    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
-      ,end_tag<T>,bits::end_of_placeholder>::type
-  , input_model <Device, GetIteratorMap>
-  >::get_if (_mdl)
+return bits::empty <T>(
+  _mdl
+,  typename std::iterator_traits<decltype (cbegin<T>(_mdl))>
+ ::iterator_category()
 );
 }
 
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, bool &
+template <typename Device, typename Map, typename Iter>
+void
+sync (
+  input_model <Device, Map> &
+, Iter
+, Iter
 );
 
 /* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
+template <typename T, typename Device, typename Map>
+input_model <Device, Map> &
 operator >> (
-  input_model <Device, GetIteratorMap> &
-, signed short &
+  input_model <Device, Map> &
+, T &
 );
 
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, unsigned short &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, signed int &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, unsigned int &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, signed long &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, unsigned long &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, float &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, double &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, long double &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, char &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, signed char &
-);
-
-/* input value */
-template <typename Device, typename GetIteratorMap>
-input_model <Device, GetIteratorMap> &
-operator >> (
-  input_model <Device, GetIteratorMap> &
-, unsigned char &
-);
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, signed short &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, unsigned short &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, signed int &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, unsigned int &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, signed long &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, unsigned long &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, float &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, double &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, long double &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, char &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, signed char &
+//);
+//
+///* input value */
+//template <typename Device, typename Sync>
+//input_model <Device, Sync> &
+//operator >> (
+//  input_model <Device, Sync> &
+//, unsigned char &
+//);
 
 /* input model */
-template <typename Device, typename GetIteratorMap>
+template <typename Device, typename Map>
 struct input_model
 : public virtual  model <Device>
 {
-GetIteratorMap iterator_map;
+
+Map map;
 
 /* ctor */
 input_model (
   Device &&
-, GetIteratorMap &&
+, Map &&
 );
 
 /* dtor */
@@ -233,144 +236,30 @@ virtual
 
 /* ctor move */
 input_model (
-  input_model<Device, GetIteratorMap> &&
+  input_model<Device, Map> &&
 ) = default;
 
 /* assignment operator move */
-input_model <Device, GetIteratorMap> &
+input_model <Device, Map> &
 operator = (
-  input_model<Device, GetIteratorMap> &&
+  input_model<Device, Map> &&
 ) = default;
 
 /* ctor copy */
 input_model (
-  input_model <Device, GetIteratorMap>
-  const &
+  input_model <Device, Map> const &
 ) = delete;
 
 /* assignment operator copy */
-input_model <Device, GetIteratorMap> &
+input_model <Device, Map> &
 operator = (
-  input_model <Device, GetIteratorMap>
-  const &
+  input_model <Device, Map> const &
 ) = delete;
 
-template <typename T>
-class iterator {
-
-typedef std::input_iterator_tag
-  iterator_catagory;
-typedef T value_type;
-typedef std::size_t difference_type;
-typedef T* pointer;
-typedef T& reference;
-
-input_model <Device, GetIteratorMap>
-* input_mdl;
-
-T temp;
-
-public:
-
-explicit
-iterator (
-  input_model <Device, GetIteratorMap>
- & _mdl
-)
-: input_mdl (& _mdl)
-, temp ()
-{
-*(this->input_mdl) >> this->temp;
-}
-
-explicit
-iterator ()
-: input_mdl (nullptr)
-, temp ()
-{}
-
-iterator (iterator const &) = default;
-
-iterator &
-operator = (iterator const &) = default;
-
-iterator (iterator &&) = default;
-
-iterator &
-operator = (iterator &&) = default;
-
-~iterator () = default;
-
-T &
-operator * (){
-return this->temp;
-}
-
-iterator *
-operator -> (){
-return &this->temp;
-}
-
-iterator
-operator ++ (int){
-auto temp_iter = *this;
-auto && iter = get<T>(*this->input_mdl);
-++iter;
-return temp_iter;
-}
-
-iterator &
-operator ++ (){
-auto && iter = get<T>(*this->input_mdl);
-++iter;
-return *this;
-}
-
-bool
-operator == (
-  iterator<T> const & _rhs
-) const {
-  if (_rhs.input_mdl == nullptr)
-  return end_of_input<T>(*this->input_mdl);
-
-return (
-   end_of_input<T>(*(_rhs.input_mdl))
-|| end_of_input<T>(*this->input_mdl)
-);
-}
-
-bool
-operator != (
-  iterator<T> const _rhs
-) const {
-return !(_rhs == *this);
-}
-
-}; /*  iterator */
 }; /* input model */
-
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-  typename input_model <Device, GetIteratorMap>
-:: template iterator<T>
-make_input_iterator (
-  input_model <Device, GetIteratorMap> &
-);
-
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-  typename input_model<Device, GetIteratorMap>
-:: template iterator<T>
-make_end_input_iterator (
-  input_model <Device, GetIteratorMap> &
-);
 
 } /* data_pattern */
 #include "bits/input_model.tcc"
-#include "bits/string_data_model_shifts.hpp"
+//#include "bits/string_data_model_shifts.hpp"
 #endif
 
