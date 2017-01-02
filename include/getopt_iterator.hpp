@@ -9,6 +9,7 @@
 #include <tuple>
 #include <string>
 #include "model.hpp"
+#include <typesystems/type_map.hpp>
 
 namespace data_pattern {
 
@@ -62,17 +63,21 @@ program_option() = default;
 
 class getopt_iterator {
 
+public:
+
 typedef int difference_type;
 typedef program_option value_type;
-typedef program_option* pointer;
-typedef program_option& reference;
-typedef std::input_iterator_tag iterator_catagory;
+typedef program_option * pointer;
+typedef program_option & reference;
+typedef std::input_iterator_tag iterator_category;
+
+private:
 
 int local_optind;
 std::string local_opts;
 int local_argc;
 program_option option;
-char** local_argv;
+char *const * local_argv;
 int rv;
 
 void
@@ -90,13 +95,13 @@ this->rv =  getopt (
 
   if (this->rv != -1){
   // if a '?' character, then an error is found.
-  get<0>(this->option.option) = static_cast<char>(rv);
+  this->option.get_option() = static_cast<char>(rv);
     if (
        '?' != static_cast<char>(rv)
     && ':' != static_cast<char>(rv)
     && optarg != NULL
     ){
-    get<1>(this->option.option) = optarg;
+    this->option.get_arg() = optarg;
     }
   }
   
@@ -108,7 +113,7 @@ optind = global_optind;
 public:
 
 getopt_iterator (
-  char * _argv[]
+  char *const * _argv
 , std::string _opts
 , int _argc
 )
@@ -163,10 +168,16 @@ bool
 operator == (
   getopt_iterator const & _rhs
 ) const {
-return ((this->rv == -1) || (_rhs.rv == -1));
+return ((this->rv == -1) && (_rhs.rv == -1));
 }
 
 }; /* getopt iterator */
+
+bool
+operator != (
+  getopt_iterator const & _lhs
+, getopt_iterator const & _rhs
+);
 
 bool
 operator != (
@@ -191,6 +202,11 @@ a (
 , opts (_opts)
 {}
 
+a ()
+: argc (-1)
+, opts ("")
+{}
+
 ~a() = default;
 a (a const &) = default;
 a (a &&) = default;
@@ -199,27 +215,23 @@ a& operator= (a&&)= default;
 
 getopt_iterator
 operator ()(
-  char** _argv
+  char *const * _argv
 ){
+  if (this->argc == -1) return getopt_iterator();
 return getopt_iterator(_argv, this->opts, this->argc);
 }
 
 };
 
-auto b = [](char** _argv){return getopt_iterator();};
-auto c = [](
-    model<char**> & _mdl
-  , getopt_iterator _first
-  , getopt_iterator _last
-  ){
-    if (_first != _last)
-    _mdl.state = model_state::inoperable;
-  };
+auto c = [](model<char**&> & _mdl, getopt_iterator _iter){
+  if (_iter != getopt_iterator())
+  _mdl.state = model_state::inoperable;
+};
 
 } /* bits */
 
 auto
-make_getopt_type_map (
+make_getopt_locale (
   std::string _opts
 , int _argc
 )
@@ -227,22 +239,27 @@ make_getopt_type_map (
   program_option
 , end_iterator_tag<program_option>
 , sync_iterator_tag<program_option>
-  const program_option
-, end_iterator_tag<const program_option>
-, sync_iterator_tag<const program_option>
-> (std::make_tuple (bits::a(_argc,_opts),bits::b,bits::c))
-){
-return typesystems::make_type_map <
+> (
+  std::make_tuple (bits::a(_argc,_opts), bits::a{}, bits::c)
+));
+
+auto
+make_getopt_locale (
+  std::string _opts
+, int _argc
+)
+-> decltype ( typesystems::make_type_map <
   program_option
 , end_iterator_tag<program_option>
 , sync_iterator_tag<program_option>
-  const program_option
-, end_iterator_tag<const program_option>
-, sync_iterator_tag<const program_option>
-> (std::make_tuple (
-  bits::a(_argc,_opts), bits::b, bits::c
-, bits::
-));
+> (
+  std::make_tuple (bits::a(_argc,_opts), bits::a{}, bits::c)
+)){
+return typesystems::make_type_map <
+  program_option
+, end_iterator_tag<program_option>
+, sync_iterator_tag<program_option> >
+(std::make_tuple (bits::a(_argc,_opts), bits::a{}, bits::c));
 }
 
 } /* data_pattern */

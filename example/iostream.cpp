@@ -1,48 +1,47 @@
+//
+
+//          Copyright Sundeep S. Sangha 2013 - 2017.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
 #include <iostream>
 #include <fstream>
-#include <iterator>
 #include "../include/stream_model.hpp"
 
 using std::cout;
 using std::cin;
 using std::fstream;
-using std::ios;
-using data_pattern::make_output_model;
-using data_pattern::make_input_model;
-using data_pattern::make_ostream_sync;
-using data_pattern::make_istream_sync;
-using data_pattern::end_of_input;
+using data_pattern::model;
+using data_pattern::make_ostream_locale;
+using data_pattern::make_istream_locale;
+using data_pattern::empty;
+using data_pattern::read;
+using data_pattern::write;
 
 int main (int argc, char *argv[]){
 
-fstream fstrm ("./testing.test", ios::out);
+fstream fs{"./testing.test", std::ios::out};
+model<fstream&> file {fs};
+model<std::istream&> input {cin};
+auto ofloc = make_ostream_locale <int, double, char>(fs);
+auto iloc = make_istream_locale <char>(cin);
+auto oloc = make_ostream_locale <int, char>(cout);
 
-auto file ( make_output_model (
-  fstrm, make_ostream_sync <int, double, char>(fstrm) )
-);
+chain(file, ofloc) << 99 << '+' << 1.1 << '=' << 100.1;
 
-file << 99 << '+' << 1.1 << ' ' << '=' << 100.1;
+model<std::ostream&> output{cout};
+chain(output, oloc) << 'g' << 'A' << 'b'
+<< 44 << 44;
 
-auto output = make_output_model
-  (cout, make_ostream_sync <int, char>(cout));
+chain(output, oloc) << 'i' << 'n' << 'p' << 'u'
+<< 't' << ' ' << 'w' << 'a' <<'s' <<':';
 
-output << 'g' << 'A' << 'b' << 44 << 44;
-
-auto input (
-  make_input_model
-  (cin, make_istream_sync <char>(cin))
-);
-
-output << 'i' << 'n' << 'p' << 'u'
-<< 't' << ' ' << 'w' << 'a' <<'s'
-<<':';
-
-char v;
-  if (! end_of_input <char>(input)){
-  input >> v;
-  output << v;
+  if (! empty<char>(input, iloc) && input.is_operable()){
+  char v = read<char>(input, iloc);
+  write(v, output, oloc);
   } else {
-  output << 'n' << 'o' << 'p' << 'e';
+  chain(output, oloc) << 'n' << 'o' << 'p' << 'e';
   }
 
 return 0;

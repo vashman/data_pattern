@@ -9,260 +9,83 @@
 #define DATA_PATTERN_OUTPUT_MODEL_TCC
 
 #include <utility>
+#include <type_traits>
 
 namespace data_pattern {
 
 /* ctor */
-template <
-  typename Device
-, typename GetIteratorMap
- >
-  output_model <Device, GetIteratorMap>
-::output_model (
+template <typename Device, typename Map>
+output_model <Device, Map>::output_model (
   Device && _device
-, GetIteratorMap && _output_iter
+, Map && _map
 )
-: model <Device> (
-    std::forward<Device>(_device)
-  )
-, iterator_map (std::forward<GetIteratorMap>(_output_iter))
+: model <Device> (std::forward<Device>(_device))
+, map (std::forward<Map>(_map))
 {}
 
 /* make output model */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap>
+template <typename Device, typename Map>
+output_model <Device, Map>
 make_output_model (
   Device && _device
-, GetIteratorMap && _iter_map
+, Map && _map
 ){
-return output_model <Device, GetIteratorMap> (
-  std::forward<Device>(_device)
-, std::forward<GetIteratorMap>(_iter_map));
-}
-
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-  typename output_model <Device, GetIteratorMap>
-:: template iterator<T>
-make_output_iterator (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-){
-return typename output_model <Device, GetIteratorMap>
-:: template iterator<T> (_mdl);
+return output_model <Device, Map> (
+  std::forward<Device>(_device), std::forward<Map>(_map) );
 }
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, bool const & _var
+template <typename T, typename Device, typename Map>
+void
+write (
+  output_model <Device, Map> & _mdl
+, T const & _var
 ){
-auto && iter = get<bool>(_mdl);
+  if (_mdl.state == model_state::inoperable) throw "err";
+auto iter = output_begin<T>(_mdl);
 *iter = _var;
-++iter;
-return _mdl;
+sync<T>(_mdl, iter);
 }
 
 /* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
+template <typename T, typename Device, typename Map>
+output_model <Device, Map> &
 operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, signed short const & _var
+  output_model <Device, Map> & _mdl
+, T const & _var
 ){
-auto && iter = get<signed short>(_mdl);
-*iter = _var;
-++iter;
+write(_mdl, _var);
 return _mdl;
 }
 
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, unsigned short const & _var
+template <typename T, typename Device, typename Map>
+typename std::enable_if <
+  ! bits::iterator_type <T, Device, Map>::value, bool >::type
+full (
+  output_model <Device, Map> & _mdl
 ){
-auto && iter = get<unsigned short>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
+using type = typename std::decay<T>::type;
+
+return output_begin<type>(_mdl) == output_end<type>(_mdl);
 }
 
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, signed int const & _var
+template <typename T, typename Device, typename Map>
+typename std::enable_if <
+  bits::iterator_type <T, Device, Map>::value, bool >::type
+full (
+  output_model <Device, Map> const & _mdl
 ){
-auto && iter = get<signed int>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
+return false;
 }
 
-/* output value */
 template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, unsigned int const & _var
+  typename T, typename Device, typename Map, typename Iter >
+void
+sync (
+  output_model<Device, Map> & _mdl
+, Iter _iter
 ){
-auto && iter = get<unsigned int>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, signed long const & _var
-){
-auto & iter = get<signed long>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, unsigned long const & _var
-){
-auto && iter = get<unsigned long>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
- output_model <Device, GetIteratorMap>
-  & _mdl
-, float const & _var
-){
-auto && iter = get<float>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, double const & _var
-){
-auto && iter = get<double>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, long double const & _var
-){
-auto && iter = get<long double>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, signed char const & _var
-){
-auto && iter = get<signed char>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, unsigned char const & _var
-){
-auto && iter = get<unsigned char>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
-}
-
-/* output value */
-template <
-  typename Device
-, typename GetIteratorMap >
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap>
-  & _mdl
-, char const & _var
-){
-using data_pattern::get;
-auto && iter = get<char>(_mdl);
-*iter = _var;
-++iter;
-return _mdl;
+sync<T>(_mdl, _mdl.map, _iter);
 }
 
 } /* data_pattern */

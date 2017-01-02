@@ -25,7 +25,7 @@ template <
 : bits::rewrite_iterator <T, Writer, Check, Model>
   (_writer, _check, _model)
 {
-this->temp = this->writer (this->model->iterator_map());
+this->temp = this->writer (*this->mdl);
 }
 
 template <
@@ -61,7 +61,7 @@ input_rewrite_iterator <T, Writer, Check, Model> &
   input_rewrite_iterator <T, Writer, Check, Model>
 ::operator ++ (
 ){
-this->temp = this->writer (this->map);s
+this->temp = this->writer (*this->mdl);
 return *this;
 }
 
@@ -76,7 +76,7 @@ input_rewrite_iterator <T, Writer, Check, Model> &
   int
 ){
 auto temp_iter = *this;
-this->temp = this->writer (this->map);
+this->temp = this->writer (*this->mdl);
 return temp_iter;
 }
 
@@ -90,10 +90,10 @@ template <
 ::output_rewrite_iterator (
   Writer & _writer
 , Check & _check
-, Model & _sync_map
+, Model & _mdl
 )
 : bits::rewrite_iterator <T, Writer, Check, Model>
-  (_writer, _check, _sync_map)
+  (_writer, _check, _mdl)
 {}
 
 /* rewriter iterator assignment operator. */
@@ -107,7 +107,7 @@ output_rewrite_iterator <T, Writer, Check, Model> &
 ::operator = (
   T const & _val
 ){
-this->writer (_val, this->map);
+this->writer (_val, *this->mdl);
 return *this;
 }
 
@@ -158,10 +158,10 @@ input_rewrite_iterator <T, Writer, Check, Model>
 make_input_rewrite_iterator (
   Writer & _writer
 , Check & _check
-, Model & _map
+, Model & _mdl
 ){
 return input_rewrite_iterator <T, Writer, Check, Model>
-(_writer, _check, _map);
+(_writer, _check, _mdl);
 }
 
 /* make rewrite iterator */
@@ -174,10 +174,10 @@ output_rewrite_iterator <T, Writer, Check, Model>
 make_output_rewrite_iterator (
   Writer & _writer
 , Check & _check
-, Model & _map
+, Model & _mdl
 ){
 return output_rewrite_iterator <T, Writer, Check, Model>
-(_writer, _check, _map);
+(_writer, _check, _mdl);
 }
 
 namespace bits {
@@ -192,12 +192,12 @@ template <
 ::rewrite_iterator (
   Writer & _writer
 , Check & _check
-, Model & _sync_map
+, Model & _mdl
 )
 : temp()
-, writer (& _writer)
-, check (& _check)
-, sync_map (& _sync_map)
+, writer (_writer)
+, check (_check)
+, mdl (& _mdl)
 {}
 
 template <
@@ -210,11 +210,13 @@ bool
 ::operator == (
   rewrite_iterator <T, Writer, Check, Model> const & _rhs
 ) const {
-  if (
-     (this->sync_map != _rhs.sync_map)
-  || (this->check != _rhs.check)){
-  return false;
-return *this->check (*this->sync_map);
+  if (this->mdl != nullptr)
+  return this->check (*this->mdl);
+
+  else if (_rhs.mdl != nullptr)
+  return _rhs.check (*_rhs.mdl);
+
+return true;
 }
 }
 

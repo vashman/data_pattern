@@ -11,97 +11,110 @@
 #include <iostream>
 #include <tuple>
 #include <iterator>
-#include "../include/output_model.hpp"
-#include "../include/input_model.hpp"
+#include <typesystems/type_map.hpp>
+#include "../include/model.hpp"
 
 namespace data_pattern {
 
-template <typename MapType, typename Stream>
-struct stream_model_sync {
+template <typename T, typename Stream>
+struct isml {
 
-typedef typename std
-::remove_reference<Stream>::type::char_type char_type;
+std::istream_iterator<T> stream;
 
-typedef typename std
-::remove_reference<Stream>::type::traits_type traits_type;
+// call ctor once, so iterator only extracts first time.
+isml (Stream & _stream) : stream (_stream) {}
+~isml() = default;
+isml(isml const &) = default;
+isml& operator=(isml const &) = default;
 
-MapType map;
-
-stream_model_sync (
-  MapType _map
-)
-: map (_map)
-{}
-
-bool
-sync (
-  std::basic_istream<char_type, traits_type> & _stream
-) const {
-  if (0 == _stream.sync()) return true;
-  else return false;
-}
-
-bool
-sync (
-  std::basic_ostream<char_type, traits_type> & _stream
-) const {
-  if (_stream.flush()) return true;
-  else return false;
-}
-
-bool
-sync (
-  std::basic_iostream<char_type, traits_type> & _stream
-) const {
-  if (_stream.flush() && (0 == _stream.sync())) return true;
-  else return false;
-}
-
-MapType &
-operator ()(
-  model <Stream> & _mdl
+std::istream_iterator<T>
+operator () (
+  Stream & _stream
 ){
-  if (this->sync(_mdl.device))
-  _mdl.state = model_state::operable;
+return this->stream;
+}
 
+};
+
+template <typename T, typename Stream>
+std::istream_iterator<T>
+ismel (
+  Stream & _stream
+){
+return std::istream_iterator<T>();
+}
+
+template <typename T, typename Stream>
+std::ostream_iterator<T>
+osml (
+  Stream & _stream
+){
+return std::ostream_iterator<T>(_stream);
+}
+
+template <typename T, typename Stream>
+void
+ismls (
+  model<Stream&> & _mdl
+, std::istream_iterator<T> _iter
+){
+  if (0 == _mdl.device.sync())
+  _mdl.state = model_state::operable;
   else
   _mdl.state = model_state::inoperable;
-return this->map;
 }
 
-}; //
+template <typename T, typename Stream>
+void
+osmls (
+  model<Stream&> & _mdl
+, std::ostream_iterator<T> _iter
+){
+  if (_mdl.device.flush())
+  _mdl.state = model_state::operable;
+  else
+  _mdl.state = model_state::inoperable;
+}
 
 template <typename... Ts, typename Stream>
-stream_model_sync <
-  typesystems::type_map <
-    std::tuple<std::ostream_iterator<Ts>...>, Ts... >
-, Stream & >
-make_ostream_sync (
-  Stream && _stream
+auto
+make_istream_locale (
+  Stream & _stream
+) -> decltype ( typesystems::make_type_map <
+  Ts..., end_iterator_tag<Ts>..., sync_iterator_tag<Ts>... >
+(
+  std::make_tuple (
+    isml<Ts,Stream>{_stream}...
+  , ismel<Ts,Stream>...
+  , ismls<Ts,Stream>...
+  )
+)
 ){
-return stream_model_sync <
-  typesystems::type_map <
-    std::tuple<std::ostream_iterator<Ts>...>, Ts... >
-, Stream & >
-(typesystems::make_type_map<Ts...>
-  (std::make_tuple(std::ostream_iterator<Ts>(_stream)...))
+return typesystems::make_type_map <
+  Ts..., end_iterator_tag<Ts>..., sync_iterator_tag<Ts>... >
+(
+  std::make_tuple (
+    isml<Ts,Stream>{_stream}...
+  , ismel<Ts,Stream>...
+  , ismls<Ts,Stream>...
+  )
 );
 }
 
 template <typename... Ts, typename Stream>
-stream_model_sync <
-  typesystems::type_map <
-    std::tuple<std::istream_iterator<Ts>...>, Ts... >
-, Stream & >
-make_istream_sync (
-  Stream && _stream
+auto
+make_ostream_locale (
+  Stream & _stream
+) -> decltype ( typesystems::make_type_map <
+  Ts..., sync_iterator_tag<Ts>... >
+(
+  std::make_tuple (osml<Ts,Stream>..., osmls<Ts,Stream>...)
+)
 ){
-return stream_model_sync <
-  typesystems::type_map <
-    std::tuple<std::istream_iterator<Ts>...>, Ts..., std::istream_iterator<Ts>... >
-, Stream & > (
-  typesystems::make_type_map<Ts...>
-  (std::make_tuple(std::istream_iterator<Ts>(_stream)..., std::istream_iterator<Ts>(_stream)...))
+return typesystems::make_type_map <
+  Ts..., sync_iterator_tag<Ts>... >
+(
+  std::make_tuple (osml<Ts,Stream>..., osmls<Ts,Stream>...)
 );
 }
 

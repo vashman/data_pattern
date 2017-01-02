@@ -1,6 +1,6 @@
 //
 
-//          Copyright Sundeep S. Sangha 2013 - 2015.
+//          Copyright Sundeep S. Sangha 2013 - 2017.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -8,244 +8,114 @@
 #ifndef DATA_PATTERN_OUTPUT_MODEL_HPP
 #define DATA_PATTERN_OUTPUT_MODEL_HPP
 
-#include <iterator>
+//#include <iterator>
 #include "model.hpp"
 #include "bits/map_type.hpp"
 
 namespace data_pattern {
 
 /* output model */
-template <typename Device, typename GetIteratorMap>
+template <typename Device, typename Map>
 class output_model;
 
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap>
+template <typename Device, typename Map>
+output_model <Device, Map>
 make_output_model (
   Device &&
-, GetIteratorMap &&
+, Map &&
 );
 
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
+template <typename T, typename Device, typename Map>
 auto
-get (
-  output_model <Device, GetIteratorMap> & _mdl
+output_begin (
+  output_model <Device, Map> & _mdl
 )
--> decltype ( typesystems::get<T> (_mdl.iterator_map(_mdl)))
+-> decltype (typesystems::get<typename std::decay<T>::type> (_mdl.map)(_mdl.device))
 {
-return typesystems::get<T> (_mdl.iterator_map(_mdl));
+using std::get;
+using type = typename std::decay<T>::type;
+
+return get<type> (_mdl.map)(_mdl.device);
 }
+
+template <typename T>
+struct is_output_iterator :
+std::is_same <
+  std::output_iterator_tag
+, typename std::iterator_traits<T>::iterator_category > 
+{};
 
 namespace bits {
 
-/*struct end_of_oplaceholder {
-
-bool operator == (
-  end_of_oplaceholder const &
-) const {
-return false;
-}
-
-};
-
-template <typename T, typename Model>
-struct end_of_oget {
-
-static auto get_if (
-  Model const & _mdl
-)
--> decltype (get<T>(const_cast<Model&>(_mdl)))
-{
-return get<T>(const_cast<Model&>(_mdl));
-}
-
-};
-
-template <typename Model>
-struct end_of_oget
-<end_of_oplaceholder, Model> {
-
-static end_of_oplaceholder get_if (
-  Model const & _mdl
-){
-return end_of_oplaceholder();
-}
-
-};*/
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-bool
-end_of_output (
-  output_model <Device, GetIteratorMap> const & _mdl
-, std::output_iterator_tag
-){
-return false;
-}
-
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-bool
-end_of_output (
-  output_model <Device, GetIteratorMap> const & _mdl
-, std::output_iterator_tag
-){
-return get<T>(_mdl) == get<decltype(get<T>(_mdl))>(_mdl); 
-}
+template <typename T, typename Device, typename Map>
+struct iterator_type : is_output_iterator <
+  decltype(
+    output_begin<T>(
+      std::declval<output_model<Device, Map>&>() )
+  )>
+{};
 
 } /* bits */
 
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-bool
-end_of_output (
-  output_model <Device, GetIteratorMap> const & _mdl
+template <typename T, typename Device, typename Map>
+auto
+output_end (
+  output_model <Device, Map> & _mdl
+)
+-> decltype (typesystems::get <
+     end_iterator_tag<typename std::decay<T>::type> >
+  (_mdl.map)(_mdl.device)
 ){
- if (_mdl.state == model_state::inoperable) return true;
+using typesystems::get;
+using type = typename std::decay<T>::type;
 
-return bits::end_of_output <T>(_mdl, typename std::iterator_traits<decltype(get<T>(_mdl))>::iterator_category());
-/*using mdl_t = typename std::remove_reference <
-decltype (
-  const_cast<output_model<Device,GetIteratorMap>&>(_mdl)
-  .iterator_map (
-    const_cast <output_model<Device,GetIteratorMap>&>(_mdl)
-  )
-)>::type;
-
-return (
-  bits::end_of_oget <
-    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
-      ,T,bits::end_of_oplaceholder>::type
-  , output_model <Device, GetIteratorMap>
-  >::get_if (_mdl)
-==
-  bits::end_of_oget <
-    typename std::conditional< typesystems::type_map_has_type<end_tag<T>, mdl_t>::value
-      ,end_tag<T>,bits::end_of_oplaceholder>::type
-  , output_model <Device, GetIteratorMap>
-  >::get_if (_mdl)
-);*/
+return get<end_iterator_tag<type>>(_mdl.map)(_mdl.device);
 }
 
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, bool const &
+template <typename T, typename Device, typename Map>
+typename std::enable_if <
+  ! bits::iterator_type <T, Device, Map>::value, bool >::type
+full (
+  output_model <Device, Map> & _mdl
+);
+
+template <typename T, typename Device, typename Map>
+typename std::enable_if <
+  bits::iterator_type <T, Device, Map>::value, bool >::type
+full (
+  output_model <Device, Map> const & _mdl
+);
+
+template <
+  typename T, typename Device, typename Map, typename Iter >
+void
+sync (
+  output_model<Device, Map> &
+, Iter
+);
+
+template <typename T, typename Device, typename Map>
+void
+write (
+  output_model <Device, Map> &
+, T const &
 );
 
 /* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
+template <typename T, typename Device, typename Map>
+output_model <Device, Map> &
 operator << (
-  output_model<Device, GetIteratorMap> &
-, signed short const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, unsigned short const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, signed int const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, unsigned int const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, signed long const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, unsigned long const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, float const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, double const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, long double const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, unsigned char const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, signed char const &
-);
-
-/* output value */
-template <typename Device, typename GetIteratorMap>
-output_model <
-  Device, GetIteratorMap> &
-operator << (
-  output_model <Device, GetIteratorMap> &
-, char const &
+  output_model <Device, Map> &
+, T const &
 );
 
 /* output model */
-template <typename Device, typename GetIteratorMap>
+template <typename Device, typename Map>
 struct output_model
 : public virtual model <Device>
 {
 
-GetIteratorMap iterator_map;
+Map map;
 
 /* dtor */
 virtual
@@ -254,133 +124,36 @@ virtual
 /* ctor */
 output_model (
   Device &&
-, GetIteratorMap &&
+, Map &&
 );
 
 /* ctor move */
 output_model (
-  output_model <Device,GetIteratorMap> &&
+  output_model <Device, Map> &&
 ) = default;
 
 /* assignment operator move */
-output_model <Device, GetIteratorMap> &
+output_model <Device, Map> &
 operator = (
-  output_model <Device, GetIteratorMap> &&
+  output_model <Device, Map> &&
 ) = default;
 
 /* ctor copy */
 output_model (
-  output_model <Device, GetIteratorMap>
+  output_model <Device, Map>
   const &
 ) = delete;
 
 /* assignment operator copy */
-output_model <Device, GetIteratorMap> &
+output_model <Device, Map> &
 operator = (
-  output_model <Device, GetIteratorMap>
+  output_model <Device, Map>
   const &
 ) = delete;
 
-template <typename T>
-class iterator {
-
-typedef std::output_iterator_tag
-  iterator_catagory;
-typedef T value_type;
-typedef std::size_t difference_type;
-typedef void pointer;
-typedef void reference;
-
-output_model <Device, GetIteratorMap>
-* output_mdl;
-
-public:
-
-explicit
-iterator (
-  output_model <Device, GetIteratorMap>
- & _mdl
-)
-: output_mdl (& _mdl)
-{}
-
-iterator (iterator const &) = default;
-
-iterator &
-operator = (iterator const &) = default;
-
-iterator (iterator &&) = default;
-
-iterator &
-operator = (iterator &&) = default;
-
-~iterator () = default;
-
-iterator &
-operator * (){
-return *this;
-}
-
-iterator &
-operator -> (){
-return this;
-}
-
-iterator
-operator ++ (int){
-sync(*(this->output_mdl));
-return *this;
-}
-
-iterator &
-operator ++ (){
-sync(*(this->output_mdl));
-return *this;
-}
-
-void
-operator = (
-  T const & _var
-){
-*(this->output_mdl) << _var;
-}
-
-bool
-operator == (
-  iterator const & _rhs
-) const {
-  if (_rhs.output_mdl == nullptr)
-  return end_of_output<T>(*this->output_mdl);
-
-return (
-   end_of_output<T>(*(_rhs.output_mdl))
-|| end_of_output<T>(*this->output_mdl)
-);
-}
-
-bool
-operator != (
-  iterator const & _lhs
-) const {
-return !(*this == _lhs);
-}
-
-}; /*  iterator */
 }; /* odata_model */
-
-template <
-  typename T
-, typename Device
-, typename GetIteratorMap >
-  typename output_model
-  <Device, GetIteratorMap>
-:: template iterator<T>
-make_output_iterator (
-  output_model <Device, GetIteratorMap> &
-);
 
 } /* data_pattern */
 #include "bits/output_model.tcc"
-#include "bits/string_data_model_shifts.hpp"
 #endif
 

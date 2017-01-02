@@ -9,65 +9,33 @@
 #ifndef DATA_PATTERN_REWRITE_TYPE_HPP
 #define DATA_PATTERN_REWRITE_TYPE_HPP
 
-#include <typesystems/writer.hpp>
-#include <typesystems/type_map.hpp>
 #include "data_model.hpp"
+#include "bits/rewrite_iterator.hpp"
 
 namespace data_pattern {
-namespace bits {
 
-/* owrrite type */
-template <typename Iterator, typename Writer>
-struct output_rewrite_type;
+template <typename Map, typename... Ts>
+class rewriter_map {
 
-/* owrite type << output_model */
-template <
-  typename T
-, typename Writer
-, typename Device
-, typename Sync >
-output_model <Device, Sync> &
-operator << (
-  output_model <Device, Sync> &
-, output_rewrite_type <T, Writer> &&
-);
+Map map;
+typesystems::type_map<std::tuple<>, Ts...> writer_map;
 
-/* iwrite type */
-template <typename T, typename Writer>
-struct input_rewrite_type;
+};
 
-/* iwrite type >> input */
-template <
-  typename T
-, typename Writer
-, typename Device
-, typename Sync >
-input_model <Device, Sync> &
-operator >> (
-  input_model <Device, Sync> &
-, input_rewrite_type <T, Writer> &&
-);
+input_rewrite_iterator<T, Writer, Check, Device, Map>
+make_input_rewritr_iterator (
+){
+}
 
-} /* bits */
-
-/* rewrite output */
-template <typename T, typename Writer>
-bits::output_rewrite_type <T, Writer>
-rewrite_output (
-  T const & // input buffer
-, Writer const
-);
-
-/* rewrite input */
-template <typename T, typename Writer>
-bits::input_rewrite_type <T, Writer>
-rewrite_input (
-  T &
-, Writer const
-);
+make_rewriter_map (
+  Map && _map
+, Tuple _writers
+){
+auto tup = make_tuple(m_iter<Ts,>...);
+typesystems::type_map<_writers, Ts...> writer_map;
+return rewriter_map <Map>(_map, writer_map);
+}
 
 } /* data_pattern */
-#include "bits/rewrite_type.tcc"
-#include "bits/rewrite_iterator.hpp"
 #endif
 

@@ -12,28 +12,28 @@ using data_pattern::rewrite_output;
 using data_pattern::rewrite_input;
 
 struct int_to_double {
-template <typename TypeMap>
+template <typename Model>
 void
  operator()(
   int const & _i
-, TypeMap & _map
+, Model & _map
 ){
-using data_pattern::get;
-auto && iter = get<double>(_map);
+auto iter = output_begin<double>(_mdl);
 *iter = static_cast<double>(_i);
-++iter;
+sync<double>(_mdl, ++iter);
 }
 };
 
 struct double_to_int {
 
-template <typename TypeMap>
+template <typename Model>
 int
 operator ()(
-  TypeMap & _map
+  Model & _mdl
 ){
 using data_pattern::get;
-auto && iter = get<double>(_map);
+
+auto iter = input_begin<double>(_mdl);
 return static_cast<int>(*iter++);
 }
 

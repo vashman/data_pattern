@@ -1,6 +1,6 @@
 //
 
-//          Copyright Sundeep S. Sangha 2013 - 2015.
+//          Copyright Sundeep S. Sangha 2013 - 2017.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -38,12 +38,22 @@ template <
 void
 sync (
   input_model <Device, Map> & _mdl
-, Iter _first
-, Iter _last
+, Iter _iter
 ){
-using std::get;
+sync<T>(_mdl, _mdl.map, _iter);
+}
 
-get<sync_iterator_tag<T>>(_mdl)(_mdl, _first, _last);
+/* input value */
+template <typename T, typename Device, typename Map>
+T
+read (
+  input_model <Device, Map> & _mdl
+){
+  if (_mdl.state == model_state::inoperable) throw "err";
+auto iter = input_begin<T>(_mdl);
+T temp {*iter};
+sync <T>(_mdl, iter);
+return temp;
 }
 
 /* input value */
@@ -53,189 +63,9 @@ operator >> (
   input_model <Device, Map> & _mdl
 , T & _var
 ){
-auto iter = begin<T>(_mdl);
-_var = *iter;
-sync <T>(_mdl, iter, ++iter);
+_var = read<T>(_mdl);
 return _mdl;
 }
-//
-///* input value */
-//template <typename Device, typename Sync>
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync> & _mdl
-//, signed short & _var
-//){
-//auto && iter = get<signed short>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <typename Device, typename Sync>
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync> & _mdl
-//, unsigned short & _var
-//){
-//auto && iter = get<unsigned short>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <typename Device, typename Sync>
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync> & _mdl
-//, signed int & _var
-//){
-//auto && iter = get<signed int>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <typename Device, typename Sync>
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync> & _mdl
-//, unsigned int & _var
-//){
-//auto && iter = get<unsigned int>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <
-//  typename Device
-//, typename Sync >
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync>
-//  & _mdl
-//, signed long & _var
-//){
-//auto && iter = get<signed long>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <
-//  typename Device
-//, typename Sync >
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync>
-//  & _mdl
-//, unsigned long & _var
-//){
-//auto && iter = get<unsigned long>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <
-//  typename Device
-//, typename Sync >
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync>
-//  & _mdl
-//, float & _var
-//){
-//auto && iter = get<float>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <
-//  typename Device
-//, typename Sync >
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync>
-//  & _mdl
-//, double & _var
-//){
-//auto && iter = get<double>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <
-//  typename Device
-//, typename Sync >
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync>
-//  & _mdl
-//, long double & _var
-//){
-//auto && iter = get<long double>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <
-//  typename Device
-//, typename Sync >
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync>
-//  & _mdl
-//, char & _var
-//){
-//using data_pattern::get;
-//auto &&  iter = data_pattern::get<char>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <
-//  typename Device
-//, typename Sync >
-//input_model <Device, Sync> &
-//operator >> (
-//  input_model <Device, Sync>
-//  & _mdl
-//, signed char & _var
-//){
-//auto && iter = get<signed char>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
-//
-///* input value */
-//template <typename Device, typename Sync>
-//input_model <Device, Sync > &
-//operator >> (
-//  input_model <Device, Sync> & _mdl
-//, unsigned char & _var
-//){
-//auto && iter = get<unsigned char>(_mdl);
-//_var = *iter;
-//++iter;
-//return _mdl;
-//}
 
 } /* data_pattern */
 #endif
