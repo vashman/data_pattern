@@ -17,7 +17,7 @@ using data_pattern::read;
 
 int main (int argc, char * argv[]){
 
-model<char**&> input_options {argv};
+model<char**> input_options {argv};
 auto getopt_locale = make_getopt_locale("abcde:", argc);
 
   if (! input_options.is_operable()) return 1;

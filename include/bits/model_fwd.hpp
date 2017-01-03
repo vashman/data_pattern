@@ -139,7 +139,7 @@ operator >> (
 );
 
 template <typename T, typename Device, typename Locale>
-chain_model<Device, Locale> &&
+chain_model<Device, Locale>
 operator >> (
   chain_model<Device, Locale> && _mdl
 , T & _var
@@ -153,7 +153,7 @@ operator << (
 );
 
 template <typename T, typename Device, typename Locale>
-chain_model<Device, Locale> &&
+chain_model<Device, Locale>
 operator << (
   chain_model<Device, Locale> && _mdl
 , T const & _var

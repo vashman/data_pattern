@@ -223,7 +223,7 @@ return getopt_iterator(_argv, this->opts, this->argc);
 
 };
 
-auto c = [](model<char**&> & _mdl, getopt_iterator _iter){
+auto c = [](model<char**> & _mdl, getopt_iterator _iter){
   if (_iter != getopt_iterator())
   _mdl.state = model_state::inoperable;
 };

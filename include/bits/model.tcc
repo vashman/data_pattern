@@ -16,13 +16,18 @@
 namespace data_pattern {
 
 template <typename Device>
-template <typename DeviceType>
+template <typename... Ts>
 model<Device>::model (
-  DeviceType && _device
+  Ts... _args
 )
-: device (std::forward<DeviceType>(_device))
+: device (std::forward<Ts>(_args)...)
 , state (model_state::operable)
 {}
+
+template <typename Device>
+model<Device>::operator Device(){
+return this->device;
+}
 
 template <typename Device, typename Locale>
 chain_model<Device, Locale>::chain_model (
@@ -137,6 +142,55 @@ using iter_cat = typename std::iterator_traits <
 return bits::full<T>(_mdl, _loc, iter_cat{});
 }
 
+template <typename Device, typename Locale>
+chain_model<Device, Locale>
+chain (
+  model<Device> & _mdl
+, Locale & _loc
+){
+return chain_model<Device, Locale>{_mdl, _loc};
+}
+
+template <typename T, typename Device, typename Locale>
+chain_model<Device, Locale> &
+operator >> (
+  chain_model<Device, Locale> & _mdl
+, T & _var
+){
+_var = read<T>(_mdl.mdl, _mdl.loc);
+return _mdl;
+}
+
+template <typename T, typename Device, typename Locale>
+chain_model<Device, Locale> &
+operator << (
+  chain_model<Device, Locale> & _mdl
+, T const & _var
+){
+write(_var, _mdl.mdl, _mdl.loc);
+return _mdl;
+}
+
+template <typename T, typename Device, typename Locale>
+chain_model<Device, Locale>
+operator >> (
+  chain_model<Device, Locale> && _mdl
+, T & _var
+){
+_var = read<T>(_mdl.mdl, _mdl.loc);
+return _mdl;
+}
+
+template <typename T, typename Device, typename Locale>
+chain_model<Device, Locale>
+operator << (
+  chain_model<Device, Locale> && _mdl
+, T const & _var
+){
+write(_var, _mdl.mdl, _mdl.loc);
+return _mdl;
+}
+
 namespace bits {
 
 template <typename T, typename Device, typename Locale>
@@ -187,51 +241,6 @@ full (
 ){
 return
 begin<T>(_mdl.device, _loc) != end<T>(_mdl.device, _loc);
-}
-
-template <typename Device, typename Locale>
-chain_model<Device, Locale>
-chain (
-  model<Device> & _mdl
-, Locale & _loc
-){
-return chain_model<Device, Locale>{_mdl, _loc};
-}
-
-template <typename T, typename Device, typename Locale>
-chain_model<Device, Locale> &
-operator >> (
-  chain_model<Device, Locale> & _mdl
-, T & _var
-){
-return _mdl;
-}
-
-template <typename T, typename Device, typename Locale>
-chain_model<Device, Locale> &
-operator << (
-  chain_model<Device, Locale> & _mdl
-, T const & _var
-){
-return _mdl;
-}
-
-template <typename T, typename Device, typename Locale>
-chain_model<Device, Locale> &&
-operator >> (
-  chain_model<Device, Locale> && _mdl
-, T & _var
-){
-return _mdl;
-}
-
-template <typename T, typename Device, typename Locale>
-chain_model<Device, Locale> &&
-operator << (
-  chain_model<Device, Locale> && _mdl
-, T const & _var
-){
-return _mdl;
 }
 
 }/* bits */ } /* data_pattern */

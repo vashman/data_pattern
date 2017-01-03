@@ -27,7 +27,7 @@ using data_pattern::full;
 
 int main (){
 
-model<vector<int>> vec {vector<int>{4}};
+model<vector<int>> vec {4,4};
 
 auto vector_ilocale = make_type_map <
   int, end_iterator_tag<int>, sync_iterator_tag<int> >
@@ -62,7 +62,7 @@ auto vector_olocale = make_type_map <
 
   if (! full<int>(vec, vector_olocale)){
   write(3, vec, vector_olocale);
-  std::cout << "output was: " << vec.device[0] << std::endl;
+  std::cout << "output was: " << vec.device[3] << std::endl;
   }
 
 return 0;

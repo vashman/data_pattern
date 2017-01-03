@@ -21,10 +21,13 @@ struct model {
 Device device;
 model_state state;
 
-template <typename DeviceType>
+template <typename... Ts>
 model (
-  DeviceType &&
+  Ts...
 );
+
+explicit
+operator Device ();
 
 model (
   model<Device> const &

@@ -16,17 +16,20 @@
 
 namespace data_pattern {
 
-template <typename T, typename Stream>
+template <typename T, typename CharT, typename Traits>
 struct isml {
 
 std::istream_iterator<T> stream;
 
 // call ctor once, so iterator only extracts first time.
-isml (Stream & _stream) : stream (_stream) {}
+isml (std::basic_istream<CharT,Traits> & _stream)
+: stream (_stream) {}
+
 ~isml() = default;
 isml(isml const &) = default;
 isml& operator=(isml const &) = default;
 
+template <typename Stream>
 std::istream_iterator<T>
 operator () (
   Stream & _stream
@@ -34,28 +37,60 @@ operator () (
 return this->stream;
 }
 
+std::istream_iterator<T>
+operator () (
+  std::basic_istream<CharT,Traits> * _stream
+){
+return this->stream;
+}
+
 };
 
-template <typename T, typename Stream>
+template <typename T, typename CharT, typename Traits>
+struct ismel {
+
+template <typename Stream>
 std::istream_iterator<T>
-ismel (
+operator ()(
   Stream & _stream
 ){
 return std::istream_iterator<T>();
 }
 
-template <typename T, typename Stream>
+std::istream_iterator<T>
+operator ()(
+  std::basic_istream<CharT,Traits> * _stream
+){
+return std::istream_iterator<T>();
+}
+};
+
+template <typename T, typename CharT, typename Traits>
+struct osml {
+
+template <typename Stream>
 std::ostream_iterator<T>
-osml (
+operator ()(
   Stream & _stream
 ){
 return std::ostream_iterator<T>(_stream);
 }
 
-template <typename T, typename Stream>
+std::ostream_iterator<T>
+operator ()(
+  std::basic_ostream<CharT,Traits> * _stream
+){
+return std::ostream_iterator<T>(*_stream);
+}
+};
+
+template <typename T, typename CharT, typename Traits>
+struct ismls {
+
+template <typename Stream>
 void
-ismls (
-  model<Stream&> & _mdl
+operator ()(
+  model<Stream> & _mdl
 , std::istream_iterator<T> _iter
 ){
   if (0 == _mdl.device.sync())
@@ -64,10 +99,25 @@ ismls (
   _mdl.state = model_state::inoperable;
 }
 
-template <typename T, typename Stream>
 void
-osmls (
-  model<Stream&> & _mdl
+operator ()(
+  model<std::basic_istream<CharT,Traits>*> & _mdl
+, std::istream_iterator<T> _iter
+){
+  if (0 == _mdl.device->sync())
+  _mdl.state = model_state::operable;
+  else
+  _mdl.state = model_state::inoperable;
+}
+};
+
+template <typename T, typename CharT, typename Traits>
+struct osmls{
+
+template <typename Stream>
+void
+operator ()(
+  model<Stream> & _mdl
 , std::ostream_iterator<T> _iter
 ){
   if (_mdl.device.flush())
@@ -76,17 +126,29 @@ osmls (
   _mdl.state = model_state::inoperable;
 }
 
-template <typename... Ts, typename Stream>
+void
+operator ()(
+  model<std::basic_ostream<CharT,Traits>*> & _mdl
+, std::ostream_iterator<T> _iter
+){
+  if (_mdl.device->flush())
+  _mdl.state = model_state::operable;
+  else
+  _mdl.state = model_state::inoperable;
+}
+};
+
+template <typename... Ts, typename CharT, typename Traits>
 auto
 make_istream_locale (
-  Stream & _stream
+  std::basic_istream<CharT,Traits> & _stream
 ) -> decltype ( typesystems::make_type_map <
   Ts..., end_iterator_tag<Ts>..., sync_iterator_tag<Ts>... >
 (
   std::make_tuple (
-    isml<Ts,Stream>{_stream}...
-  , ismel<Ts,Stream>...
-  , ismls<Ts,Stream>...
+    isml<Ts,CharT,Traits>{_stream}...
+  , ismel<Ts,CharT,Traits>{}...
+  , ismls<Ts,CharT,Traits>{}...
   )
 )
 ){
@@ -94,27 +156,31 @@ return typesystems::make_type_map <
   Ts..., end_iterator_tag<Ts>..., sync_iterator_tag<Ts>... >
 (
   std::make_tuple (
-    isml<Ts,Stream>{_stream}...
-  , ismel<Ts,Stream>...
-  , ismls<Ts,Stream>...
+    isml<Ts,CharT,Traits>{_stream}...
+  , ismel<Ts,CharT,Traits>{}...
+  , ismls<Ts,CharT,Traits>{}...
   )
 );
 }
 
-template <typename... Ts, typename Stream>
+template <typename... Ts, typename CharT, typename Traits>
 auto
 make_ostream_locale (
-  Stream & _stream
-) -> decltype ( typesystems::make_type_map <
-  Ts..., sync_iterator_tag<Ts>... >
+  std::basic_ostream<CharT,Traits> & _stream
+) -> decltype ( typesystems::make_type_map <Ts..., sync_iterator_tag<Ts>...>
 (
-  std::make_tuple (osml<Ts,Stream>..., osmls<Ts,Stream>...)
+  std::make_tuple (
+    osml<Ts,CharT,Traits>{}...
+  , osmls<Ts,CharT,Traits>{}...
+  )
 )
 ){
-return typesystems::make_type_map <
-  Ts..., sync_iterator_tag<Ts>... >
+return typesystems::make_type_map <Ts..., sync_iterator_tag<Ts>...>
 (
-  std::make_tuple (osml<Ts,Stream>..., osmls<Ts,Stream>...)
+  std::make_tuple (
+    osml<Ts,CharT,Traits>{}...
+  , osmls<Ts,CharT,Traits>{}...
+  )
 );
 }
 
