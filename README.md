@@ -44,8 +44,16 @@ Documentation
 + [Tutorial](doc/tutorial.md)
 + [Desgin Overview](doc/proposal.md)
 
+Features
+==========================================================================
++ add writer iterator
++ collection of model / locale builder
++ make Locale immutable
++ add concurrancy measures
++ add inilizer list ctor for model
+
 License
 ==========================================================================
-Source Copyright © 2013-2014 Sundeep S. Sangha and contributers.
+Source Copyright © 2013-2017 Sundeep S. Sangha and contributers.
 Distributed under the Boost software license. See the
 [License](./License_1_0.txt) file.

@@ -21,7 +21,16 @@ model<Device>::model (
   Ts... _args
 )
 : device (std::forward<Ts>(_args)...)
-, state (model_state::operable)
+, state {model_state::operable}
+{}
+
+template <typename Device>
+template <typename T>
+model<Device>::model (
+  std::initializer_list<T> _list
+)
+: device (_list)
+, state {model_state::operable}
 {}
 
 template <typename Device>

@@ -62,7 +62,7 @@ auto vector_olocale = make_type_map <
 
   if (! full<int>(vec, vector_olocale)){
   write(3, vec, vector_olocale);
-  std::cout << "output was: " << vec.device[3] << std::endl;
+  std::cout << "output was: " << vec.device[1] << std::endl;
   }
 
 return 0;

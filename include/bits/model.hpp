@@ -8,6 +8,8 @@
 #ifndef DATA_PATTERN_BITS_MODEL_HPP
 #define DATA_PATTERN_BITS_MODEL_HPP
 
+#include  <initializer_list>
+
 namespace data_pattern {
 
 enum class model_state {
@@ -24,6 +26,11 @@ model_state state;
 template <typename... Ts>
 model (
   Ts...
+);
+
+template <typename T>
+model (
+  std::initializer_list<T>
 );
 
 explicit

@@ -17,13 +17,15 @@ template <
   typename T
 , typename Writer
 , typename Check
-, typename Model >
+, typename Device
+, typename Locale >
 class rewrite_iterator {
 
 T temp;
 Writer writer;
 Check check;
-Model * mdl
+model<Device> * mdl;
+Locale & loc;
 
 public:
 
@@ -31,7 +33,8 @@ public:
 rewrite_iterator (
   Writer &
 , Check &
-, Model &
+, model<Device> &
+, Locale &
 );
 
 /* ctor copy */
