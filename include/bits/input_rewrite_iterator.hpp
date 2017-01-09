@@ -221,7 +221,7 @@ template <
 T&
   input_rewrite_iterator <T, Writer, Check, Device, Locale>
 ::operator * (){
-return *this->temp;
+return this->temp;
 }
 
 template <
@@ -233,7 +233,7 @@ template <
 T*
   input_rewrite_iterator <T, Writer, Check, Device, Locale>
 ::operator -> (){
-return this->temp;
+return &this->temp;
 }
 
 template <

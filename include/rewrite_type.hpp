@@ -11,7 +11,7 @@
 
 #include "model.hpp"
 #include "bits/input_rewrite_iterator.hpp"
-//#include "bits/output_rewrite_iterator.hpp"
+#include "bits/output_rewrite_iterator.hpp"
 
 namespace data_pattern {
 

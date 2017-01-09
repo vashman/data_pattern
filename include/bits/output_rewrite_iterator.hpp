@@ -28,8 +28,8 @@ public:
 typedef std::output_iterator_tag iterator_catagory;
 typedef void value_type;
 typedef void difference_type;
-typedef void * pointer;
-typedef void & reference;
+typedef void pointer;
+typedef void reference;
 
 /* ctor */
 template <typename WriterType, typename CheckType>
