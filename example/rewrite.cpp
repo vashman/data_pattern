@@ -81,12 +81,14 @@ operator ()(
 , Model & _mdl
 , Locale & _loc
 ){
+using data_pattern::begin;
+
 this->func (
   _str
 , _mdl
 , _loc
 , typename
-  std::iterator_traits<decltype(iter)>::iterator_category()
+  std::iterator_traits<decltype(begin<char>(_mdl.device, _loc))>::iterator_category()
 );
 }
 
