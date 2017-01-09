@@ -1,67 +1,63 @@
 #include <iostream>
+#include "../include/model.hpp"
 #include "../include/stream_model.hpp"
 #include "../include/rewrite_type.hpp"
 
 using std::cout;
 using std::cin;
-using data_pattern::make_output_model;
-using data_pattern::make_input_model;
-using data_pattern::make_ostream_sync;
-using data_pattern::make_istream_sync;
-using data_pattern::rewrite_output;
-using data_pattern::rewrite_input;
-
-struct int_to_double {
-template <typename Model>
-void
- operator()(
-  int const & _i
-, Model & _map
-){
-auto iter = output_begin<double>(_mdl);
-*iter = static_cast<double>(_i);
-sync<double>(_mdl, ++iter);
-}
-};
+using data_pattern::model;
+using data_pattern::make_ostream_locale;
+using data_pattern::make_istream_locale;
+using data_pattern::make_input_rewrite_iterator;
 
 struct double_to_int {
 
-template <typename Model>
+template <typename Model, typename Locale>
 int
 operator ()(
   Model & _mdl
+, Locale & _loc
 ){
-using data_pattern::get;
+using data_pattern::begin;
 
-auto iter = input_begin<double>(_mdl);
+auto iter = begin<double>(_mdl.device, _loc);
 return static_cast<int>(*iter++);
 }
 
 };
 
+struct dtoi_check {
+template <typename Model, typename Locale>
+bool
+operator ()(
+  Model & _mdl
+, Locale & _loc
+){
+using data_pattern::begin;
+using data_pattern::end;
+
+return begin<double>(_mdl.device, _loc)
+    == end<double>(_mdl.device, _loc);
+}
+};
+
 int main (){
 
-auto output (
-  make_output_model
-  (cout, make_ostream_sync <char, double>(cout))
-);
+model<std::ostream *> output (&cout);
+model<std::istream *> input (&cin);
+auto oloc = make_ostream_locale <char, double>(cout);
+auto iloc = make_istream_locale <char, double>(cin);
 
-output << 't' << 'e' << 's' << 't' << ' ' << 12.04;
+auto iter = make_input_rewrite_iterator <int>(
+  double_to_int{}, dtoi_check{}, input, iloc );
 
-output << ' ' << rewrite_output(1, int_to_double()) << ' ';
-
-auto input (
-  make_input_model
-  (cin, make_istream_sync <char, double>(cin))
-);
+//chain (output, oloc) << "test" << ':' << ' ' << 12.04;
 
 char temp;
 int temp_int;
 
-input >> temp >> rewrite_input(temp_int, double_to_int());
-std::cout << temp << " " << temp_int;
-
-auto oiter = make_output_rewrite_iterator <>(output);
+//input >> temp >> rewrite_input(temp_int, double_to_int());
+//std::cout << temp << " " << temp_int;
 
 return 0;
 }

@@ -50,7 +50,6 @@ Features
 + collection of model / locale builder
 + make Locale immutable
 + add concurrancy measures
-+ add inilizer list ctor for model
 
 License
 ==========================================================================

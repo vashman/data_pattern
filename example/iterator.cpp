@@ -7,35 +7,29 @@
 
 #include <iostream>
 #include <sstream>
-#include <memory>
-#include <iterator>
+//#include <memory>
+//#include <iterator>
 #include <algorithm>
 #include <vector>
-#include "../include/data_model.hpp"
+#include "../include/model.hpp"
 #include "../include/stream_model.hpp"
 
 using std::cout;
 using std::cin;
-using std::vector;
-using data_pattern::make_input_model;
-using data_pattern::make_output_model;
-using data_pattern::make_ostream_map;
-using data_pattern::make_istream_map;
-using data_pattern::make_data_model;
-using data_pattern::model_state;
-using data_pattern::output_begin;
-using data_pattern::output_end;
-using data_pattern::input_begin;
-using data_pattern::input_end;
+using data_pattern::make_ostream_locale;
+using data_pattern::make_istream_locale;
+using std::copy;
+using data_pattern::model;
+using data_pattern::begin;
+using data_pattern::end;
 
 int main(){
 
-std::stringstream s1 {"abcdefg"};
-auto input = make_input_model
-  (s1, make_istream_map<char>(s1));
+model <std::stringstream> input ("abcdefg");
+auto loc = make_istream_locale<char>(input.device);
 
-auto first = input_begin<char>(input);
-auto last = input_end<char>(input);
+auto first = begin<char>(input, loc);
+auto last = end<char>(input, loc);
 
 while (first != last){
 cout << "\nenter a character: ";
@@ -43,24 +37,24 @@ cout << "\nThe input was: " << *first;
 ++first;
 }
 
-auto omdl = make_output_model
-   (cout, make_ostream_map<char,int>(cout));
-
 std::vector<char> vec = {'A', 'E', 'I', 'O'};
-std::copy (begin(vec), end(vec), output_begin<char>(omdl));
+model<std::ostream*> output (&cout);
+auto oloc = make_ostream_locale<char,int>(cout);
 
-std::stringstream ss("12345");
-auto io = make_data_model (
-  ss
-, make_istream_map<char,int>(ss)
-, make_ostream_map<char,int>(ss)
+copy (
+  begin(vec)
+, end(vec)
+, begin<char>(output.device, oloc)
 );
 
-std::copy (
-  input_begin<int>(io)
-, input_end<int>(io)
-, output_begin<int>(omdl)
-);
+model<std::stringstream> ss("12345");
+auto ss_oloc = make_ostream_locale<char,int>(ss.device);
+auto ss_iloc = make_istream_locale<char,int>(ss.device);
+
+copy (
+  begin<int>(ss.device, ss_iloc)
+, end<int>(ss.device, ss_iloc)
+, begin<int>(output.device, oloc) );
 
 return 0;
 }

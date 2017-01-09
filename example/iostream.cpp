@@ -22,8 +22,8 @@ using data_pattern::write;
 int main (int argc, char *argv[]){
 
 model<fstream> file {"./testing.test", std::ios::out};
-model<std::istream*> input {&cin};
-model<std::ostream*> output{&cout};
+model<std::istream*> input (&cin);
+model<std::ostream*> output (&cout);
 
 auto ofloc =
   make_ostream_locale <int, double, char>(file.device);
