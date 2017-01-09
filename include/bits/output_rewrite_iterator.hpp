@@ -9,6 +9,27 @@
 #define DATA_PATTERN_OUTPUT_REWRITE_ITERATOR_HPP
 
 namespace data_pattern {
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Device
+, typename Locale >
+class output_rewrite_iterator;
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Device
+, typename Locale >
+output_rewrite_iterator <T, Writer, Check, Device, Locale>
+make_output_rewrite_iterator (
+  Writer &&
+, Check &&
+, model<Device> &
+, Locale &
+);
 
 template <
   typename T
@@ -120,10 +141,10 @@ template <typename WriterType, typename CheckType>
 , Locale & _locale
 , model<Device> & _mdl
 )
-: writer {_writer}
-, check {_check}
-, mdl {_mdl}
-, locale {_locale}
+: writer (_writer)
+, check (_check)
+, mdl (&_mdl)
+, locale (&_locale)
 {}
 
 template <
@@ -206,6 +227,24 @@ output_rewrite_iterator <T, Writer, Check, Device, Locale> &
   output_rewrite_iterator <T, Writer, Check, Device, Locale>
 ::operator * (){
 return *this;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Device
+, typename Locale >
+output_rewrite_iterator <T, Writer, Check, Device, Locale>
+make_output_rewrite_iterator (
+  Writer && _writer
+, Check && _check
+, model<Device> & _mdl
+, Locale & _locale
+){
+return
+output_rewrite_iterator<T, Writer, Check, Device, Locale>
+{_writer, _check, _locale, _mdl};
 }
 
 } /* data_pattern */

@@ -1,14 +1,17 @@
 #include <iostream>
+#include <string>
 #include "../include/model.hpp"
 #include "../include/stream_model.hpp"
 #include "../include/rewrite_type.hpp"
 
 using std::cout;
 using std::cin;
+using std::string;
 using data_pattern::model;
 using data_pattern::make_ostream_locale;
 using data_pattern::make_istream_locale;
 using data_pattern::make_input_rewrite_iterator;
+using data_pattern::make_output_rewrite_iterator;
 
 struct double_to_int {
 
@@ -22,6 +25,31 @@ using data_pattern::begin;
 
 auto iter = begin<double>(_mdl.device, _loc);
 return static_cast<int>(*iter++);
+}
+
+};
+
+struct str_to_char {
+
+template <typename Model, typename Locale>
+void
+operator ()(
+  std::string const _str
+, Model & _mdl
+, Locale & _loc
+){
+using data_pattern::begin;
+using data_pattern::end;
+
+auto iter = begin<char>(_mdl.device, _loc);
+auto eiter = end<char>(_mdl.device, _loc);
+auto b = begin(_str);
+auto e = end(_str);
+
+while ((iter != eiter) && (b != e)){
+*iter = *b;
+++b;
+}
 }
 
 };
@@ -41,6 +69,21 @@ return begin<double>(_mdl.device, _loc)
 }
 };
 
+struct stoc_check {
+template <typename Model, typename Locale>
+bool
+operator ()(
+  Model & _mdl
+, Locale & _loc
+){
+using data_pattern::begin;
+using data_pattern::end;
+
+return begin<char>(_mdl.device, _loc)
+    != end<char>(_mdl.device, _loc);
+}
+};
+
 int main (){
 
 model<std::ostream *> output (&cout);
@@ -51,6 +94,10 @@ auto iloc = make_istream_locale <char, double>(cin);
 auto iter = make_input_rewrite_iterator <int>(
   double_to_int{}, dtoi_check{}, input, iloc );
 
+auto oiter = make_output_rewrite_iterator <std::string>(
+  str_to_char{}, stoc_check{}, output, oloc );
+auto k = std::string {"testing"};
+*oiter = k;
 //chain (output, oloc) << "test" << ':' << ' ' << 12.04;
 
 char temp;
