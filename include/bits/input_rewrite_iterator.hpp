@@ -194,7 +194,7 @@ template <
 input_rewrite_iterator <T, Writer, Check, Device, Locale> &
   input_rewrite_iterator <T, Writer, Check, Device, Locale>
 ::operator ++ (){
-this->temp = this->writer(*this->device, *this->locale);
+this->temp = this->writer(*this->mdl, *this->locale);
 return *this;
 }
 

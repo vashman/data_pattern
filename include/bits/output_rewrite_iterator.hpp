@@ -70,7 +70,7 @@ operator = (
 ~output_rewrite_iterator () = default;
 
 /* rewrite iterator assignment operator. */
-output_rewrite_iterator <T, Writer, Chekc, Device, Locale> &
+output_rewrite_iterator <T, Writer, Check, Device, Locale> &
 operator = (
   T const &
 );
@@ -99,13 +99,13 @@ template <
 , typename Device
 , typename Locale >
 bool
-  output_rewrite_iterator <T, Writer, Check, Device, Locale>
-::operator != (
+operator != (
   output_rewrite_iterator <T, Writer, Check, Device, Locale>
   const &
 , output_rewrite_iterator <T, Writer, Check, Device, Locale>
   const &
 );
+
 template <
   typename T
 , typename Writer
@@ -133,8 +133,7 @@ template <
 , typename Device
 , typename Locale >
 bool
-  output_rewrite_iterator <T, Writer, Check, Device, Locale>
-::operator != (
+operator != (
   output_rewrite_iterator <T, Writer, Check, Device, Locale>
   const & _lhs
 , output_rewrite_iterator <T, Writer, Check, Device, Locale>
@@ -169,13 +168,14 @@ bool
 ::operator == (
   output_rewrite_iterator <T, Writer, Check, Device, Locale>
   const & _rhs
-){
+) const {
 return this->check(*this->mdl, *this->locale);
 }
 
 template <
   typename T
 , typename Writer
+, typename Check
 , typename Device
 , typename Locale >
 output_rewrite_iterator <T, Writer, Check, Device, Locale> &
