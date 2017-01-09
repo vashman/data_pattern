@@ -31,6 +31,49 @@ return static_cast<int>(*iter++);
 
 struct str_to_char {
 
+template <typename Model, typename Locale, typename Cat>
+void
+func (
+  std::string const _str
+, Model & _mdl
+, Locale & _loc
+, Cat
+){
+using data_pattern::begin;
+using data_pattern::end;
+
+auto iter = begin<char>(_mdl.device, _loc);
+auto b = begin(_str);
+auto e = end(_str);
+auto eiter = end<char>(_mdl.device, _loc);
+
+while ((iter != eiter) && (b != e)){
+*iter = *b;
+++b;
+}
+}
+
+template <typename Model, typename Locale>
+void
+func (
+  std::string const _str
+, Model & _mdl
+, Locale & _loc
+, std::output_iterator_tag
+){
+using data_pattern::begin;
+using data_pattern::end;
+
+auto iter = begin<char>(_mdl.device, _loc);
+auto b = begin(_str);
+auto e = end(_str);
+
+while (b != e){
+*iter = *b;
+++b;
+}
+}
+
 template <typename Model, typename Locale>
 void
 operator ()(
@@ -38,18 +81,13 @@ operator ()(
 , Model & _mdl
 , Locale & _loc
 ){
-using data_pattern::begin;
-using data_pattern::end;
-
-auto iter = begin<char>(_mdl.device, _loc);
-auto eiter = end<char>(_mdl.device, _loc);
-auto b = begin(_str);
-auto e = end(_str);
-
-while ((iter != eiter) && (b != e)){
-*iter = *b;
-++b;
-}
+this->func (
+  _str
+, _mdl
+, _loc
+, typename
+  std::iterator_traits<decltype(iter)>::iterator_category()
+);
 }
 
 };
