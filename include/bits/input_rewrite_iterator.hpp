@@ -104,29 +104,7 @@ operator == (
   const &
 ) const;
 
-input_rewrite_iterator &
-operator ()(
-  model<Device> &
-);
-
 }; /* input rewrite iterator */
-
-template <
-  typename T
-, typename Device
-, typename Locale
-, typename Writer
-, typename Check >
-input_rewrite_iterator<T, Device, Locale, Writer, Check> &
-  input_rewrite_iterator<T, Device, Locale, Writer, Check>
-::operator()(
-  model<Device> & _mdl
-){
-this->mdl = &_mdl;
-  if (! this->check(*this->mdl, *this->locale))
-  this->temp = this->writer(*this->mdl, *this->locale);
-return *this;
-}
 
 template <
   typename T
@@ -279,9 +257,39 @@ template <
 , typename Writer
 , typename Check >
 auto
-get (
-  input_rewriter_locale<Device, Locale, Writer, Check>
-  & _loc
+begin (
+  model<Device> & _mdl
+, input_rewriter_locale<Locale, Writer, Check> & _loc
+)
+-> input_rewrite_iterator <
+  T
+, Device
+, Locale
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.writer))>::type
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.check))>::type
+>
+{
+return input_rewrite_iterator <
+  T
+, Device
+, Locale
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.writer))>::type
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.check))>::type
+>{
+  get<T>(_loc.writer), get<T>(_loc.check), _loc.locale, _mdl
+};
+}
+
+template <
+  typename T
+, typename Device
+, typename Locale
+, typename Writer
+, typename Check >
+auto
+end (
+  model<Device> & _mdl
+, input_rewriter_locale<Locale, Writer, Check> & _loc
 )
 -> input_rewrite_iterator <
   T

@@ -1,3 +1,5 @@
+//
+
 //          Copyright Sundeep S. Sangha 2013 - 2017.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -22,8 +24,6 @@ using data_pattern::make_ostream_locale;
 using data_pattern::make_istream_locale;
 using data_pattern::make_input_rewrite_locale;
 using data_pattern::make_output_rewrite_locale;
-using data_pattern::get;
-using data_pattern::begin;
 
 struct double_to_int {
 
@@ -115,8 +115,7 @@ operator ()(
 using data_pattern::begin;
 using data_pattern::end;
 
-return begin<double>(_mdl.device, _loc)
-    == end<double>(_mdl.device, _loc);
+return begin<double>(_mdl, _loc) == end<double>(_mdl, _loc);
 }
 };
 
@@ -130,8 +129,7 @@ operator ()(
 using data_pattern::begin;
 using data_pattern::end;
 
-return begin<char>(_mdl.device, _loc)
-    != end<char>(_mdl.device, _loc);
+return begin<char>(_mdl, _loc) != end<char>(_mdl, _loc);
 }
 };
 
@@ -146,19 +144,17 @@ auto irw_loc = make_input_rewrite_locale (
   iloc
 , make_type_map<int>(make_tuple(double_to_int{}))
 , make_type_map<int>(make_tuple(dtoi_check{}))
-, input.device
 );
 
 auto orw_loc = make_output_rewrite_locale (
   oloc
 , make_type_map<std::string>(make_tuple(str_to_char{}))
 , make_type_map<std::string>(make_tuple(stoc_check{}))
-, output.device
 );
 
 int tempi;
-auto i = begin<int>(input, irw_loc);
-//chain (input, irw_loc) >> tempi;
+//auto i = begin<int>(input, irw_loc);
+chain (input, irw_loc) >> tempi;
 
 //*oiter = std::string {"testing"};
 //chain (output, oloc) << "test" << ':' << ' ' << 12.04;

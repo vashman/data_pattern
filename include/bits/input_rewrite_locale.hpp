@@ -10,18 +10,10 @@
 
 namespace data_pattern {
 
-template <
-  typename Device
-, typename Locale
-, typename Writer
-, typename Check >
+template <typename Locale, typename Writer, typename Check>
 struct input_rewriter_locale;
 
-template <
-  typename Device
-, typename Locale
-, typename Writer
-, typename Check >
+template <typename Locale, typename Writer, typename Check>
 struct input_rewriter_locale {
 
 input_rewriter_locale (
@@ -59,19 +51,14 @@ Check check;
 
 }; /* rewrite locale */
 
-template <
-  typename Device
-, typename Locale
-, typename Writer
-, typename Check >
-input_rewriter_locale<Device, Locale, Writer, Check>
+template <typename Locale, typename Writer, typename Check>
+input_rewriter_locale<Locale, Writer, Check>
 make_input_rewrite_locale (
   Locale _loc
 , Writer _writer
 , Check _check
-, Device &
 ){
-return input_rewriter_locale<Device, Locale, Writer, Check>
+return input_rewriter_locale<Locale, Writer, Check>
 {_loc, _writer, _check};
 }
 
