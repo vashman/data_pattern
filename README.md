@@ -47,8 +47,11 @@ Documentation
 Features
 ==========================================================================
 + add writer iterator
++ Begin / End take model vs. device
 + collection of model / locale builder
 + make Locale immutable
+  + Add ref / pointer rewriter locale ctor
+  + Add move ctor for rewriter locale
 + add concurrancy measures
 
 License

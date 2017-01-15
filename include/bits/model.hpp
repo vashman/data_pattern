@@ -37,21 +37,21 @@ explicit
 operator Device ();
 
 model (
-  model<Device> const &
+  model const &
 ) = default;
 
 model (
-  model<Device> &&
+  model &&
 ) = default;
 
-model<Device> &
+model &
 operator = (
-  model<Device> const &
+  model const &
 ) = default;
 
-model<Device> &
+model &
 operator = (
-  model<Device> &&
+  model &&
 ) = default;
 
 ~model() = default;

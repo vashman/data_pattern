@@ -12,45 +12,7 @@
 #include "model.hpp"
 #include "bits/input_rewrite_iterator.hpp"
 #include "bits/output_rewrite_iterator.hpp"
+#include "typesystems/type_traits.hpp"
 
-namespace data_pattern {
-
-/*template <typename Locale, typename>
-class input_rewriter_locale {
-
-Locale locale;
-TupleWriter writer;
-TupleCheck check;
-
-type_map <tuple<input_rewrite_iterator<Ts, W, C, Device, Locale>...>, Ts...>
-
-};
-
-template <typename T>
-input_rewrite_iterator<T, Writer, Check, Device, Locale>
-get (
-  input_rewriter_locale<Locale, >
-){
-
-}
-
-input_rewrite_iterator<T, Writer, Check, Device, Map>
-make_input_rewritr_iterator (
-){
-}
-
-template <typename... Ts, typename Locale, typename TupleWriter, typename TupleCheck>
-make_rewriter_locale (
-  Locale _locale
-, TupleWriter _writers
-, TupleCheck _checks
-, model<Device> _mdl
-){
-auto tup = make_tuple(m_iter<Ts,>...);
-typesystems::type_map<_writers, Ts...> writer_map;
-return rewriter_map <Map>(_map, writer_map);
-}*/
-
-} /* data_pattern */
 #endif
 

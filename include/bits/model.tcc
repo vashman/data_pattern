@@ -10,7 +10,7 @@
 
 #include <utility>
 #include <iterator>
-#include <tuple> // std::get
+//#include <tuple> // std::get
 #include "map_type.hpp" // typesystems::get
 
 namespace data_pattern {
@@ -57,30 +57,30 @@ return model_state::operable == this->state;
 template <typename T, typename Device, typename Locale>
 auto
 begin (
-  Device & _device
+  model<Device> & _mdl
 , Locale & _loc
 )
--> decltype (typesystems::get<typename std::decay<T>::type> (_loc)(_device))
+-> decltype (get<typename std::decay<T>::type> (_loc)(_mdl.device))
 {
 using typesystems::get;
 using type = typename std::decay<T>::type;
 
-return get<type> (_loc)(_device);
+return get<type> (_loc)(_mdl.device);
 }
 
 template <typename T, typename Device, typename Locale>
 auto
 end (
-  Device & _device
+  model<Device> & _mdl
 , Locale & _loc
 )
--> decltype (typesystems::get<end_iterator_tag<typename std::decay<T>::type>>
-  (_loc)(_device)
+-> decltype (get<end_iterator_tag<typename std::decay<T>::type>>
+  (_loc)(_mdl.device)
 ){
 using typesystems::get;
 using type = typename std::decay<T>::type;
 
-return get<end_iterator_tag<type>>(_loc)(_device);
+return get<end_iterator_tag<type>>(_loc)(_mdl.device);
 }
 
 template <
@@ -108,7 +108,7 @@ read (
 , Locale & _loc
 ){
    if (! _mdl.is_operable()) throw "err";
-auto iter = begin<T>(_mdl.device, _loc);
+auto iter = begin<T>(_mdl, _loc);
 T temp {*iter};
 sync <T>(_mdl, _loc, iter);
 return temp;
@@ -122,7 +122,7 @@ write (
 , Locale & _loc
 ){
   if (! _mdl.is_operable()) throw "err";
-auto iter = begin<T>(_mdl.device, _loc);
+auto iter = begin<T>(_mdl, _loc);
 *iter = _var;
 sync <T>(_mdl, _loc, iter);
 }
@@ -134,7 +134,7 @@ empty (
 , Locale & _loc
 ){
 using iter_cat = typename std::iterator_traits <
-  decltype(begin<T>(_mdl.device, _loc))>::iterator_category;
+  decltype(begin<T>(_mdl, _loc))>::iterator_category;
 
 return bits::empty<T>(_mdl, _loc, iter_cat{});
 }
@@ -146,7 +146,7 @@ full (
 , Locale & _loc
 ){
 using iter_cat = typename std::iterator_traits <
-  decltype(begin<T>(_mdl.device, _loc))>::iterator_category;
+  decltype(begin<T>(_mdl, _loc))>::iterator_category;
 
 return bits::full<T>(_mdl, _loc, iter_cat{});
 }
@@ -234,7 +234,7 @@ empty (
 , IteratorTag
 ){
 return
-begin<T>(_mdl.device, _loc) == end<T>(_mdl.device, _loc);
+begin<T>(_mdl, _loc) == end<T>(_mdl, _loc);
 }
 
 template <
@@ -249,7 +249,7 @@ full (
 , IteratorTag
 ){
 return
-begin<T>(_mdl.device, _loc) != end<T>(_mdl.device, _loc);
+begin<T>(_mdl, _loc) != end<T>(_mdl, _loc);
 }
 
 }/* bits */ } /* data_pattern */

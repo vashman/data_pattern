@@ -8,7 +8,12 @@
 #ifndef DATA_PATTERN_OUTPUT_REWRITE_ITERATOR_HPP
 #define DATA_PATTERN_OUTPUT_REWRITE_ITERATOR_HPP
 
+#include <functional>
+#include <type_traits>
+#include "output_rewrite_locale.hpp"
+
 namespace data_pattern {
+
 template <
   typename T
 , typename Writer
@@ -25,8 +30,8 @@ template <
 , typename Locale >
 output_rewrite_iterator <T, Writer, Check, Device, Locale>
 make_output_rewrite_iterator (
-  Writer &&
-, Check &&
+  Writer &
+, Check &
 , model<Device> &
 , Locale &
 );
@@ -39,8 +44,8 @@ template <
 , typename Locale >
 class output_rewrite_iterator {
 
-Writer writer;
-Check check;
+std::reference_wrapper<Writer> writer;
+std::reference_wrapper<Check> check;
 model<Device> * mdl;
 Locale * locale;
 
@@ -53,12 +58,18 @@ typedef void pointer;
 typedef void reference;
 
 /* ctor */
-template <typename WriterType, typename CheckType>
 output_rewrite_iterator (
-  WriterType
-, CheckType
+  Writer &
+, Check &
 , Locale &
 , model<Device> &
+);
+
+/* ctor */
+output_rewrite_iterator (
+  Writer &
+, Check &
+, Locale &
 );
 
 /* ctor copy */
@@ -96,20 +107,24 @@ operator = (
   T const &
 );
 
-output_rewrite_iterator <T, Writer, Check, Device, Locale> &
+output_rewrite_iterator &
 operator ++ ();
 
-output_rewrite_iterator <T, Writer, Check, Device, Locale> &
+output_rewrite_iterator &
 operator ++ (int);
 
-output_rewrite_iterator <T, Writer, Check, Device, Locale> &
+output_rewrite_iterator &
 operator * ();
 
 bool
 operator == (
-  output_rewrite_iterator <T, Writer, Check, Device, Locale>
-  const &
+  output_rewrite_iterator const &
 ) const;
+
+output_rewrite_iterator &
+operator ()(
+  model<Device> &
+);
 
 }; /* output rewrite iterator */
 
@@ -133,18 +148,35 @@ template <
 , typename Check
 , typename Device
 , typename Locale >
-template <typename WriterType, typename CheckType>
   output_rewrite_iterator<T, Writer, Check, Device, Locale>
 ::output_rewrite_iterator (
-  WriterType _writer
-, CheckType _check
+  Writer & _writer
+, Check & _check
 , Locale & _locale
 , model<Device> & _mdl
 )
 : writer (_writer)
 , check (_check)
-, mdl (&_mdl)
-, locale (&_locale)
+, mdl (& _mdl)
+, locale (& _locale)
+{}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Device
+, typename Locale >
+  output_rewrite_iterator<T, Writer, Check, Device, Locale>
+::output_rewrite_iterator (
+  Writer & _writer
+, Check & _check
+, Locale & _locale
+)
+: writer (_writer)
+, check (_check)
+, mdl (nullptr)
+, locale (& _locale)
 {}
 
 template <
@@ -235,16 +267,60 @@ template <
 , typename Check
 , typename Device
 , typename Locale >
+output_rewrite_iterator <T, Writer, Check, Device, Locale> &
+  output_rewrite_iterator <T, Writer, Check, Device, Locale>
+::operator ()(
+  model<Device> & _mdl
+){
+this->mdl = &_mdl;
+return *this;
+}
+
+template <
+  typename T
+, typename Writer
+, typename Check
+, typename Device
+, typename Locale >
 output_rewrite_iterator <T, Writer, Check, Device, Locale>
 make_output_rewrite_iterator (
-  Writer && _writer
-, Check && _check
+  Writer & _writer
+, Check & _check
 , model<Device> & _mdl
 , Locale & _locale
 ){
 return
 output_rewrite_iterator<T, Writer, Check, Device, Locale>
 {_writer, _check, _locale, _mdl};
+}
+
+template <
+  typename T
+, typename Device
+, typename Locale
+, typename Writer
+, typename Check >
+auto
+get (
+  output_rewriter_locale<Device, Locale, Writer, Check>
+  & _loc
+)
+-> output_rewrite_iterator <
+  T
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.writer))>::type
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.check))>::type
+, Device
+, Locale
+>
+{
+return output_rewrite_iterator <
+  T
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.writer))>::type
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.check))>::type
+, Device
+, Locale
+>
+{get<T>(_loc.writer), get<T>(_loc.check), _loc.locale};
 }
 
 } /* data_pattern */

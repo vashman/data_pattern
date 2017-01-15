@@ -5,46 +5,36 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef DATA_PATTERN_INPUT_REWRITE_ITERATOR_HPP
-#define DATA_PATTERN_INPUT_REWRITE_ITERATOR_HPP
+#ifndef DATA_PATTERN_BITS_INPUT_REWRITE_ITERATOR_HPP
+#define DATA_PATTERN_BITS_INPUT_REWRITE_ITERATOR_HPP
+
+#include <functional>
+#include <type_traits>
+#include "input_rewrite_locale.hpp"
 
 namespace data_pattern {
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
+, typename Locale
+, typename Writer
+, typename Check >
 class input_rewrite_iterator;
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
-input_rewrite_iterator <T, Writer, Check, Device, Locale>
-make_input_rewrite_iterator (
-  Writer &&
-, Check &&
-, model<Device> &
-, Locale &
-);
-
-template <
-  typename T
+, typename Locale
 , typename Writer
-, typename Check
-, typename Device
-, typename Locale >
+, typename Check >
 class input_rewrite_iterator {
 
 T temp;
-Writer writer;
-Check check;
 model<Device> * mdl;
 Locale * locale;
+std::reference_wrapper<Writer> writer;
+std::reference_wrapper<Check> check;
 
 public:
 
@@ -55,47 +45,51 @@ typedef T * pointer;
 typedef T & reference;
 
 /* ctor */
-template <typename WriterType, typename CheckType>
 input_rewrite_iterator (
-  WriterType
-, CheckType
+  Writer &
+, Check &
 , Locale &
 , model<Device> &
 );
 
+/* ctor */
+input_rewrite_iterator (
+  Writer &
+, Check &
+, Locale &
+);
+
 /* ctor copy */
 input_rewrite_iterator (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator
   const &
 ) = default;
 
 /* operator copy assignment */
-input_rewrite_iterator <T, Writer, Check, Device, Locale> &
+input_rewrite_iterator &
 operator = (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator
   const &
 ) = default;
 
 /* ctor move */
 input_rewrite_iterator (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
-  &&
+  input_rewrite_iterator &&
 ) = default;
 
 /* operator move assignment */
-input_rewrite_iterator <T, Writer, Check, Device, Locale> &
+input_rewrite_iterator &
 operator = (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
-  &&
+  input_rewrite_iterator &&
 ) = default;
 
 /* dtor */
 ~input_rewrite_iterator () = default;
 
-input_rewrite_iterator <T, Writer, Check, Device, Locale> &
+input_rewrite_iterator &
 operator ++ ();
 
-input_rewrite_iterator <T, Writer, Check, Device, Locale>
+input_rewrite_iterator
 operator ++ (int);
 
 T&
@@ -106,61 +100,103 @@ operator -> ();
 
 bool
 operator == (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
   const &
 ) const;
+
+input_rewrite_iterator &
+operator ()(
+  model<Device> &
+);
 
 }; /* input rewrite iterator */
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
-bool
-operator != (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
-  const &
-, input_rewrite_iterator <T, Writer, Check, Device, Locale>
-  const &
-);
+, typename Locale
+, typename Writer
+, typename Check >
+input_rewrite_iterator<T, Device, Locale, Writer, Check> &
+  input_rewrite_iterator<T, Device, Locale, Writer, Check>
+::operator()(
+  model<Device> & _mdl
+){
+this->mdl = &_mdl;
+  if (! this->check(*this->mdl, *this->locale))
+  this->temp = this->writer(*this->mdl, *this->locale);
+return *this;
+}
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
-template <typename WriterType, typename CheckType>
-  input_rewrite_iterator<T, Writer, Check, Device, Locale>
+, typename Locale
+, typename Writer
+, typename Check >
+bool
+operator != (
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
+  const &
+, input_rewrite_iterator <T, Device, Locale, Writer, Check>
+  const &
+);
+
+/* ctor */
+template <
+  typename T
+, typename Device
+, typename Locale
+, typename Writer
+, typename Check >
+  input_rewrite_iterator<T, Device, Locale, Writer, Check>
 ::input_rewrite_iterator (
-  WriterType _writer
-, CheckType _check
+  Writer & _writer
+, Check & _check
 , Locale & _locale
 , model<Device> & _mdl
 )
 : temp {}
+, mdl (& _mdl)
+, locale (& _locale)
 , writer (_writer)
 , check (_check)
-, mdl (&_mdl)
-, locale (&_locale)
 {
   if (! this->check(*this->mdl, *this->locale))
   this->temp = this->writer(*this->mdl, *this->locale);
 }
 
+/* ctor */
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
+, typename Locale
+, typename Writer
+, typename Check >
+  input_rewrite_iterator<T, Device, Locale, Writer, Check>
+::input_rewrite_iterator (
+  Writer & _writer
+, Check & _check
+, Locale & _locale
+)
+: temp {}
+, mdl (nullptr)
+, locale (& _locale)
+, writer (_writer)
+, check (_check)
+{}
+
+template <
+  typename T
+, typename Device
+, typename Locale
+, typename Writer
+, typename Check >
 bool
 operator != (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
   const & _lhs
-, input_rewrite_iterator <T, Writer, Check, Device, Locale>
+, input_rewrite_iterator <T, Device, Locale, Writer, Check>
   const & _rhs
 ){
 return !(_lhs == _rhs);
@@ -168,31 +204,31 @@ return !(_lhs == _rhs);
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
+, typename Locale
+, typename Writer
+, typename Check >
 bool
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
 ::operator == (
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
   const & _rhs
 ) const {
-  if (this->check == nullptr){
-    if (_rhs.check == nullptr) return true;
-  return _rhs.check(*_rhs,mdl, *_rhs.locale);
+  if (this->mdl == nullptr){
+    if (_rhs.mdl == nullptr) return true;
+  return _rhs.check(*_rhs.mdl, *_rhs.locale);
   }
 return this->check(*this->mdl, *this->locale);
 }
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
-input_rewrite_iterator <T, Writer, Check, Device, Locale> &
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+, typename Locale
+, typename Writer
+, typename Check >
+input_rewrite_iterator <T, Device, Locale, Writer, Check> &
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
 ::operator ++ (){
 this->temp = this->writer(*this->mdl, *this->locale);
 return *this;
@@ -200,58 +236,69 @@ return *this;
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
-input_rewrite_iterator <T, Writer, Check, Device, Locale>
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+, typename Locale
+, typename Writer
+, typename Check >
+input_rewrite_iterator <T, Device, Locale, Writer, Check>
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
 ::operator ++ (int){
 auto temp_iter (*this);
-this->temp = this->writer(*this->device, *this->locale);
+this->temp = this->writer(*this->device, *this->local);
 return temp_iter;
 }
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
+, typename Locale
+, typename Writer
+, typename Check >
 T&
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
 ::operator * (){
 return this->temp;
 }
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
+, typename Locale
+, typename Writer
+, typename Check >
 T*
-  input_rewrite_iterator <T, Writer, Check, Device, Locale>
+  input_rewrite_iterator <T, Device, Locale, Writer, Check>
 ::operator -> (){
 return &this->temp;
 }
 
 template <
   typename T
-, typename Writer
-, typename Check
 , typename Device
-, typename Locale >
-input_rewrite_iterator <T, Writer, Check, Device, Locale>
-make_input_rewrite_iterator (
-  Writer && _writer
-, Check && _check
-, model<Device> & _mdl
-, Locale & _locale
-){
-return
-input_rewrite_iterator<T, Writer, Check, Device, Locale>
-{_writer, _check, _locale, _mdl};
+, typename Locale
+, typename Writer
+, typename Check >
+auto
+get (
+  input_rewriter_locale<Device, Locale, Writer, Check>
+  & _loc
+)
+-> input_rewrite_iterator <
+  T
+, Device
+, Locale
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.writer))>::type
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.check))>::type
+>
+{
+return input_rewrite_iterator <
+  T
+, Device
+, Locale
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.writer))>::type
+, typename std::remove_reference<decltype(typesystems::get<T>(_loc.check))>::type
+>
+{get<T>(_loc.writer), get<T>(_loc.check), _loc.locale};
 }
 
 } /* data_pattern */

@@ -1,17 +1,24 @@
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <typesystems/type_map.hpp>
+#include <tuple>
 #include "../include/model.hpp"
 #include "../include/stream_model.hpp"
 #include "../include/rewrite_type.hpp"
 
 using std::cout;
-using std::cin;
+using std::stringstream;
 using std::string;
+using std::make_tuple;
+using typesystems::make_type_map;
 using data_pattern::model;
 using data_pattern::make_ostream_locale;
 using data_pattern::make_istream_locale;
-using data_pattern::make_input_rewrite_iterator;
-using data_pattern::make_output_rewrite_iterator;
+using data_pattern::make_input_rewrite_locale;
+using data_pattern::make_output_rewrite_locale;
+using data_pattern::get;
+using data_pattern::begin;
 
 struct double_to_int {
 
@@ -21,10 +28,9 @@ operator ()(
   Model & _mdl
 , Locale & _loc
 ){
-using data_pattern::begin;
-
-auto iter = begin<double>(_mdl.device, _loc);
-return static_cast<int>(*iter++);
+using data_pattern::read;
+auto var = read<double>(_mdl, _loc);
+return static_cast<int>(var);
 }
 
 };
@@ -127,17 +133,29 @@ return begin<char>(_mdl.device, _loc)
 int main (){
 
 model<std::ostream *> output (&cout);
-model<std::istream *> input (&cin);
-auto oloc = make_ostream_locale <char, double>(cout);
-auto iloc = make_istream_locale <char, double>(cin);
+model<std::stringstream> input ("12.14 13.04");
+auto oloc = make_ostream_locale<char, double>(cout);
+auto iloc = make_istream_locale<char, double>(input.device);
 
-auto iter = make_input_rewrite_iterator <int>(
-  double_to_int{}, dtoi_check{}, input, iloc );
+auto irw_loc = make_input_rewrite_locale (
+  iloc
+, make_type_map<int>(make_tuple(double_to_int{}))
+, make_type_map<int>(make_tuple(dtoi_check{}))
+, input.device
+);
 
-auto oiter = make_output_rewrite_iterator <std::string>(
-  str_to_char{}, stoc_check{}, output, oloc );
-auto k = std::string {"testing"};
-*oiter = k;
+auto orw_loc = make_output_rewrite_locale (
+  oloc
+, make_type_map<std::string>(make_tuple(str_to_char{}))
+, make_type_map<std::string>(make_tuple(stoc_check{}))
+, output.device
+);
+
+int tempi;
+auto i = begin<int>(input, irw_loc);
+//chain (input, irw_loc) >> tempi;
+
+//*oiter = std::string {"testing"};
 //chain (output, oloc) << "test" << ':' << ' ' << 12.04;
 
 char temp;
