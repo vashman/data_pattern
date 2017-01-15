@@ -333,6 +333,22 @@ return output_rewrite_iterator <
 {get<T>(_loc.writer), get<T>(_loc.check), _loc.locale};
 }
 
+template <
+  typename T
+, typename Device
+, typename Locale
+, typename Writer
+, typename Check
+, typename Iter >
+void
+sync (
+  model<Device> & _mdl
+, output_rewriter_locale<Locale, Writer, Check> & _loc
+, Iter &
+){
+
+}
+
 } /* data_pattern */
 #endif
 

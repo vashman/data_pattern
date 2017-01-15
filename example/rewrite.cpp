@@ -53,10 +53,10 @@ func (
 using data_pattern::begin;
 using data_pattern::end;
 
-auto iter = begin<char>(_mdl.device, _loc);
+auto iter = begin<char>(_mdl, _loc);
 auto b = begin(_str);
 auto e = end(_str);
-auto eiter = end<char>(_mdl.device, _loc);
+auto eiter = end<char>(_mdl, _loc);
 
 while ((iter != eiter) && (b != e)){
 *iter = *b;
@@ -75,7 +75,7 @@ func (
 using data_pattern::begin;
 using data_pattern::end;
 
-auto iter = begin<char>(_mdl.device, _loc);
+auto iter = begin<char>(_mdl, _loc);
 auto b = begin(_str);
 auto e = end(_str);
 
@@ -99,7 +99,7 @@ this->func (
 , _mdl
 , _loc
 , typename
-  std::iterator_traits<decltype(begin<char>(_mdl.device, _loc))>::iterator_category()
+  std::iterator_traits<decltype(begin<char>(_mdl, _loc))>::iterator_category()
 );
 }
 
@@ -153,11 +153,10 @@ auto orw_loc = make_output_rewrite_locale (
 );
 
 int tempi;
-//auto i = begin<int>(input, irw_loc);
 chain (input, irw_loc) >> tempi;
 
 //*oiter = std::string {"testing"};
-//chain (output, oloc) << "test" << ':' << ' ' << 12.04;
+chain (output, orw_loc) << std::string{"test"};// << ':' << ' ' << 12.04;
 
 char temp;
 int temp_int;
