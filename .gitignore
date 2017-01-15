@@ -32,6 +32,11 @@
 *.*~
 *.project
 *.doxy
+/.vs
+*.sln
+*.VC.*
+*.vcxproj
+*.vcxproj.*
 
 # Log files
 *.log
