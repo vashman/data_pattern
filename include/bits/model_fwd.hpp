@@ -33,7 +33,7 @@ template <typename T, typename Device, typename Locale>
 void
 write (
   T const &
-, model <Device> &
+, model<Device> &
 , Locale &
 );
 

@@ -10,23 +10,24 @@
 
 #include <memory>
 #include <cstring>
+#include <stdint.h>
 
 namespace data_pattern {
 
-template <
-  typename T = unsigned char
-, typename Allocator = std::allocator<T> >
+template <typename Allocator = std::allocator<uint8_t>>
 class raw {
 
-T * data_ptr;
+uint8_t * data_ptr;
 std::size_t data_size;
 Allocator allocator;
 
 public:
 
+typedef uint8_t data_type;
+
 /* ctor */
 explicit
-raw(
+raw (
   Allocator const & _alloc = Allocator()
 );
 
@@ -35,53 +36,78 @@ raw(
  * of the data passed into it.
  */
 raw (
-  T const * const
+  data_type const * const
 , std::size_t
 , Allocator const & _alloc = Allocator()
 );
 
-/* ctor copy */
+template <typename T>
 raw (
-  raw const &
+  T const &
+, Allocator const & _alloc = Allocator()
 );
+
+raw (raw const &);
+raw (raw &&);
+~raw();
 
 /* copy assignment */
 template <typename Alloc>
 raw &
-operator = (
-  raw<T,Alloc> const &
-);
+operator = (raw<Alloc> const &);
 
-/* copy assignment */
 raw &
-operator = (
-  raw const &
-);
+operator = (raw const &);
 
-/* move ctor */
-raw (
-  raw &&
-);
-
-/* move operator */
 raw
-operator = (
-  raw &&
-);
-
-/* dtor */
-~raw();
+operator = (raw &&);
 
 std::size_t
 size () const;
 
-T * const
+data_type * const
 data () const;
 
 Allocator
 get_allocator() const;
 
 }; /* raw */
+
+template <typename Allocator>
+std::size_t
+size (
+  raw<Allocator> const &
+);
+
+template <typename Allocator>
+Allocator
+get_allocator (
+  raw<Allocator> const &
+);
+
+template <typename Allocator>
+typename raw<Allocator>::data_type * const
+begin (
+  raw<Allocator> &
+);
+
+template <typename Allocator>
+typename raw<Allocator>::data_type * const
+end (
+  raw<Allocator> &
+);
+
+template <typename Allocator>
+typename raw<Allocator>::data_type const * const
+cbegin (
+  raw<Allocator> const &
+);
+
+template <typename Allocator>
+typename raw<Allocator>::data_type const * const
+cend (
+  raw<Allocator> const &
+);
 
 } /* data_pattern */
 #endif
