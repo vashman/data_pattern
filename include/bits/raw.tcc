@@ -46,8 +46,9 @@ raw<Allocator>::raw (
 
 /* ctor */
 template <typename Allocator>
+template <typename T>
 raw<Allocator>::raw (
-  raw<Allocator>::data_type const * const _data
+  T const & _src
 , std::size_t _size
 , Allocator const & _alloc
 )
@@ -55,23 +56,8 @@ raw<Allocator>::raw (
 , data_size (_size)
 , allocator (_alloc)
 {
-  if (nullptr == _data) throw "error";
 this->data_ptr = this->allocator.allocate(_size);
-memcpy(data_ptr, _data, _size);
-}
-
-template <typename Allocator>
-template <typename T>
-raw<Allocator>::raw (
-  T const & _src
-, Allocator const & _alloc
-)
-: data_ptr (nullptr)
-, data_size (sizeof(T))
-, allocator (_alloc)
-{
-this->data_ptr = this->allocator.allocate(sizeof(T));
-memcpy(data_ptr, & _src, sizeof(T));
+memcpy(data_ptr, & _src, _size);
 }
 
 /* dtor */
@@ -99,7 +85,7 @@ return _raw.size();
 
 /**/
 template <typename Allocator>
-typename raw<Allocator>::data_type * const
+typename raw<Allocator>::data_type *
 raw<Allocator>::data (
 ) const {
 return this->data_ptr;
@@ -136,7 +122,7 @@ return *this;
 }
 
 template <typename Allocator>
-typename raw<Allocator>::data_type * const
+typename raw<Allocator>::data_type *
 begin (
   raw<Allocator> & _raw
 ){
@@ -144,7 +130,7 @@ return _raw.data();
 }
 
 template <typename Allocator>
-typename raw<Allocator>::data_type * const
+typename raw<Allocator>::data_type *
 end (
   raw<Allocator> & _raw
 ){
@@ -153,7 +139,7 @@ return temp += _raw.size();
 }
 
 template <typename Allocator>
-typename raw<Allocator>::data_type const * const
+typename raw<Allocator>::data_type const *
 cbegin (
   raw<Allocator> const & _raw
 ){
@@ -161,7 +147,7 @@ return _raw.data();
 }
 
 template <typename Allocator>
-typename raw<Allocator>::data_type const * const
+typename raw<Allocator>::data_type const *
 cend (
   raw<Allocator> const & _raw
 ){

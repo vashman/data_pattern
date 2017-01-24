@@ -11,11 +11,11 @@
 using data_pattern::raw;
 
 int main (){
-Empty e;
 std::vector<raw<>::data_type> vec {0, 1, 2};
 
 raw<> temp(vec.data(), vec.size());
 raw<> blob(vec);
+raw<> str("hello", 5); // ub
 
 return 0;
 }

@@ -32,18 +32,13 @@ raw (
 );
 
 /* ctor
- * The constructor must gurantee a copy
- * of the data passed into it.
+ * The constructor must gurantee a copy of the data passed
+ * into it.
  */
-raw (
-  data_type const * const
-, std::size_t
-, Allocator const & _alloc = Allocator()
-);
-
 template <typename T>
 raw (
   T const &
+, std::size_t _size = sizeof(T)
 , Allocator const & _alloc = Allocator()
 );
 
@@ -65,7 +60,7 @@ operator = (raw &&);
 std::size_t
 size () const;
 
-data_type * const
+data_type *
 data () const;
 
 Allocator
@@ -86,25 +81,25 @@ get_allocator (
 );
 
 template <typename Allocator>
-typename raw<Allocator>::data_type * const
+typename raw<Allocator>::data_type *
 begin (
   raw<Allocator> &
 );
 
 template <typename Allocator>
-typename raw<Allocator>::data_type * const
+typename raw<Allocator>::data_type *
 end (
   raw<Allocator> &
 );
 
 template <typename Allocator>
-typename raw<Allocator>::data_type const * const
+typename raw<Allocator>::data_type const *
 cbegin (
   raw<Allocator> const &
 );
 
 template <typename Allocator>
-typename raw<Allocator>::data_type const * const
+typename raw<Allocator>::data_type const *
 cend (
   raw<Allocator> const &
 );
