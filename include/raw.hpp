@@ -66,6 +66,19 @@ data () const;
 Allocator
 get_allocator() const;
 
+/*data_type
+operator [] ();
+
+void
+remove_prefix (
+  std::size_t
+);
+
+void
+remove_suffix (
+  std::size_t
+);*/
+
 }; /* raw */
 
 template <typename Allocator>

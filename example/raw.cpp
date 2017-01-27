@@ -6,16 +6,20 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include "../include/raw.hpp"
+#include "../include/raw_view.hpp"
 #include <vector>
 
 using data_pattern::raw;
+using data_pattern::raw_view;
 
 int main (){
-std::vector<raw<>::data_type> vec {0, 1, 2};
+std::vector<raw<>::data_type> vec {'0', '1', '2'};
 
-raw<> temp(vec.data(), vec.size());
+raw<> temp(vec.data(), vec.size()); //ub
 raw<> blob(vec);
 raw<> str("hello", 5); // ub
+
+raw_view v (temp);
 
 return 0;
 }
