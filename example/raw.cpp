@@ -21,6 +21,8 @@ raw<> str("hello", 5); // ub
 
 raw_view v (temp);
 
+bool b = (blob != str);
+
 return 0;
 }
 

@@ -77,9 +77,22 @@ remove_prefix (
 void
 remove_suffix (
   std::size_t
-);*/
+);
+*/
+template <typename Allocator2>
+bool
+operator == (
+  raw<Allocator2> const &
+) const;
 
 }; /* raw */
+
+template <typename Allocator1, typename Allocator2>
+bool
+operator != (
+  raw<Allocator1> const &
+, raw<Allocator2> const &
+);
 
 template <typename Allocator>
 std::size_t

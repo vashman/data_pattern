@@ -122,6 +122,25 @@ return *this;
 }
 
 template <typename Allocator>
+template <typename Allocator2>
+bool
+raw<Allocator>::operator == (
+  raw<Allocator2> const & _rhs
+) const {
+  if (this->size() != _rhs.size()) return false;
+return std::equal(begin(*this), end(*this), begin(_rhs));
+}
+
+template <typename Allocator1, typename Allocator2>
+bool
+operator != (
+  raw<Allocator1> const & _lhs
+, raw<Allocator2> const & _rhs
+){
+return !(_lhs == _rhs);
+}
+
+template <typename Allocator>
 typename raw<Allocator>::data_type *
 begin (
   raw<Allocator> & _raw

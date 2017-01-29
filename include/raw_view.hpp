@@ -57,7 +57,23 @@ data_end() const ;
 std::size_t
 size() const;
 
+bool
+operator == (
+  raw_view const &
+) const;
+
 }; /* raw_view */
+
+bool
+operator != (
+  raw_view const &
+, raw_view const &
+);
+
+std::size_t
+size (
+  raw_view const &
+);
 
 raw<>::data_type const *
 begin (
@@ -124,6 +140,13 @@ raw_view::size (
 return this->data_end_ptr - this->data_begin_ptr;
 }
 
+std::size_t
+size (
+  raw_view const & _raw
+){
+return _raw.size();
+}
+
 raw<>::data_type const *
 begin (
   raw_view const & _raw
@@ -150,6 +173,24 @@ cend (
   raw_view const & _raw
 ){
 return _raw.data_end();
+}
+
+bool
+raw_view::operator == (
+  raw_view const & _rhs
+) const {
+using data_pattern::size;
+
+  if (size(*this) != size(_rhs)) return false;
+return std::equal(begin(*this), end(*this), begin(_rhs));
+}
+
+bool
+operator != (
+  raw_view const & _lhs
+, raw_view const & _rhs
+){
+return !(_lhs == _rhs);
 }
 
 } /* data_pattern */
