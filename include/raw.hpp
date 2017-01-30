@@ -54,7 +54,7 @@ operator = (raw<Alloc> const &);
 raw &
 operator = (raw const &);
 
-raw
+raw &
 operator = (raw &&);
 
 std::size_t

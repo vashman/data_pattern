@@ -99,24 +99,22 @@ raw<Allocator>::operator = (
   raw<Alloc> const & _rhs
 ){
   if (this != &_rhs){
-  this->data_ptr
-    = this->allocator.allocate (_rhs.data_size);
+  this->data_ptr = this->allocator.allocate(_rhs.data_size);
   memcpy (data_ptr, _rhs.data_ptr, _rhs.data_size);
   this->data_size = _rhs.data_size;
   }
 return *this;
 }
 
-/* copy assignment */
+/* move assignment */
 template <typename Allocator>
 raw<Allocator> &
 raw<Allocator>::operator = (
-  raw<Allocator> const & _rhs
+  raw<Allocator> && _rhs
 ){
   if (this != &_rhs){
-  this->data_ptr = this->allocator.allocate(_rhs.data_size);
-  memcpy (data_ptr, _rhs.data_ptr, _rhs.data_size);
-  this->data_size = _rhs.data_size;
+  this->data_size = std::move(_rhs.data_size);
+  this->data_ptr = std::move(_rhs.data_ptr);
   }
 return *this;
 }
