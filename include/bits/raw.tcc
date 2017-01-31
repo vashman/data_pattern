@@ -64,6 +64,7 @@ memcpy(data_ptr, & _src, _size);
 template <typename Allocator>
 raw<Allocator>::~raw (
 ){
+  if (this->data_ptr == nullptr) return;
 this->allocator.deallocate(this->data_ptr, this->data_size);
 }
 
@@ -106,17 +107,44 @@ raw<Allocator>::operator = (
 return *this;
 }
 
+/* copy assignment */
+template <typename Allocator>
+raw<Allocator> &
+raw<Allocator>::operator = (
+  raw<Allocator> const & _rhs
+){
+  if (this != &_rhs){
+  this->data_ptr = this->allocator.allocate(_rhs.data_size);
+  memcpy (data_ptr, _rhs.data_ptr, _rhs.data_size);
+  this->data_size = _rhs.data_size;
+  }
+return *this;
+}
+
 /* move assignment */
 template <typename Allocator>
 raw<Allocator> &
 raw<Allocator>::operator = (
   raw<Allocator> && _rhs
 ){
+//propagate_on_container_move_assignmen ??
   if (this != &_rhs){
   this->data_size = std::move(_rhs.data_size);
   this->data_ptr = std::move(_rhs.data_ptr);
+  _rhs.data_ptr = nullptr;
   }
 return *this;
+}
+
+template <typename Allocator>
+raw<Allocator>::raw(
+  raw<Allocator> && _other
+)
+: data_ptr (std::move(_other.data_ptr))
+, data_size (std::move(_other.data_size))
+, allocator (std::move(_other.allocator))
+{
+_other.data_ptr = nullptr;
 }
 
 template <typename Allocator>
