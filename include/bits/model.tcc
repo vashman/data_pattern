@@ -10,7 +10,6 @@
 
 #include <utility>
 #include <iterator>
-//#include <tuple> // std::get
 #include "map_type.hpp" // typesystems::get
 
 namespace data_pattern {
@@ -18,20 +17,20 @@ namespace data_pattern {
 template <typename Device>
 template <typename... Ts>
 model<Device>::model (
-  Ts... _args
+  Ts &&... _args
 )
 : device (std::forward<Ts>(_args)...)
 , state {model_state::operable}
 {}
 
-template <typename Device>
+/*template <typename Device>
 template <typename T>
 model<Device>::model (
   std::initializer_list<T> _list
 )
 : device (_list)
 , state {model_state::operable}
-{}
+{}*/
 
 template <typename Device>
 model<Device>::operator Device(){

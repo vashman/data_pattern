@@ -8,7 +8,7 @@
 #ifndef DATA_PATTERN_BITS_MODEL_HPP
 #define DATA_PATTERN_BITS_MODEL_HPP
 
-#include  <initializer_list>
+//#include  <initializer_list>
 
 namespace data_pattern {
 
@@ -25,16 +25,8 @@ model_state state;
 
 template <typename... Ts>
 model (
-  Ts...
+  Ts &&...
 );
-
-template <typename T>
-model (
-  std::initializer_list<T>
-);
-
-explicit
-operator Device ();
 
 model (
   model const &
@@ -58,6 +50,9 @@ operator = (
 
 bool
 is_operable () const;
+
+explicit
+operator Device ();
 
 }; /* model */
 
